@@ -1159,7 +1159,7 @@ function render(scroll){
 }
 
 /* ---------- INTEL ---------- */
-const GREETS=['What are we hunting for today, {u}?','Hunting for some wheels, {u}?','Let\'s find those hidden gems.','Car intel and chill?','There\'s always a better deal out there. Let\'s find it.','Coffee and fast cars? Let\'s go.','Let\'s explore some wheels.','Got a car on your mind, {u}?','Let\'s find your next ride.','What\'s caught your eye today?','Ready to talk cars, {u}?','Somewhere out there is a steal. Let\'s find it.','What\'s worth a look today?'];
+const GREETS=['What are we hunting for today, {u}?','Hunting for some wheels, {u}?','Let\'s find those hidden gems.','Car intel and chill?','There\'s always a better deal out there. Let\'s find it.','Coffee and fast cars? Let\'s go.','Let\'s explore some wheels.','Got a car on your mind, {u}?','Let\'s find your next ride.','What\'s caught your eye today?','Ready to talk cars, {u}?','Somewhere out there is a great deal. Let\'s find it.','What\'s worth a look today?'];
 const GREET_PICK=GREETS[Math.floor(Math.random()*GREETS.length)];
 function greeting(){return GREET_PICK.replace('{u}',S.user)}
 function intelHome(){
@@ -1345,7 +1345,7 @@ function rngPaint(r){
  const pc=v=>(v-min)/(max-min)*100,i=r.querySelector('i');
  if(hi){i.style.left=pc(a)+'%';i.style.right=(100-pc(b))+'%'}else{i.style.left='0';i.style.right=(100-pc(a))+'%'}
  const fm=v=>f==='vs'?(v>=max?'any price':(v>0?'+':'')+v+'%'):f==='days'?(v>=max?'any':v+' days'):f==='mi'?(v>=max?'any':v.toLocaleString('en-US')+' mi'):f==='dist'?(v>=max?'Nationwide':'within '+v.toLocaleString('en-US')+' mi'):f==='usd'?(v>=max?money(v)+'+':money(v)):f==='hp'?(v>=max?v+'+ hp':v+' hp'):v;
- r.querySelector('output').textContent=hi?(f==='mi'&&a===0&&b>=max?'Any mileage':fm(a)+' to '+fm(b)):fm(a);
+ r.querySelector('output').textContent=hi?(f==='year'&&a<=min&&b>=max?'Any year':f==='mi'&&a===0&&b>=max?'Any mileage':fm(a)+' to '+fm(b)):fm(a);
 }
 function cmpCount(){document.querySelectorAll('.cmpmore').forEach(cmpCount1)}
 function cmpCount1(box){
