@@ -596,19 +596,17 @@ label.f{font-size:13.5px}
   .app.closed .side-foot{height:auto;margin:auto 0 0;padding:12px 0 0;border-top:none;width:100%}
 }
 
-/* ===== LOGO v5 (12.11.2026): Road heavy, Rocket thin, both tilted the same ===== */
-.logo,.logo-s,.bar h1.lg{display:inline-block;font-family:"Archivo",var(--head,sans-serif)!important;font-style:normal!important;font-stretch:125%;font-weight:900!important;letter-spacing:-.045em!important;white-space:nowrap;transform:skewX(-21deg)}
-.logo b,.logo-s b,.bar h1.lg b{font-style:normal!important;transform:none!important;font-weight:200;font-stretch:112%;letter-spacing:-.02em;margin-left:.06em}
-
-/* ===== LOGO v6 (12.11.2026): optical size match + subtle speed cut ===== */
-.logo b,.logo-s b,.bar h1.lg b{font-size:1.04em;font-weight:250}
-.logo .r{background:linear-gradient(180deg,currentColor 0 59.9%,transparent 59.9% calc(59.9% + max(.035em,1px)),currentColor calc(59.9% + max(.035em,1px)));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.logo-s .r{background:linear-gradient(180deg,currentColor 0 59.9%,transparent 59.9% calc(59.9% + max(.035em,1px)),currentColor calc(59.9% + max(.035em,1px)));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-
 /* ===== subtle New chat (12.11.2026) ===== */
 .newchat{background:transparent!important;border-color:transparent!important;box-shadow:none!important;color:var(--muted);font-weight:500;min-height:38px;padding:0 10px}
 .newchat svg.i{width:16px;height:16px;stroke-width:1.8;opacity:.8}
 .newchat:hover{background:var(--surf2)!important;color:var(--ink)}
+
+/* ===== ROADROCKET LOGO STANDARD v1 (12.11.2026). Spec: RoadRocket/decisions/2026-11-12-logo-standard.md. Change values here only. ===== */
+:root{--rr-tilt:-21deg;--rr-cut-y:59.9%;--rr-cut-h:max(.035em,1px);--rr-blue:#5b7cff}
+:root[data-theme="light"]{--rr-blue:#1a3fb8}
+.logo,.logo-s,.bar h1.lg{display:inline-block;font-family:"Archivo",sans-serif!important;font-style:normal!important;font-stretch:125%;font-weight:900!important;letter-spacing:-.045em!important;line-height:1.05;white-space:nowrap;transform:skewX(var(--rr-tilt))}
+.logo b,.logo-s b,.bar h1.lg b{font-style:normal!important;transform:none!important;font-size:1.04em;font-weight:250;font-stretch:112%;letter-spacing:-.02em;margin-left:.06em;color:var(--rr-blue)!important}
+.logo .r,.logo-s .r,.bar h1.lg .r{background:linear-gradient(180deg,currentColor 0 var(--rr-cut-y),transparent var(--rr-cut-y) calc(var(--rr-cut-y) + var(--rr-cut-h)),currentColor calc(var(--rr-cut-y) + var(--rr-cut-h)));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 </style>
 <style>html{zoom:0.9}</style>
 </head>
