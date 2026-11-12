@@ -994,7 +994,7 @@ function askBar(id,ph){
   <button type="button" class="iconbtn mic" data-act="mic" aria-label="Speak">${ic('mic')}</button>
   <button type="submit" class="send" data-act="ask">Ask</button></form>`;
 }
-function photo(c,w){const im=IMG[c.id];return `<div class="photo" style="background:linear-gradient(135deg,${c.color},#0b0d12);${w?'width:'+w:''}">${im?`<img src="img/${im}" alt="${c.y} ${c.mk} ${c.md}" loading="lazy" onerror="this.remove()">`:CARSVG}<span>${c.y} ${c.md}</span></div>`}
+function photo(c,w){const im=IMG[c.id];return `<div class="photo" style="background:linear-gradient(135deg,${c.color},#0b0d12);${w?'width:'+w:''}">${im?`<img src="img/${im}" alt="${c.y} ${c.mk} ${c.md}" loading="lazy" onerror="this.remove()">`:CARSVG}</div>`}
 function starBtn(id){return `<button class="star ${S.starred.has(id)?'on':''}" data-star="${id}" aria-label="Save">${ic('star')}</button>`}
 function contacts(c){return `<div class="contacts">
  <button class="btn" data-contact="call" data-id="${c.id}">${ic('phone')}Call</button>
