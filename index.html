@@ -698,6 +698,7 @@ label.f{font-size:13.5px}
 .logo,.logo-s,.bar h1.lg{display:inline-block;font-family:"Archivo",sans-serif!important;font-style:normal!important;font-stretch:125%;font-weight:900!important;letter-spacing:-.045em!important;line-height:1.05;white-space:nowrap;transform:skewX(var(--rr-tilt))}
 .logo b,.logo-s b,.bar h1.lg b{font-style:normal!important;transform:none!important;font-size:1.04em;font-weight:250;font-stretch:112%;letter-spacing:-.02em;margin-left:.06em;color:var(--rr-blue)!important}
 .logo .r,.logo-s .r,.bar h1.lg .r{background:linear-gradient(180deg,currentColor 0 var(--rr-cut-y),transparent var(--rr-cut-y) calc(var(--rr-cut-y) + var(--rr-cut-h)),currentColor calc(var(--rr-cut-y) + var(--rr-cut-h)));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.srchead{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;margin-bottom:6px;background:var(--bg,#111318)}
 </style>
 <style>:root{--z:1}@media (min-width:1280px){:root{--z:.9}html{zoom:.9}}</style>
 </head>
@@ -1162,9 +1163,8 @@ function ask(q,ctx){
 
 /* ---------- SOURCING ---------- */
 function sourcingHome(){
- return `<div class="wrap">${backBtn()}<h1 class="pagetitle">Sourcing</h1><p class="mut" style="margin-top:0">Your saved searches. New matches since your last visit.</p>
- <div class="card">${SEARCHES.map(s=>`<div class="saved" data-search="${s.id}">${ic('search')}<div><b>${s.name}</b><div class="hint">${s.crit.join(' · ')}</div></div><span class="new">${s.n} new</span></div>`).join('')}</div>
- <button class="btn main" style="margin-top:16px" data-act="newsearch">${ic('plus')}New search</button></div>`;
+ return `<div class="wrap">${backBtn()}<div class="srchead"><h1 class="pagetitle" style="margin:0">Sourcing</h1><button class="btn main" data-act="newsearch">${ic('plus')}New search</button></div><p class="mut" style="margin-top:0">Your saved searches. New matches since your last visit.</p>
+ <div class="card">${SEARCHES.map(s=>`<div class="saved" data-search="${s.id}">${ic('search')}<div><b>${s.name}</b><div class="hint">${s.crit.join(' · ')}</div></div><span class="new">${s.n} new</span></div>`).join('')}</div></div>`;
 }
 function fltCars(){
  const f=S.flt;return CARS.filter(c=>(S.arg==='all'||c.s===S.arg)&&c.price<=f.maxPrice*(S.arg==='s3'?10:1)&&f.seller[c.st]&&f.trans[c.trans]!==false&&(!f.saved||S.starred.has(c.id))).sort((a,b)=>a.vs-b.vs);
@@ -1178,7 +1178,7 @@ function filterPanel(){
  <h4 style="margin-top:14px">Transmission</h4>${['Manual','PDK'].map(t=>`<label class="ck"><input type="checkbox" data-trans="${t}" ${f.trans[t]?'checked':''}>${t}</label>`).join('')}
  <h4 style="margin-top:14px">Seller</h4>${['Dealer','Private'].map(t=>`<label class="ck"><input type="checkbox" data-seller="${t}" ${f.seller[t]?'checked':''}>${t}</label>`).join('')}
  <h4 style="margin-top:14px">Colour</h4><select><option>Any colour</option><option>Paint to Sample</option></select>
- <h4 style="margin-top:14px">Location</h4><select><option>Florida</option><option>Within 150 mi of me</option><option>United States</option></select>
+ <h4 style="margin-top:14px">Location</h4><select><option>📍 Use my current location</option><option>Florida</option><option>Within 150 mi of me</option><option>United States</option></select>
  <label class="ck" style="margin-top:14px"><input type="checkbox" data-saved ${f.saved?'checked':''}>Saved cars only ${ic('star')}</label>
  <h4 style="margin-top:14px">Sort</h4><select><option>Best price first (adjusted for miles, year)</option><option>Newest listing</option></select>
  ${cmpMore('src')}`;
