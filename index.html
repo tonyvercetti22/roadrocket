@@ -431,6 +431,23 @@ h1,h2,h3,.head{letter-spacing:-.02em}
 .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin:8px 2px 0}
 .legend i{display:inline-block;width:18px;height:0;border-top:3px solid;vertical-align:middle;margin-right:6px}
 .verdict{font-size:17px;margin:4px 0 10px}
+.lothead{display:flex;align-items:baseline;gap:10px;margin:6px 0 10px}
+.lotstrip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.ltile{border:1px solid var(--hair);border-radius:var(--r-big);background:var(--surf);overflow:hidden;cursor:pointer;box-shadow:var(--e1);text-align:left;padding:0;color:inherit;font:inherit}
+.ltile:hover{border-color:var(--hair2);background:var(--surf2)}
+.ltile .photo{border-radius:0;aspect-ratio:16/9}.ltile .photo span{display:none}
+.ltb{padding:10px 12px 12px;display:flex;flex-direction:column;gap:2px}
+.ltb .ln{font-size:14.5px;line-height:1.25;min-height:2.5em}
+.ltb .lv{font-family:var(--head);font-size:24px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ltb .spark{margin:6px 0 0;width:100%;height:28px}
+.ladd{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-style:dashed;box-shadow:none;background:none;color:var(--muted);font-weight:600;min-height:160px}
+.pstrip{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--hair);border-radius:var(--r-big);background:var(--surf);margin-bottom:18px;box-shadow:var(--e1)}
+.pstrip>div{padding:12px 16px;display:flex;flex-direction:column;gap:2px;border-left:1px solid var(--hair)}
+.pstrip>div:first-child{border-left:0}
+.pstrip .lbl{font-size:13.5px;color:var(--muted)}
+.pstrip>div>b{font-family:var(--head);font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.trajhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
+@media(max-width:760px){.lotstrip{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}.ltile{min-width:68%;scroll-snap-align:start}.pstrip{grid-template-columns:1fr}.pstrip>div{border-left:0;border-top:1px solid var(--hair)}.pstrip>div:first-child{border-top:0}}
 
 /* overlays */
 .pop{border-color:var(--hair2);box-shadow:var(--e2);padding:6px;border-radius:14px}
@@ -648,6 +665,9 @@ label.f{font-size:13.5px}
 .rng-track input::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--brand);box-shadow:0 2px 8px rgba(0,0,0,.45);cursor:grab}
 .rng-track input::-moz-range-thumb{pointer-events:auto;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--brand);cursor:grab}
 .rng-track input:active::-webkit-slider-thumb{cursor:grabbing;transform:scale(1.08)}
+.cmpmore-btn .cmpcount{margin-left:auto;white-space:nowrap}
+.filters .cmpmore-btn{white-space:nowrap;font-size:15.5px;gap:8px}
+.filters .cmpchips .chip{min-height:34px;padding:0 11px;font-size:14px}
 .cmpreset{margin-top:18px;background:none;border:none;color:var(--muted);text-decoration:underline;text-underline-offset:3px;font-size:14.5px;padding:4px 0}
 .cmpreset:hover{color:var(--ink)}
 
@@ -777,9 +797,9 @@ const WATCH=[
  {id:'w6',name:'Ford GT (2017)',v:1090000,ch:1.4,g:0.002,seed:6}
 ];
 const MINE=[
- {id:'m1',name:'1995 Porsche 911 Turbo (993)',v:252000,paid:240000,since:'2021',ch:6.1,g:0.009,seed:7},
- {id:'m2',name:'1973 Porsche 911 Carrera RS 2.7',v:1180000,paid:905000,since:'2018',ch:2.2,g:0.005,seed:8},
- {id:'m3',name:'2016 McLaren 675LT',v:298000,paid:355000,since:'2019',ch:-3.1,g:-0.003,seed:9}
+ {id:'m1',img:'c5',color:'#3a4a5c',name:'1995 Porsche 911 Turbo (993)',v:252000,paid:240000,since:'2021',ch:6.1,g:0.009,seed:7},
+ {id:'m2',img:'m2',color:'#7a5a2a',name:'1973 Porsche 911 Carrera RS 2.7',v:1180000,paid:905000,since:'2018',ch:2.2,g:0.005,seed:8},
+ {id:'m3',img:'m3',color:'#2a5a4a',name:'2016 McLaren 675LT',v:298000,paid:355000,since:'2019',ch:-3.1,g:-0.003,seed:9}
 ];
 const BENCH={sp:{n:'S&P 500',y:0.10,s:11},nq:{n:'NASDAQ',y:0.13,s:12},gold:{n:'Gold',y:0.08,s:13},cc:{n:'Collector car index',y:0.06,s:14}};
 const RN={'3M':3,'6M':6,'1Y':12,'5Y':60,'All':120};
@@ -1263,23 +1283,29 @@ function investHome(){
  const m=S.invMode==='market';const list=m?WATCH:MINE;
  return `<div class="wrap" style="max-width:900px"><h1 class="pagetitle">Invest</h1>
  <div class="switch" role="tablist"><button class="${m?'on':''}" data-inv="market">Market</button><button class="${m?'':'on'}" data-inv="mine">My cars</button></div>
- ${m?`<p class="mut" style="margin-top:0">Your watchlist: from your preferences and every star. 6-month trend.</p>`:`<p class="mut" style="margin-top:0">Cars you own and what they are worth today.</p>${portfolioBlock()}`}
- <div class="card">${list.map(w=>`<div class="saved" data-chart="${w.id}"><div><b>${w.name}</b>${w.paid?`<div class="hint">Bought ${w.since} for ${money(w.paid)}</div>`:''}</div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(w.ch)} <span class="hint">6 mo</span></div></span></div>`).join('')}</div>
- <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn" data-act="addwatch">${ic('plus')}${m?'Add model':'Add a car you own'}</button></div></div>`;
+ ${m?`<p class="mut" style="margin-top:0">Your watchlist: from your preferences and every star. 6-month trend.</p>`:portfolioBlock()}
+ ${m?`<div class="card">${list.map(w=>`<div class="saved" data-chart="${w.id}"><div><b>${w.name}</b>${w.paid?`<div class="hint">Bought ${w.since} for ${money(w.paid)}</div>`:''}</div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(w.ch)} <span class="hint">6 mo</span></div></span></div>`).join('')}</div>
+ <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn" data-act="addwatch">${ic('plus')}Add model</button></div>`:''}</div>`;
 }
 function benchPicker(){return `<div class="benchrow"><span class="lbl">Compare to</span><div class="ranges" style="margin:0">${Object.entries(BENCH).map(([k,b])=>`<button class="${S.bench===k?'on':''}" data-bench="${k}">${b.n}</button>`).join('')}</div></div>`}
 function portfolioBlock(){
  const paid=MINE.reduce((t,w)=>t+w.paid,0),now=MINE.reduce((t,w)=>t+w.v,0),b=BENCH[S.bench];
  const alt=MINE.reduce((t,w)=>t+w.paid*Math.pow(1+b.y,2026-+w.since),0);const diff=now-alt;
  const f12=MINE.reduce((t,w)=>t+w.v*(1+w.g*12),0);
- return `<div class="pcard" style="margin-bottom:14px"><div class="lbl">Total value today</div><div class="big">${money(now)}</div><div>${pct((now-paid)/paid*100)} since bought (${money(paid)})</div>
- <div style="margin-top:10px">Same money in ${b.n}: <b>${money(alt)}</b> today. ${diff>=0?`You are <b class="up">↑ ${money(diff)} ahead</b>.`:`You are <b class="down">↓ ${money(-diff)} behind</b>.`}</div>
- <div style="margin-top:6px">Estimate in 12 months: <b>${money(f12)}</b> <span class="hint">range ${money(f12*0.92)} to ${money(f12*1.08)}. Estimate, not a fact.</span></div></div>
- ${benchPicker()}
- <div class="ranges">${['3M','6M','1Y','5Y','All'].map(r=>`<button class="${S.range===r?'on':''}" data-range="${r}">${r}</button>`).join('')}</div>
+ const tiles=MINE.map(w=>{const gain=(w.v-w.paid)/w.paid*100;return `<div class="ltile" data-chart="${w.id}">${photo({id:w.img,color:w.color,y:'',mk:'',md:w.name},'100%')}
+  <div class="ltb"><b class="ln">${w.name}</b><div class="lv">${money(w.v)}</div><div>${pct(gain)} <span class="hint">since ${w.since}</span></div><div class="hint">Paid ${money(w.paid)}</div>${spark(w)}</div></div>`}).join('')
+   +`<button class="ltile ladd" data-act="addwatch">${ic('plus')}<span>Add a car you own</span></button>`;
+ return `<h2 class="lothead">Your lot <span class="hint">${MINE.length} cars</span></h2>
+ <div class="lotstrip">${tiles}</div>
+ <div class="pstrip">
+  <div><span class="lbl">Worth today</span><b>${money(now)}</b><span>${pct((now-paid)/paid*100)} on ${money(paid)} paid</span></div>
+  <div><span class="lbl">Same money in ${b.n}</span><b>${money(alt)}</b><span>${diff>=0?`<b class="up">↑ ${money(diff)} ahead</b>`:`<b class="down">↓ ${money(-diff)} behind</b>`}</span></div>
+  <div><span class="lbl">In 12 months</span><b>~${money(f12)}</b><span class="hint">${money(f12*0.92)} to ${money(f12*1.08)}. Estimate</span></div>
+ </div>
+ <div class="trajhead"><h2 style="margin:0">Trajectory</h2><div class="ranges" style="margin:0">${['1Y','5Y','All'].map(r=>`<button class="${S.range===r?'on':''}" data-range="${r}">${r}</button>`).join('')}</div></div>
  <p class="verdict" id="pverdict"></p>
- <div class="chartbox" style="margin-bottom:6px"><svg id="chart" viewBox="0 0 ${innerWidth<=760?420:800} ${innerWidth<=760?260:320}" style="width:100%;height:auto;display:block"></svg></div>
- <div class="legend"><span><i style="border-color:var(--link)"></i>Your cars</span><span><i style="border-color:var(--muted);border-top-style:dashed"></i>${b.n}, same start</span><span><i style="border-color:var(--link);border-top-style:dotted"></i>Estimate, next months</span></div>
+ <div class="chartbox" style="margin-bottom:6px"><svg id="chart" viewBox="0 0 ${innerWidth<=760?420:800} ${innerWidth<=760?220:240}" style="width:100%;height:auto;display:block"></svg></div>
+ ${benchPicker()}
  <div style="margin:4px 2px 16px">${src('Sketch numbers. Live: your purchase prices, 126+ sales per model, daily index prices')}</div>`;
 }
 function spark(w){const a=series(w).slice(-7),mn=Math.min(...a),mx=Math.max(...a),X=i=>2+i/(a.length-1)*92,Y=v=>28-(v-mn)/((mx-mn)||1)*24;const c=w.ch>=0?'var(--up)':'var(--down)';const pts=a.map((v,i)=>X(i).toFixed(1)+','+Y(v).toFixed(1)).join(' ');return `<svg class="spark" viewBox="0 0 96 32" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="${c}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${X(a.length-1)}" cy="${Y(a[a.length-1])}" r="2.2" fill="${c}"/></svg>`}
@@ -1298,17 +1324,17 @@ function chartView(){
 function drawChart(){
  if(!$('#chart'))return;
  const port=S.scr!=='chart';const n=RN[S.range];let d,fc,lo,hi,F;
- if(port){const all=portSeries();d=all.slice(-n-1);F=Math.min(12,n);fc=[...Array(F+1)].map((_,i)=>MINE.reduce((t,w)=>t+w.v*(1+w.g*i),0));lo=fc.map((v,i)=>v*(1-0.0067*i));hi=fc.map((v,i)=>v*(1+0.0067*i))}
+ if(port){const all=portSeries();d=all.slice(-n-1);F=Math.min(12,Math.max(3,Math.round(n/5)));fc=[...Array(F+1)].map((_,i)=>MINE.reduce((t,w)=>t+w.v*(1+w.g*i),0));lo=fc.map((v,i)=>v*(1-0.0067*i));hi=fc.map((v,i)=>v*(1+0.0067*i))}
  else{const w=[...WATCH,...MINE].find(x=>x.id===S.arg);d=series(w).slice(-n-1);F=Math.min(6,n);fc=[...Array(F+1)].map((_,i)=>w.v*(1+w.g*i));lo=fc.map((v,i)=>v*(1-0.0085*i));hi=fc.map((v,i)=>v*(1+0.0085*i))}
  const bs=benchSeries(d[0],d.length-1,S.bench);
  const carCh=(d[d.length-1]/d[0]-1)*100,bCh=(bs[bs.length-1]/bs[0]-1)*100,gap=carCh-bCh,bn=BENCH[S.bench].n;
  const pv=$('#pverdict');if(pv)pv.innerHTML=`Last ${S.range==='All'?'10 years':S.range}: ${port?'your cars':'this model'} ${pct(carCh)}, ${bn} ${pct(bCh)}. ${gap>=0?'<b>Beat</b>':'<b>Behind</b>'} ${bn} by ${Math.abs(gap).toFixed(1)} points.`;
  const vals=[...d,...lo,...hi,...bs];const mn=Math.min(...vals)*0.98,mx=Math.max(...vals)*1.02;
- const ph=innerWidth<=760,W=ph?420:800,H=ph?260:320,L=10,R=70,T=14,B=30,tot=d.length-1+F,cw=W-L-R;
+ const ph=innerWidth<=760,W=ph?420:800,H=port?(ph?220:240):(ph?260:320),L=10,R=port?96:70,T=14,B=30,tot=d.length-1+F,cw=W-L-R;
  const X=i=>L+i/tot*cw,Y=v=>T+(1-(v-mn)/(mx-mn))*(H-T-B);
  const css=getComputedStyle(document.documentElement);const ink=css.getPropertyValue('--muted'),brand=css.getPropertyValue('--link'),line=css.getPropertyValue('--line');
  const base=d.length-1;
- let g='';[0,0.5,1].forEach(t=>{const v=mn+(mx-mn)*t;g+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="${line}" stroke-dasharray="${t===0?'0':'2 5'}"/><text x="${W-R+8}" y="${Y(v)+5}" fill="${ink}" font-size="12.5" font-weight="600">${money(v)}</text>`});
+ let g='';(port?[0]:[0,0.5,1]).forEach(t=>{const v=mn+(mx-mn)*t;g+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="${line}" stroke-dasharray="${t===0?'0':'2 5'}"/><text x="${W-R+8}" y="${Y(v)+5}" fill="${ink}" font-size="12.5" font-weight="600">${money(v)}</text>`});
  const band=hi.map((v,i)=>`${X(base+i)},${Y(v)}`).join(' ')+' '+lo.map((v,i)=>`${X(base+i)},${Y(v)}`).reverse().join(' ');
  g+=`<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${brand}" stop-opacity=".26"/><stop offset="1" stop-color="${brand}" stop-opacity="0"/></linearGradient></defs>`;
  g+=`<polygon points="${d.map((v,i)=>`${X(i)},${Y(v)}`).join(' ')} ${X(base)},${H-B} ${X(0)},${H-B}" fill="url(#ga)"/>`;
@@ -1318,6 +1344,11 @@ function drawChart(){
  g+=`<polyline points="${fc.map((v,i)=>`${X(base+i)},${Y(v)}`).join(' ')}" fill="none" stroke="${brand}" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round"/><circle cx="${X(base)}" cy="${Y(d[base])}" r="4.5" fill="${brand}" stroke="${css.getPropertyValue('--surf')}" stroke-width="3"/>`;
  g+=`<line x1="${X(base)}" x2="${X(base)}" y1="${T}" y2="${H-B}" stroke="${ink}" stroke-dasharray="2 4"/><text x="${X(base)+6}" y="${T+14}" fill="${ink}" font-size="13">Today</text><text x="${X(base+F/2)}" y="${H-10}" fill="${ink}" font-size="13" text-anchor="middle">Estimate</text>`;
  g+=`<text x="${L}" y="${H-10}" fill="${ink}" font-size="13">${S.range==='All'?'10 years ago':S.range+' ago'}</text>`;
+ if(port){const fe=fc[fc.length-1];g=g.replace(/<text x="[^"]+" y="[^"]+" fill="[^"]+" font-size="12.5" font-weight="600">\$[^<]*<\/text>/g,'');
+  g+=`<text x="${X(base)-8}" y="${Y(d[base])-12}" fill="${brand}" font-size="14" font-weight="800" text-anchor="end">You ${money(d[base])}</text>`;
+  g+=`<text x="${X(base+F)+6}" y="${Y(fe)+5}" fill="${brand}" font-size="13" font-weight="700">${money(fe)}</text>`;
+  g+=`<text x="${X(base+F)+6}" y="${Y(fe)+21}" fill="${ink}" font-size="12">in ${F} mo</text>`;
+  g+=`<text x="${X(0)+4}" y="${Y(d[0])-10}" fill="${ink}" font-size="12.5">${money(d[0])}</text>`;}
  $('#chart').innerHTML=g;
 }
 
