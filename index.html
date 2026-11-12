@@ -1038,7 +1038,7 @@ function render(scroll){
  else h=(views[S.tab][S.scr]||views[S.tab].home)();
  v.innerHTML=h;
  const showDock=!(S.tab==='intel'&&S.scr==='home')&&!['compare','account'].includes(S.scr);
- const ph={chat:'Ask a follow-up',car:'Ask about this car',lotcar:'Ask about this car',results:'Ask about these results',chart:'Ask about this model',account:'Ask RoadRocket'}[S.scr]||{intel:'Ask about any car, VIN or listing link',sourcing:'Ask about any car, VIN or listing link',mylot:'Ask about your lot',invest:'Ask about values and trends'}[S.tab];
+ const ph={chat:'Ask a follow-up',car:'Ask about this car',lotcar:'Ask about this car',results:S._pending&&S.arg==='all'?'Or describe the car you want':'Ask about these results',chart:'Ask about this model',account:'Ask RoadRocket'}[S.scr]||{intel:'Ask about any car, VIN or listing link',sourcing:'Ask about any car, VIN or listing link',mylot:'Ask about your lot',invest:'Ask about values and trends'}[S.tab];
  $('#dock').style.display=showDock?'':'none';
  $('#dock').innerHTML=showDock?askBar('dockask',ph):'';
  v.scrollTop=scroll||0;
