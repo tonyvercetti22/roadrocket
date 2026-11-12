@@ -857,6 +857,33 @@ const WATCH=[
  {id:'w5',name:'McLaren 720S',v:236000,ch:-7.9,g:-0.008,seed:5},
  {id:'w6',name:'Ford GT (2017)',v:1090000,ch:1.4,g:0.002,seed:6}
 ];
+const MKT=[
+ {id:'k1',name:'Porsche 911 GT3 (992)',y:2022,hp:502,c:'Germany',cat:'Sports',v:245000,ch:3.8,g:0.006,seed:21},
+ {id:'k2',name:'Porsche 911 Turbo (993)',y:1996,hp:402,c:'Germany',cat:'Classic',v:252000,ch:6.1,g:0.009,seed:22},
+ {id:'k3',name:'Porsche 911 Carrera RS 2.7',y:1973,hp:210,c:'Germany',cat:'Classic',v:1180000,ch:2.2,g:0.005,seed:23},
+ {id:'k4',name:'Porsche 918 Spyder',y:2015,hp:887,c:'Germany',cat:'Supercar',v:1750000,ch:4.9,g:0.007,seed:24},
+ {id:'k5',name:'Porsche 911 GT3 RS (991)',y:2019,hp:520,c:'Germany',cat:'Sports',v:262000,ch:2.6,g:0.004,seed:25},
+ {id:'k6',name:'BMW M3 (E30)',y:1988,hp:192,c:'Germany',cat:'Classic',v:98000,ch:5.4,g:0.008,seed:26},
+ {id:'k7',name:'Mercedes-AMG GT Black Series',y:2021,hp:720,c:'Germany',cat:'Supercar',v:365000,ch:-2.1,g:-0.003,seed:27},
+ {id:'k8',name:'Ferrari 812 Competizione',y:2022,hp:819,c:'Italy',cat:'GT',v:1650000,ch:3.8,g:0.004,seed:28},
+ {id:'k9',name:'Ferrari F40',y:1990,hp:471,c:'Italy',cat:'Classic',v:2950000,ch:5.8,g:0.008,seed:29},
+ {id:'k10',name:'Ferrari 458 Speciale',y:2015,hp:597,c:'Italy',cat:'Supercar',v:520000,ch:4.4,g:0.006,seed:30},
+ {id:'k11',name:'Ferrari 296 GTB',y:2022,hp:819,c:'Italy',cat:'Supercar',v:341000,ch:-6.2,g:-0.007,seed:31},
+ {id:'k12',name:'Lamborghini Huracán EVO',y:2020,hp:631,c:'Italy',cat:'Supercar',v:262000,ch:-4.2,g:-0.004,seed:32},
+ {id:'k13',name:'Lamborghini Countach LP400S',y:1980,hp:353,c:'Italy',cat:'Classic',v:690000,ch:3.1,g:0.005,seed:33},
+ {id:'k14',name:'McLaren 720S',y:2019,hp:710,c:'UK',cat:'Supercar',v:236000,ch:-7.9,g:-0.008,seed:34},
+ {id:'k15',name:'McLaren 675LT',y:2016,hp:666,c:'UK',cat:'Supercar',v:298000,ch:-3.1,g:-0.003,seed:35},
+ {id:'k16',name:'Aston Martin DB5',y:1964,hp:282,c:'UK',cat:'Classic',v:1050000,ch:1.9,g:0.003,seed:36},
+ {id:'k17',name:'Ford GT (2017)',y:2017,hp:647,c:'USA',cat:'Supercar',v:1090000,ch:1.4,g:0.002,seed:37},
+ {id:'k18',name:'Chevrolet Corvette Z06 (C8)',y:2023,hp:670,c:'USA',cat:'Sports',v:128000,ch:-5.5,g:-0.006,seed:38},
+ {id:'k19',name:'Dodge Viper ACR (VX)',y:2017,hp:645,c:'USA',cat:'Sports',v:185000,ch:3.3,g:0.005,seed:39},
+ {id:'k20',name:'Nissan Skyline GT-R (R34)',y:1999,hp:276,c:'Japan',cat:'Classic',v:215000,ch:7.2,g:0.010,seed:40},
+ {id:'k21',name:'Honda NSX (NA1)',y:1991,hp:270,c:'Japan',cat:'Classic',v:118000,ch:4.0,g:0.006,seed:41},
+ {id:'k22',name:'Lexus LFA',y:2012,hp:553,c:'Japan',cat:'Supercar',v:1020000,ch:6.4,g:0.008,seed:42},
+ {id:'k23',name:'Toyota Supra (A80)',y:1997,hp:320,c:'Japan',cat:'Classic',v:92000,ch:2.8,g:0.004,seed:43},
+ {id:'k24',name:'Lamborghini Urus',y:2021,hp:641,c:'Italy',cat:'SUV',v:214000,ch:-6.8,g:-0.007,seed:44},
+ {id:'k25',name:'Mercedes-AMG G63',y:2022,hp:577,c:'Germany',cat:'SUV',v:172000,ch:-3.6,g:-0.004,seed:45}
+];
 const MINE=[
  {id:'m1',img:'c5',color:'#3a4a5c',name:'1995 Porsche 911 Turbo (993)',v:252000,paid:240000,since:'2021',ch:6.1,g:0.009,seed:7},
  {id:'m2',img:'m2',color:'#7a5a2a',name:'1973 Porsche 911 Carrera RS 2.7',v:1180000,paid:905000,since:'2018',ch:2.2,g:0.005,seed:8},
@@ -877,7 +904,7 @@ const ALERTS=[
 /* ================= STATE ================= */
 const S={tab:'intel',scr:'home',arg:null,stack:[],chats:[],chatId:null,starred:new Set(['c8']),
  sideOpen:true,vehicle:'car',flt:{maxPrice:250000,seller:{Dealer:true,Private:true},trans:{Manual:true,PDK:true,DCT:true},saved:false},
- invMode:'mine',range:'1Y',bench:'sp',lotEmpty:false,user:'Thomas',signedUp:true,offline:false,
+ invMode:'mine',invF:{cat:'Any',c:'Any',y:[1960,2026],b:[50000,1e9],hp:[150,1e9]},range:'1Y',bench:'sp',lotEmpty:false,user:'Thomas',signedUp:true,offline:false,
  prefs:{makes:['Porsche','Ferrari'],region:'Florida + Southeast',band:'$150k to $500k'},
  alerts:{bell:true,sms:true,wa:true,email:true,digest:'7:00 am',max:5,quiet:'9pm to 7am',thr:10}};
 let uid=1;
@@ -1180,7 +1207,7 @@ function rngPaint(r){
  if(hi&&a>b){if(document.activeElement===lo){a=b;lo.value=a}else{b=a;hi.value=b}}
  const pc=v=>(v-min)/(max-min)*100,i=r.querySelector('i');
  if(hi){i.style.left=pc(a)+'%';i.style.right=(100-pc(b))+'%'}else{i.style.left='0';i.style.right=(100-pc(a))+'%'}
- const fm=v=>f==='vs'?(v>=max?'any price':(v>0?'+':'')+v+'%'):f==='days'?(v>=max?'any':v+' days'):f==='mi'?(v>=max?'any':v.toLocaleString('en-US')+' mi'):f==='dist'?(v>=max?'Nationwide':'within '+v.toLocaleString('en-US')+' mi'):v;
+ const fm=v=>f==='vs'?(v>=max?'any price':(v>0?'+':'')+v+'%'):f==='days'?(v>=max?'any':v+' days'):f==='mi'?(v>=max?'any':v.toLocaleString('en-US')+' mi'):f==='dist'?(v>=max?'Nationwide':'within '+v.toLocaleString('en-US')+' mi'):f==='usd'?(v>=max?money(v)+'+':money(v)):f==='hp'?(v>=max?v+'+ hp':v+' hp'):v;
  r.querySelector('output').textContent=hi?(f==='mi'&&a===0&&b>=max?'Any mileage':fm(a)+' to '+fm(b)):fm(a);
 }
 function cmpCount(){document.querySelectorAll('.cmpmore').forEach(cmpCount1)}
@@ -1195,7 +1222,7 @@ document.addEventListener('click',e=>{
  const rs=e.target.closest('[data-cmpreset]');if(rs){e.stopPropagation();const b=rs.closest('.cmpmore');b.querySelectorAll('.cmpchips').forEach(c=>{c.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));const d=c.dataset.name==='win'?[...c.children].find(x=>x.textContent==='90 days'):c.firstElementChild;d.classList.add('on')});b.querySelectorAll('.rng').forEach(r=>{r.querySelector('.lo').value=r.dataset.lo0;const h=r.querySelector('.hi');if(h)h.value=r.dataset.hi0;rngPaint(r)});b.querySelectorAll('input[type=text]').forEach(x=>x.value='');cmpCount();return}
  const c=e.target.closest('.cmpchips .chip');if(c){e.stopPropagation();const g=c.parentElement,all=[...g.querySelectorAll('.chip')];if(g.dataset.multi){if(c===all[0]){all.forEach(x=>x.classList.toggle('on',x===c))}else{c.classList.toggle('on');all[0].classList.remove('on');if(!all.some(x=>x.classList.contains('on')))all[0].classList.add('on')}}else all.forEach(x=>x.classList.toggle('on',x===c));cmpCount()}
 },true);
-document.addEventListener('input',e=>{const r=e.target.closest('.rng');if(r){rngPaint(r);cmpCount()}else if(e.target.closest('.cmpmore'))cmpCount()});
+document.addEventListener('input',e=>{const r=e.target.closest('.rng');if(r&&r.dataset.iv){rngPaint(r);const lo=+r.querySelector('.lo').value,hi=+r.querySelector('.hi').value,mx=+r.dataset.max;S.invF[r.dataset.iv]=[lo,hi>=mx&&r.dataset.iv!=='y'?1e9:hi];document.getElementById('ivres').innerHTML=bestList();return}if(r){rngPaint(r);cmpCount()}else if(e.target.closest('.cmpmore'))cmpCount()});
 new MutationObserver(()=>{document.querySelectorAll('.rng:not([data-ok])').forEach(r=>{r.dataset.ok=1;rngPaint(r)})}).observe(document.documentElement,{childList:true,subtree:true});
 function compareResult(){
  const c=S.arg?(CARS.find(x=>x.id===S.arg)||LOT.find(x=>x.id===S.arg)):CARS.find(x=>x.id==='c7');
@@ -1384,9 +1411,29 @@ function investHome(){
  const m=S.invMode==='market';const list=m?WATCH:MINE;
  return `<div class="wrap" style="max-width:900px"><h1 class="pagetitle">Invest</h1>
  <div class="switch" role="tablist"><button class="${m?'':'on'}" data-inv="mine">My cars</button><button class="${m?'on':''}" data-inv="market">Market</button></div>
- ${m?`<p class="mut" style="margin-top:0">Your watchlist: from your preferences and every star. 6-month trend.</p>`:portfolioBlock()}
+ ${m?bestBuy()+`<h2 style="margin:22px 0 4px">Your watchlist</h2><p class="mut" style="margin-top:0">From your preferences and every star. 6-month trend.</p>`:portfolioBlock()}
  ${m?`<div class="card">${list.map(w=>`<div class="saved" data-chart="${w.id}"><div><b>${w.name}</b>${w.paid?`<div class="hint">Bought ${w.since} for ${money(w.paid)}</div>`:''}</div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(w.ch)} <span class="hint">6 mo</span></div></span></div>`).join('')}</div>
  <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn" data-act="addwatch">${ic('plus')}Add model</button></div>`:''}</div>`;
+}
+function bestBuy(){
+ const f=S.invF,cl=(a,mx)=>Math.min(a,mx),grp=(k,lbl,opts)=>`<div style="margin-top:14px"><div class="lbl" style="margin-bottom:8px">${lbl}</div><div style="display:flex;flex-wrap:wrap;gap:8px">${opts.map(o=>`<button class="chip ${f[k]===o?'on':''}" style="min-height:38px;cursor:pointer" data-ivf="${k}" data-val="${o}">${o}</button>`).join('')}</div></div>`;
+ return `<div class="card ivfind" id="ivf" style="padding:18px"><h2 style="margin:0">Find the best investment</h2><p class="mut" style="margin:4px 0 0">Drag the lines. The list updates as you go.</p>
+ ${grp('cat','Category',['Any','Supercar','Sports','GT','Classic','SUV'])}
+ ${grp('c','Country',['Any','Germany','Italy','UK','USA','Japan'])}
+ ${rng('Year',1960,2026,1,f.y[0],f.y[1],'year').replace('class="rng"','class="rng" data-iv="y"')}
+ ${rng('Budget',50000,3000000,10000,f.b[0],cl(f.b[1],3000000),'usd').replace('class="rng"','class="rng" data-iv="b"')}
+ ${rng('Horsepower',150,900,10,f.hp[0],cl(f.hp[1],900),'hp').replace('class="rng"','class="rng" data-iv="hp"')}
+ </div><div id="ivres">${bestList()}</div>`;
+}
+function bestList(){
+ const f=S.invF,hit=MKT.filter(w=>(f.cat==='Any'||w.cat===f.cat)&&(f.c==='Any'||w.c===f.c)&&w.y>=f.y[0]&&w.y<=f.y[1]&&w.v>=f.b[0]&&w.v<=f.b[1]&&w.hp>=f.hp[0]&&w.hp<=f.hp[1]).sort((a,b)=>b.g-a.g);
+ if(!hit.length)return `<div class="card" style="padding:18px;margin-top:14px"><b>No models match.</b><p class="mut" style="margin:4px 0 0">Widen the budget, years or horsepower.</p></div>`;
+ const top=hit[0],y5=w=>(a=>(a[a.length-1]/a[a.length-61]-1)*100)(series(w));
+ return `<div class="card" style="padding:18px;margin-top:14px"><div class="lbl">Best investment for these filters</div>
+ <div class="saved" data-chart="${top.id}" style="padding:8px 0 0;border:0"><div><b style="font-size:20px">${top.name}</b><div class="hint">${top.c} · ${top.cat} · ${top.y} · ${top.hp} hp</div></div>${spark(top)}<span style="margin-left:auto;text-align:right"><b>${money(top.v)}</b><div>${pct(top.g*1200)} <span class="hint">next 12 mo, estimate</span></div></span></div>
+ <p class="verdict" style="margin:10px 0 0">${pct(y5(top),0)} over the last 5 years. Strongest expected rise of the ${hit.length} model${hit.length>1?'s':''} that match.</p></div>
+ ${hit.length>1?`<h2 style="margin:18px 0 8px">All ${hit.length} matches, best first</h2><div class="card">${hit.map((w,i)=>`<div class="saved" data-chart="${w.id}"><div><b>${i+1}. ${w.name}</b><div class="hint">${w.c} · ${w.cat} · ${w.y} · ${w.hp} hp</div></div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(w.g*1200)} <span class="hint">12 mo est.</span></div><div class="hint">${(v=>(v>=0?'+':'−')+Math.abs(v).toFixed(0))(y5(w))}% last 5 yr</div></span></div>`).join('')}</div>`:''}
+ <div style="margin:10px 2px 0">${src('Sketch numbers. Live: sales and listings per model, 10 years. Estimates are not facts.')}</div>`;
 }
 function benchPicker(){return `<div class="benchrow"><span class="lbl">Compare to</span><div class="ranges" style="margin:0">${Object.entries(BENCH).map(([k,b])=>`<button class="${S.bench===k?'on':''}" data-bench="${k}">${b.n}</button>`).join('')}</div></div>`}
 function portfolioBlock(){
@@ -1557,6 +1604,7 @@ document.addEventListener('click',e=>{
  if(d.lotcar){go('lotcar',d.lotcar);return}
  if(d.chart){go('chart',d.chart);return}
  if(d.inv){S.invMode=d.inv;render();return}
+ if(d.ivf){S.invF[d.ivf]=d.val;document.querySelectorAll(`[data-ivf="${d.ivf}"]`).forEach(b=>b.classList.toggle('on',b.dataset.val===d.val));document.getElementById('ivres').innerHTML=bestList();return}
  if(d.bench){S.bench=d.bench;render();return}
  if(d.range){S.range=d.range;document.querySelectorAll('[data-range]').forEach(b=>b.classList.toggle('on',b.dataset.range===S.range));drawChart();return}
  if(d.sw){if(d.sw==='dark'){const l=document.documentElement.dataset.theme==='light';document.documentElement.dataset.theme=l?'dark':'light'}else if(d.sw==='offline'){S.offline=!S.offline;shell()}else S.alerts[d.sw]=!S.alerts[d.sw];render(document.getElementById('view').scrollTop);return}
