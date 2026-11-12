@@ -1170,7 +1170,7 @@ function intelHome(){
 }
 function compareForm(){
  const f=S.cmpFill;
- return `<div class="wrap" style="max-width:680px">${backBtn()}<h1 class="pagetitle">Compare</h1><p class="mut" style="margin-top:0">Any car against the US market.</p>
+ return `<div class="wrap">${backBtn()}<h1 class="pagetitle">Compare</h1><p class="mut" style="margin-top:0">Any car against the US market.</p>
  <div class="card" style="padding:18px">
   <label class="f" style="margin-top:0">Paste a VIN or listing link (fills everything)</label>
   <div style="display:flex;gap:8px"><input type="text" id="vin" value="${f?'ZFF03RHA8N02xxxxx':''}" placeholder="VIN or https://..."><button class="btn" data-act="fill">Fill</button></div>
@@ -1365,7 +1365,7 @@ function compareResult(){
  const c=S.arg?(CARS.find(x=>x.id===S.arg)||LOT.find(x=>x.id===S.arg)):CARS.find(x=>x.id==='c7');
  const price=c.price||c.you,vs=(price-c.mkt)/c.mkt*100;const n=Math.round(14+c.mkt/200000);
  const comps=[...Array(Math.min(n,8))].map((_,i)=>{const p=Math.round(c.mkt*(0.93+((i*37)%15)/100)/100)*100;return {y:c.y-(i%3===2?1:0),mi:Math.round((c.mi||5000)*(0.6+(i%5)*0.2)/100)*100,p,loc:['Miami, FL','Dallas, TX','Greenwich, CT','Scottsdale, AZ','Atlanta, GA','Los Angeles, CA','Naples, FL','Chicago, IL'][i],st:['Dealer','Private','Dealer','Dealer','Private','Dealer','Dealer','Private'][i],d:[3,8,12,21,26,34,41,55][i]}});
- return `<div class="wrap" style="max-width:860px">${backBtn()}<h1 class="pagetitle">Compare</h1>
+ return `<div class="wrap">${backBtn()}<h1 class="pagetitle">Compare</h1>
  <div class="pcard"><div class="lbl">${c.y} ${c.mk} ${c.md}${c.tr?', '+c.tr:''}, ${mi(c.mi)}</div>
  <div class="lbl" style="margin-top:10px">US average price</div><div class="big">${money(c.mkt)}</div>
  <div class="pgrid"><div><span class="lbl">Comps</span><b>${n}, last 90 days</b></div><div><span class="lbl">Usually sells in</span><b>${c.typ||21} days</b></div><div><span class="lbl">Price trend, 6 months</span><b>${pct(3.8)}</b></div><div><span class="lbl">${c.you?'Your price':'This listing'}</span><b>${money(price)}, ${val(vs)}</b></div></div>
@@ -1423,7 +1423,7 @@ function carRow(c){
  ${contacts(c)}</div>`;
 }
 function searchForm(){
- return `<div class="wrap" style="max-width:680px">${backBtn()}<h1 class="pagetitle">New search</h1><p class="mut" style="margin-top:0">Tell us what you are looking for. Results show after you press Search.</p>
+ return `<div class="wrap">${backBtn()}<h1 class="pagetitle">New search</h1><p class="mut" style="margin-top:0">Tell us what you are looking for. Results show after you press Search.</p>
  <div class="card" style="padding:18px" id="nsform">
   <label class="f" style="margin-top:0">Make</label>${makeChips()}
   <div id="modelpick"><label class="f">Model</label><p class="hint" style="margin:0">Pick a make first.</p></div>
@@ -1442,7 +1442,7 @@ function results(){
  if(S.arg==='all'&&S._pending)return searchForm();
  const q=S.q||{};const s=SEARCHES.find(x=>x.id===S.arg)||{name:[q.make,q.model].filter(Boolean).join(' ')||'Your search',crit:[]};const cs=fltCars();const tags=activeTags();
  const list=S._loading?'<div class="skel"></div><div class="skel"></div><div class="skel"></div>':cs.length?cs.map(carRow).join('')+`<p class="hint" style="text-align:center;padding:18px">You are caught up. ${cs.length} cars match.</p>`:'<p class="mut" style="padding:20px 0">No cars match these filters.</p>';
- return `<div class="wrap" style="max-width:1200px">${backBtn()}<h1 class="pagetitle">${s.name}</h1>
+ return `<div class="wrap">${backBtn()}<h1 class="pagetitle">${s.name}</h1>
  <p class="mut" style="margin:0 0 6px">${cs.length} cars, best price first, adjusted for miles and year.</p>
  <div class="p-only" style="display:flex;gap:8px;align-items:center;margin:8px 0"><button class="btn" data-act="filters">${ic('filter')}Filters${tags.length?' ('+tags.length+')':''}</button></div>
  ${tags.length?`<div class="ftags">${tags.map(t=>`<span class="chip">${t}</span>`).join('')}<button class="btn sm ghost" data-act="clearflt">Clear</button></div>`:''}
@@ -1548,8 +1548,7 @@ function sellSheet(id){const c=LOT.find(x=>x.id===id);const L=LIVE[id]||{};
 /* ---------- INVEST ---------- */
 function investHome(){
  const m=S.invMode==='market';const list=m?WATCH:MINE;
- return `<div class="wrap" style="max-width:900px"><h1 class="pagetitle">Invest</h1>
- <div class="switch" role="tablist"><button class="${m?'':'on'}" data-inv="mine">My cars</button><button class="${m?'on':''}" data-inv="market">Market</button></div>
+ return `<div class="wrap"><div class="srchead"><h1 class="pagetitle" style="margin:0">Invest</h1><div class="switch" role="tablist" style="margin:0"><button class="${m?'':'on'}" data-inv="mine">My cars</button><button class="${m?'on':''}" data-inv="market">Market</button></div></div>
  ${m?bestBuy()+`<h2 style="margin:22px 0 4px">Your watchlist</h2><p class="mut" style="margin-top:0">From your preferences and every star. 6-month trend.</p>`:portfolioBlock()}
  ${m?`<div class="card">${list.map(w=>`<div class="saved" data-chart="${w.id}"><div><b>${w.name}</b>${w.paid?`<div class="hint">Bought ${w.since} for ${money(w.paid)}</div>`:''}</div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(w.ch)} <span class="hint">6 mo</span></div></span></div>`).join('')}</div>
  <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn" data-act="addwatch">${ic('plus')}Add model</button></div>`:''}</div>`;
@@ -1606,7 +1605,7 @@ function spark(w){const a=series(w).slice(-7),mn=Math.min(...a),mx=Math.max(...a
 function series(w){let v=w.v,a=[];let r=w.seed*9301%233;for(let i=0;i<120;i++){r=(r*9301+49297)%233280;const noise=(r/233280-0.5)*0.035;a.unshift(v);v=v/(1+w.g+noise)}return a}
 function chartView(){
  const w=[...WATCH,...MINE,...MKT].find(x=>x.id===S.arg);
- return `<div class="wrap" style="max-width:900px">${backBtn()}<h1 class="pagetitle">${w.name}</h1>
+ return `<div class="wrap">${backBtn()}<h1 class="pagetitle">${w.name}</h1>
  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="head" style="font-size:44px">${money(w.v)}</span><span>${pct(w.ch)} <span class="hint">6 months</span></span>${starBtn(w.id)}</div>
  <div>${src('Based on 126 sales and listings, last 10 years')}</div>
  ${benchPicker()}<div class="ranges">${['3M','6M','1Y','5Y','All'].map(r=>`<button class="${S.range===r?'on':''}" data-range="${r}">${r}</button>`).join('')}</div>
@@ -1653,7 +1652,7 @@ function drawChart(){
 function sw(on,key){return `<button class="sw ${on?'on':''}" data-sw="${key}" aria-pressed="${on}"></button>`}
 function account(){
  const a=S.alerts,dark=document.documentElement.dataset.theme!=='light';
- return `<div class="wrap acc" style="max-width:760px">${backBtn()}<h1 class="pagetitle">Settings</h1>
+ return `<div class="wrap acc">${backBtn()}<h1 class="pagetitle">Settings</h1>
  <section id="sec-prefs"><h2>What RoadRocket remembers</h2><p class="mut" style="margin-top:0">Used for answers, watchlist and alerts. Edit any time.</p>
  <div class="tg"><span>Makes</span><span>${S.prefs.makes.map(m=>`<span class="chip">${m} ×</span>`).join(' ')} <span class="chip">+ Add</span></span></div>
  <div class="tg"><span>Region</span><b>${S.prefs.region}</b></div><div class="tg"><span>Price band</span><b>${S.prefs.band}</b></div></section>
@@ -1740,7 +1739,7 @@ document.addEventListener('click',e=>{
  if(d.veh){e.stopPropagation();if(S.vehicle!==d.veh){S.vehicle=d.veh;document.querySelectorAll('[data-veh]').forEach(b=>{const on=b.dataset.veh===S.vehicle;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)});toast(S.vehicle==='car'?'Showing cars':'Showing motorcycles')}return}
  if(d.star){e.stopPropagation();S.starred.has(d.star)?S.starred.delete(d.star):(S.starred.add(d.star),toast('Saved. Added to your Invest watchlist.'));t.classList.toggle('on');return}
  if(d.contact){e.stopPropagation();const c=CARS.find(x=>x.id===d.id);toast({call:'Calls '+c.seller+': '+c.phone,text:'Opens text or WhatsApp to '+c.phone,email:'Opens email to '+c.email,copy:'Copied: '+c.seller+', '+c.phone+', '+c.email}[d.contact]);return}
- if(d.tab){if(S.tab===d.tab&&S.scr==='home')return;tab(d.tab);document.getElementById('app').classList.remove('drawer');return}
+ if(d.tab){if(S.tab===d.tab&&S.scr==='home'){const v=document.getElementById('view');v&&v.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});document.getElementById('app').classList.remove('drawer');return}tab(d.tab);document.getElementById('app').classList.remove('drawer');return}
  if(d.go==='home'){tab('intel');document.getElementById('app').classList.remove('drawer');return}
  if(d.chat){S.stack=[];S.tab='intel';S.scr='chat';S.chatId=d.chat;document.getElementById('app').classList.remove('drawer');render();return}
  if(d.fup!==undefined){if(S.scr!=='chat'){ask(d.fup)}else ask(d.fup);return}
