@@ -1242,7 +1242,7 @@ function filterPanel(){
  <h4 style="margin-top:14px">Sort</h4><select><option>Best price first (adjusted for miles, year)</option><option>Newest listing</option></select>
  ${cmpMore('src')}`;
 }
-function activeTags(){const f=S.flt,t=[];if(f.maxPrice<250000)t.push('Under '+money(f.maxPrice));Object.keys(f.seller).forEach(k=>{if(!f.seller[k])t.push('No '+k.toLowerCase())});Object.keys(f.trans).forEach(k=>{if(!f.trans[k])t.push('No '+k)});if(f.saved)t.push('Saved only');return t}
+function activeTags(){const f=S.flt,t=[];if(f.maxPrice<250000)t.push('Under '+money(f.maxPrice));Object.keys(f.seller).forEach(k=>{if(!f.seller[k])t.push('No '+k.toLowerCase())});Object.keys(f.trans).forEach(k=>{if(!f.trans[k]&&k!=='DCT')t.push('No '+k)});if(f.saved)t.push('Saved only');return t}
 function carRow(c){
  return `<div class="carrow" data-car="${c.id}">${photo(c)}
  <div><h3>${c.y} ${c.mk} ${c.md}</h3><div class="spec">${c.tr} · ${mi(c.mi)} · ${c.col} · ${c.loc}</div>
