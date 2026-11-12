@@ -651,6 +651,15 @@ label.f{font-size:13.5px}
 .cmpreset{margin-top:18px;background:none;border:none;color:var(--muted);text-decoration:underline;text-underline-offset:3px;font-size:14.5px;padding:4px 0}
 .cmpreset:hover{color:var(--ink)}
 
+/* ===== make/model picker (12.11.2026) ===== */
+.combo{position:relative}
+.combo-list{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:40;max-height:280px;overflow:auto;background:var(--surf);border:1px solid var(--hair2);border-radius:var(--r-big);box-shadow:var(--e2,0 14px 34px -14px rgba(0,0,0,.7));padding:6px}
+.combo.open .combo-list{display:block}
+.combo .opt-i{padding:9px 12px;border-radius:var(--r-small);font-size:15.5px;color:var(--muted);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.combo .opt-i b{color:var(--ink);font-weight:650}
+.combo .opt-i:hover,.combo .opt-i.act{background:var(--surf2);color:var(--ink)}
+.combo .opt-i.free{border-top:1px solid var(--hair);margin-top:4px;padding-top:11px;color:var(--link)}
+
 /* ===== ROADROCKET LOGO STANDARD v1 (12.11.2026). Spec: RoadRocket/decisions/2026-11-12-logo-standard.md. Change values here only. ===== */
 :root{--rr-tilt:-21deg;--rr-cut-y:59.9%;--rr-cut-h:max(.035em,1px);--rr-blue:#5b7cff}
 :root[data-theme="light"]{--rr-blue:#1a3fb8}
@@ -964,14 +973,70 @@ function compareForm(){
  <div class="card" style="padding:18px">
   <label class="f" style="margin-top:0">Paste a VIN or listing link (fills everything)</label>
   <div style="display:flex;gap:8px"><input type="text" id="vin" value="${f?'ZFF03RHA8N02xxxxx':''}" placeholder="VIN or https://..."><button class="btn" data-act="fill">Fill</button></div>
-  <p class="hint" style="margin:14px 0 0">No VIN? Fill in 4 fields:</p>
-  <label class="f">Model</label><input type="text" value="${f?'Ferrari 812 Competizione A':''}" placeholder="e.g. Porsche 911 GT3 Touring">
+  <p class="hint" style="margin:14px 0 0">No VIN? Pick or type the car:</p>
+  <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:10px"><div><label class="f">Make</label>${combo('make',f?'Ferrari':'','e.g. Porsche')}</div><div><label class="f">Model</label>${combo('model',f?'812 Competizione A':'','e.g. 911 GT3 Touring')}</div></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label class="f">Year</label><input type="text" value="${f?'2022':''}" placeholder="2022"></div><div><label class="f">Mileage</label><input type="text" value="${f?'2,400':''}" placeholder="6,100"></div></div>
   <label class="f">Options</label><input type="text" value="${f?'Carbon wheels, telemetry':''}" placeholder="e.g. Paint to Sample, carbon seats">
   ${cmpMore()}
   <button class="btn main" style="width:100%;margin-top:18px" data-act="runcompare">Compare to market</button>
  </div></div>`;
 }
+/* Make + model picker (12.11.2026): sleek list, filters as you type, free text always allowed */
+const MAKES={'Porsche':['911 Carrera','911 Carrera S','911 Targa','911 Turbo','911 Turbo S','911 GT3','911 GT3 Touring','911 GT3 RS','911 GT2 RS','911 Dakar','911 S/T','Cayman','Cayman GT4','Cayman GT4 RS','Boxster','Boxster Spyder','Carrera GT','918 Spyder','Taycan','Macan','Cayenne'],
+'Ferrari':['812 Superfast','812 Competizione','812 Competizione A','F8 Tributo','F8 Spider','296 GTB','296 GTS','SF90 Stradale','Roma','Purosangue','458 Italia','488 GTB','LaFerrari','Enzo','F40','Testarossa'],
+'Lamborghini':['Huracán EVO','Huracán STO','Huracán Tecnica','Huracán Sterrato','Aventador S','Aventador SVJ','Revuelto','Urus','Countach','Diablo','Murciélago','Gallardo'],
+'McLaren':['720S','750S','765LT','Artura','GT','600LT','570S','P1','Senna','Elva','F1'],
+'Mercedes-AMG':['GT','GT Black Series','GT R','SLS AMG','SL 63','G 63','AMG ONE'],
+'Aston Martin':['Vantage','DB11','DB12','DBS Superleggera','Valkyrie','Vanquish'],
+'Bentley':['Continental GT','Continental GTC','Flying Spur','Bentayga'],
+'Rolls-Royce':['Cullinan','Ghost','Phantom','Wraith','Dawn','Spectre'],
+'BMW':['M2','M3','M4','M5','M8','Z8','1M','E30 M3'],
+'Audi':['R8','RS3','RS6 Avant','RS e-tron GT','TT RS'],
+'Chevrolet':['Corvette Stingray','Corvette Z06','Corvette E-Ray','Corvette ZR1','Camaro ZL1','Corvette C2 L88'],
+'Ford':['GT','Mustang Shelby GT500','Mustang Dark Horse','Bronco Raptor','F-150 Raptor R'],
+'Dodge':['Viper ACR','Challenger SRT Demon','Challenger Hellcat'],
+'Nissan':['GT-R','GT-R Nismo','Z','Skyline GT-R R34'],
+'Toyota':['GR Supra','GR86','GR Corolla','Supra Mk4','Land Cruiser'],
+'Honda':['NSX','S2000','Civic Type R'],
+'Lotus':['Emira','Evora GT','Exige','Elise'],
+'Maserati':['MC20','GranTurismo','MC12'],
+'Bugatti':['Chiron','Veyron','Divo'],
+'Pagani':['Huayra','Zonda'],
+'Koenigsegg':['Jesko','Regera','Agera RS'],
+'Jaguar':['F-Type R','E-Type','XJ220'],
+'Land Rover':['Defender 110','Defender 90','Range Rover SV'],
+'Mercedes-Benz':['300SL Gullwing','190E 2.5-16 Evo II','G-Class']};
+function combo(kind,val,ph){return `<div class="combo" data-kind="${kind}"><input type="text" value="${val}" placeholder="${ph}" autocomplete="off" aria-autocomplete="list"><div class="combo-list" role="listbox"></div></div>`}
+function comboItems(box){
+ const q=box.querySelector('input').value.trim().toLowerCase();
+ let all;
+ if(box.dataset.kind==='make'){all=Object.keys(MAKES)}
+ else{const mk=(box.closest('.card').querySelector('.combo[data-kind=make] input').value||'').trim().toLowerCase();const k=Object.keys(MAKES).find(x=>x.toLowerCase()===mk);all=k?MAKES[k]:[].concat(...Object.entries(MAKES).map(([m,l])=>l.map(x=>m+' '+x)))}
+ const hit=q?all.filter(x=>x.toLowerCase().includes(q)).sort((a,b)=>a.toLowerCase().indexOf(q)-b.toLowerCase().indexOf(q)):all;
+ return hit.slice(0,40);
+}
+function comboOpen(box){
+ const list=box.querySelector('.combo-list'),items=comboItems(box),q=box.querySelector('input').value.trim();
+ const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+ const hl=s=>{if(!q)return esc(s);const i=s.toLowerCase().indexOf(q.toLowerCase());return i<0?esc(s):esc(s.slice(0,i))+'<b>'+esc(s.slice(i,i+q.length))+'</b>'+esc(s.slice(i+q.length))};
+ list.innerHTML=items.map((x,i)=>`<div class="opt-i${i===0&&q?' act':''}" role="option" data-v="${esc(x)}">${hl(x)}</div>`).join('')+(q&&!items.some(x=>x.toLowerCase()===q.toLowerCase())?`<div class="opt-i free" data-v="${esc(q)}">Use “${esc(q)}”</div>`:'');
+ box.classList.toggle('open',list.children.length>0);
+}
+function comboPick(box,v){
+ box.querySelector('input').value=v;box.classList.remove('open');
+ if(box.dataset.kind==='make'){const m=box.closest('.card').querySelector('.combo[data-kind=model] input');if(m){m.value='';m.focus()}}
+ if(typeof cmpCount==='function')cmpCount();
+}
+document.addEventListener('focusin',e=>{const b=e.target.closest('.combo');if(b&&e.target.tagName==='INPUT')comboOpen(b)});
+document.addEventListener('input',e=>{const b=e.target.closest('.combo');if(b)comboOpen(b)});
+document.addEventListener('mousedown',e=>{const o=e.target.closest('.combo .opt-i');if(o){e.preventDefault();comboPick(o.closest('.combo'),o.dataset.v);return}document.querySelectorAll('.combo.open').forEach(b=>{if(!b.contains(e.target))b.classList.remove('open')})});
+document.addEventListener('keydown',e=>{
+ const b=e.target.closest('.combo');if(!b)return;
+ const opts=[...b.querySelectorAll('.opt-i')];let i=opts.findIndex(o=>o.classList.contains('act'));
+ if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!b.classList.contains('open'))comboOpen(b);i=e.key==='ArrowDown'?Math.min(i+1,opts.length-1):Math.max(i-1,0);opts.forEach((o,j)=>o.classList.toggle('act',j===i));opts[i]&&opts[i].scrollIntoView({block:'nearest'})}
+ else if(e.key==='Enter'){if(b.classList.contains('open')&&i>=0){e.preventDefault();comboPick(b,opts[i].dataset.v)}}
+ else if(e.key==='Escape'||e.key==='Tab'){b.classList.remove('open')}
+});
 /* More criteria (12.11.2026): hidden until opened, chips for choices, drag ranges for numbers */
 function chips(name,opts,on){return `<div class="cmpchips" data-name="${name}">${opts.map(o=>`<span class="chip${o===on?' on':''}" role="button" tabindex="0">${o}</span>`).join('')}</div>`}
 function rng(label,min,max,step,lo,hi,fmt){return `<div class="rng" data-min="${min}" data-max="${max}" data-fmt="${fmt}" data-lo0="${lo}" data-hi0="${hi}"><div class="rng-top"><span>${label}</span><output></output></div><div class="rng-track"><i></i><input type="range" class="lo" min="${min}" max="${max}" step="${step}" value="${lo}" aria-label="${label} from"><input type="range" class="hi" min="${min}" max="${max}" step="${step}" value="${hi}" aria-label="${label} to"></div></div>`}
