@@ -1977,6 +1977,7 @@ if(h&&h!=='signup'){const m={sourcing:'sourcing',mylot:'mylot',invest:'invest'};
    const from=n*0.82,t0=performance.now(),D=610;
    (function step(now){const p=Math.min(1,(now-t0)/D),e=1-Math.pow(1-p,3);if(!el.isConnected)return;
     el.textContent=p<1?m[1]+fmt(from+(n-from)*e)+m[3]:t;if(p<1)requestAnimationFrame(step)})(t0);
+   setTimeout(()=>{if(el.isConnected)el.textContent=t},D+150);
   });
  }
  function drawLines(v){
