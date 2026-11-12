@@ -995,7 +995,7 @@ function askBar(id,ph){
   <button type="button" class="iconbtn mic" data-act="mic" aria-label="Speak">${ic('mic')}</button>
   <button type="submit" class="send" data-act="ask">Ask</button></form>`;
 }
-function photo(c,w){const im=IMG[c.id];return `<div class="photo" style="background:linear-gradient(135deg,${c.color},#0b0d12);${w?'width:'+w:''}">${im?`<img src="img/${im}" alt="${c.y} ${c.mk} ${c.md}" loading="lazy" onerror="this.remove()">`:CARSVG}</div>`}
+function photo(c,w){const im=IMG[c.id];return `<div class="photo" style="background:linear-gradient(135deg,${c.color},#0b0d12);${w?'width:'+w:''}">${im?`<img src="img/t_${im}" srcset="img/t_${im} 360w, img/${im} 720w" sizes="${w==='100%'?'(max-width:760px) 92vw, 560px':'170px'}" alt="${c.y} ${c.mk} ${c.md}" loading="lazy" onerror="this.remove()">`:CARSVG}</div>`}
 function starBtn(id){return `<button class="star ${S.starred.has(id)?'on':''}" data-star="${id}" aria-label="Save">${ic('star')}</button>`}
 function contacts(c){return `<div class="contacts">
  <button class="btn" data-contact="call" data-id="${c.id}">${ic('phone')}Call</button>
@@ -1036,6 +1036,7 @@ function render(scroll){
  v.scrollTop=scroll||0;
  if(S.scr==='chat')v.scrollTop=v.scrollHeight;
  if(S.tab==='invest'&&(S.scr==='chart'||S.invMode==='mine'))drawChart();
+ fitLotChart();
  if(S.tab==='sourcing'&&S.scr==='results'&&S._loading){setTimeout(()=>{S._loading=false;render(0)},450)}
 }
 
@@ -1269,12 +1270,8 @@ function lotValueSeries(){
  for(let d=90;d>=0;d--){let v=0;LOT.forEach(c=>{if(c.days>=d){let pr=c.hist[0][1];c.hist.forEach(h=>{if(ago(h[2])>=d)pr=h[1]});v+=pr}});SOLD.forEach(c=>{if(d>c.ago&&d<=c.ago+c.days)v+=c.price});pts.push([d,v])}
  return pts;
 }
-function lotStats(){
- const you=LOT.reduce((a,c)=>a+c.you,0),mkt=LOT.reduce((a,c)=>a+c.mkt,0);
- const avg=LOT.reduce((a,c)=>a+c.days,0)/LOT.length,typ=LOT.reduce((a,c)=>a+c.typ,0)/LOT.length;
- const sAvg=SOLD.reduce((a,c)=>a+c.days,0)/SOLD.length;
- const slow=LOT.filter(c=>c.days>c.typ),slowV=slow.reduce((a,c)=>a+c.you,0);
- const ser=lotValueSeries(),mx=Math.max(...ser.map(p=>p[1]))*1.08,W=560,H=170,L=58,B=24;
+function lotChartSvg(W,H){
+ const ser=lotValueSeries(),mx=Math.max(...ser.map(p=>p[1]))*1.08,L=70,B=24;
  const X=d=>L+(90-d)/90*(W-L-8),Y=v=>8+(1-v/mx)*(H-B-8);
  const sm=ser.map((p,i)=>{if(i===0||i===ser.length-1)return p;let a=0,n=0;for(let j=i-7;j<=i+7;j++){if(j>=0&&j<ser.length){a+=ser[j][1];n++}}return [p[0],a/n]});
  const P=sm.filter((p,i)=>i%3===0||i===sm.length-1).map(p=>[X(p[0]),Y(p[1])]);
@@ -1283,6 +1280,16 @@ function lotStats(){
  const grid=[.25,.5,.75,1].map(f=>{const v=mx/1.08*f;return `<line x1="${L}" x2="${W-8}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end">${money(v)}</text>`}).join('');
  const xl=[[90,'90 days ago','start'],[60,'60','middle'],[30,'30','middle'],[0,'Today','end']].map(a=>`<text x="${X(a[0])}" y="${H-4}" text-anchor="${a[2]}">${a[1]}</text>`).join('');
  const svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Lot value over the last 90 days, now ${money(last[1])}">${grid}<path d="${path} V${Y(0)} H${X(90)} Z" fill="var(--brand)" opacity=".12"/><path d="${path}" fill="none" stroke="var(--brand)" stroke-width="2.5" stroke-linejoin="round"/><circle cx="${X(0)}" cy="${Y(last[1])}" r="4" fill="var(--brand)"/>${xl}</svg>`;
+ return svg;
+}
+let _rsz;addEventListener('resize',()=>{clearTimeout(_rsz);_rsz=setTimeout(()=>{fitLotChart();if($('#chart'))drawChart()},150)});
+function fitLotChart(){const b=document.getElementById("lotchart");if(!b)return;const z=parseFloat(getComputedStyle(document.documentElement).zoom)||1,W=Math.max(300,Math.round(b.getBoundingClientRect().width/z));b.innerHTML=lotChartSvg(W,Math.round(Math.min(220,Math.max(170,W*0.34))))}
+function lotStats(){
+ const you=LOT.reduce((a,c)=>a+c.you,0),mkt=LOT.reduce((a,c)=>a+c.mkt,0);
+ const avg=LOT.reduce((a,c)=>a+c.days,0)/LOT.length,typ=LOT.reduce((a,c)=>a+c.typ,0)/LOT.length;
+ const sAvg=SOLD.reduce((a,c)=>a+c.days,0)/SOLD.length;
+ const slow=LOT.filter(c=>c.days>c.typ),slowV=slow.reduce((a,c)=>a+c.you,0);
+ const svg=`<div id="lotchart">${lotChartSvg(560,190)}</div>`;
  const byDays=[...LOT].sort((a,b)=>b.days-a.days),mxd=Math.max(...LOT.map(c=>Math.max(c.days,c.typ)));
  const days=byDays.map(c=>`<div class="dayrow"><span>${c.y} ${c.md}</span><div class="bar"><i style="width:${c.days/mxd*100}%;background:${c.days>c.typ?'var(--down)':'var(--up)'}"></i><em style="left:${c.typ/mxd*100}%"></em></div><b>${c.days}</b></div>`).join('');
  return `<div class="lotstats">
@@ -1377,7 +1384,9 @@ function drawChart(){
  const carCh=(d[d.length-1]/d[0]-1)*100,bCh=(bs[bs.length-1]/bs[0]-1)*100,gap=carCh-bCh,bn=BENCH[S.bench].n;
  const pv=$('#pverdict');if(pv)pv.innerHTML=`Last ${S.range==='All'?'10 years':S.range}: ${port?'your cars':'this model'} ${pct(carCh)}, ${bn} ${pct(bCh)}. ${gap>=0?'<b>Beat</b>':'<b>Behind</b>'} ${bn} by ${Math.abs(gap).toFixed(1)} points.`;
  const vals=[...d,...lo,...hi,...bs];const mn=Math.min(...vals)*0.98,mx=Math.max(...vals)*1.02;
- const ph=innerWidth<=760,W=ph?420:800,H=port?(ph?220:240):(ph?260:320),L=10,R=port?96:70,T=14,B=30,tot=d.length-1+F,cw=W-L-R;
+ const ph=innerWidth<=760,cz=parseFloat(getComputedStyle(document.documentElement).zoom)||1,cwid=$('#chart').getBoundingClientRect().width/cz;
+ const W=Math.max(300,Math.round(cwid||(ph?420:800))),H=Math.round(Math.min(port?240:320,Math.max(port?190:220,W*(port?0.3:0.4)))),L=10,R=port?96:70,T=14,B=30,tot=d.length-1+F,cw=W-L-R;
+ $('#chart').setAttribute('viewBox',`0 0 ${W} ${H}`);
  const X=i=>L+i/tot*cw,Y=v=>T+(1-(v-mn)/(mx-mn))*(H-T-B);
  const css=getComputedStyle(document.documentElement);const ink=css.getPropertyValue('--muted'),brand=css.getPropertyValue('--link'),line=css.getPropertyValue('--line');
  const base=d.length-1;
