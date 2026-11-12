@@ -842,6 +842,7 @@ body:has(#ibxwrap) .msgfab{display:none}
 .rkn.top{background:color-mix(in srgb,var(--brand) 25%,transparent);color:var(--link)}
 /* ===== ONE SYSTEM (Thomas 13.11.2026): every page shares width, type, number boxes, spacing and motion. Fibonacci 8/13/21/34/55/89 ===== */
 :root{--page-w:1080px;--ease-out:cubic-bezier(.16,1,.3,1)}
+.view{scrollbar-gutter:stable}
 .wrap{max-width:var(--page-w)!important;padding:34px 34px 89px}
 .pagetitle{font-size:27px;font-weight:700;margin:0 0 8px}
 .wrap h2{font-size:20px;font-weight:600;letter-spacing:-.01em}
@@ -1960,7 +1961,7 @@ if(h&&h!=='signup'){const m={sourcing:'sourcing',mylot:'mylot',invest:'invest'};
  function reveal(v){
   if(io)io.disconnect();
   const all=[...v.querySelectorAll('.card,.lotcard,.lotstats>div,.pstrip>div,.chartbox,.ltile,.sect,.carrow,.box,.lotcharts')];
-  const top=all.filter(e=>!all.some(o=>o!==e&&o.contains(e)));
+  const top=all.filter(e=>!e.closest('details')&&!all.some(o=>o!==e&&o.contains(e)));
   const vb=v.getBoundingClientRect().bottom;
   const below=top.filter(e=>e.getBoundingClientRect().top>vb-8);
   if(!below.length)return;
