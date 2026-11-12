@@ -1500,13 +1500,19 @@ function bestBuy(){
  </div><div id="ivres">${bestList()}</div>`;
 }
 function bestList(){
- const f=S.invF,hit=MKT.filter(w=>(f.cat==='Any'||w.cat===f.cat)&&(f.c==='Any'||w.c===f.c)&&w.y>=f.y[0]&&w.y<=f.y[1]&&w.v>=f.b[0]&&w.v<=f.b[1]&&w.hp>=f.hp[0]&&w.hp<=f.hp[1]).sort((a,b)=>b.g-a.g);
- if(!hit.length)return `<div class="card" style="padding:18px;margin-top:14px"><b>No models match.</b><p class="mut" style="margin:4px 0 0">Widen the budget, years or horsepower.</p></div>`;
+ const f=S.invF;let hit=MKT.filter(w=>(f.cat==='Any'||w.cat===f.cat)&&(f.c==='Any'||w.c===f.c)&&w.y>=f.y[0]&&w.y<=f.y[1]&&w.v>=f.b[0]&&w.v<=f.b[1]&&w.hp>=f.hp[0]&&w.hp<=f.hp[1]).sort((a,b)=>b.g-a.g);
+ let near=false;
+ if(!hit.length){near=true;
+  const off=(v,lo,hi,span)=>v<lo?(lo-v)/span:v>hi?(v-hi)/span:0;
+  const miss=w=>{const m=[];if(f.cat!=='Any'&&w.cat!==f.cat)m.push(w.cat);if(f.c!=='Any'&&w.c!==f.c)m.push(w.c);if(w.y<f.y[0]||w.y>f.y[1])m.push(String(w.y));if(w.v<f.b[0]||w.v>f.b[1])m.push(money(w.v));if(w.hp<f.hp[0]||w.hp>f.hp[1])m.push(w.hp+' hp');return m};
+  const d=w=>(f.cat!=='Any'&&w.cat!==f.cat?1:0)+(f.c!=='Any'&&w.c!==f.c?1:0)+off(w.y,f.y[0],f.y[1],66)+off(w.v,f.b[0],f.b[1],2950000)+off(w.hp,f.hp[0],f.hp[1],750);
+  hit=MKT.map(w=>({...w,_d:d(w),_m:miss(w)})).sort((a,b)=>a._d-b._d||b.g-a.g).slice(0,5);
+ }
  const top=hit[0],y5=w=>(a=>(a[a.length-1]/a[a.length-61]-1)*100)(series(w));
- return `<div class="card" style="padding:18px;margin-top:14px"><div class="lbl">Best investment for these filters</div>
+ return `${near?`<div class="card" style="padding:18px;margin-top:14px"><b>Nothing fits every filter exactly.</b><p class="mut" style="margin:4px 0 0">Here are the ${hit.length} closest models. The grey note on each shows what is outside your filters.</p></div>`:''}<div class="card" style="padding:18px;margin-top:14px"><div class="lbl">${near?'Closest match':'Best investment for these filters'}</div>
  <div class="saved" data-chart="${top.id}" style="padding:8px 0 0;border:0"><div><b style="font-size:20px">${top.name}</b><div class="hint">${top.c} · ${top.cat} · ${top.y} · ${top.hp} hp</div></div>${spark(top)}<span style="margin-left:auto;text-align:right"><b>${money(top.v)}</b><div>${pct(top.g*1200)} <span class="hint">next 12 mo, estimate</span></div></span></div>
- <p class="verdict" style="margin:10px 0 0">${pct(y5(top),0)} over the last 5 years. Strongest expected rise of the ${hit.length} model${hit.length>1?'s':''} that match.</p></div>
- ${hit.length>1?`<h2 style="margin:18px 0 8px">All ${hit.length} matches, best first</h2><div class="card">${hit.map((w,i)=>`<div class="saved" data-chart="${w.id}"><div><b>${i+1}. ${w.name}</b><div class="hint">${w.c} · ${w.cat} · ${w.y} · ${w.hp} hp</div></div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(w.g*1200)} <span class="hint">12 mo est.</span></div><div class="hint">${(v=>(v>=0?'+':'−')+Math.abs(v).toFixed(0))(y5(w))}% last 5 yr</div></span></div>`).join('')}</div>`:''}
+ ${near?`<div class="hint" style="margin-top:6px">Outside your filters: ${top._m.join(', ')}</div>`:''}<p class="verdict" style="margin:10px 0 0">${pct(y5(top),0)} over the last 5 years.${near?'':` Strongest expected rise of the ${hit.length} model${hit.length>1?'s':''} that match.`}</p></div>
+ ${hit.length>1?`<h2 style="margin:18px 0 8px">${near?`${hit.length} closest models, nearest first`:`All ${hit.length} matches, best first`}</h2><div class="card">${hit.map((w,i)=>`<div class="saved" data-chart="${w.id}"><div><b>${i+1}. ${w.name}</b><div class="hint">${w.c} · ${w.cat} · ${w.y} · ${w.hp} hp</div>${near?`<div class="hint">Outside: ${w._m.join(', ')}</div>`:''}</div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(w.g*1200)} <span class="hint">12 mo est.</span></div><div class="hint">${(v=>(v>=0?'+':'−')+Math.abs(v).toFixed(0))(y5(w))}% last 5 yr</div></span></div>`).join('')}</div>`:''}
  <div style="margin:10px 2px 0">${src('Sketch numbers. Live: sales and listings per model, 10 years. Estimates are not facts.')}</div>`;
 }
 function benchPicker(){return `<div class="benchrow"><span class="lbl">Compare to</span><div class="ranges" style="margin:0"><button class="${S.bench?'':'on'}" data-bench="none">Nothing</button>${Object.entries(BENCH).map(([k,b])=>`<button class="${S.bench===k?'on':''}" data-bench="${k}">${b.n}</button>`).join('')}</div></div>`}
