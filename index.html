@@ -181,6 +181,14 @@ label.f{display:block;font-size:15px;color:var(--muted);margin:12px 0 6px}
 .lotcharts svg text{fill:var(--hint);font-size:13px}
 .dayrow{display:grid;grid-template-columns:minmax(150px,auto) 1fr 34px;gap:10px;align-items:center;font-size:15px;margin:6px 0}
 .dayrow .bar{margin:0}.dayrow b{text-align:right}
+.lotgal{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.lotcard{background:var(--surf);border:1px solid var(--hair,var(--line));border-radius:12px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.lotcard:hover{box-shadow:0 6px 18px rgba(0,0,0,.08);transform:translateY(-2px)}
+.lotcard .photo{border-radius:0;aspect-ratio:16/10;height:auto}
+.lc-body{padding:12px 14px 14px}.lc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.lc-top b{font-size:16px;line-height:1.3}.lc-top .tag{flex-shrink:0}
+.lc-price{margin-top:10px}.lc-price b{font-size:22px;display:block}
+.lc-days{margin-top:8px;font-size:14px}.lc-days.slow{color:var(--down)}
 @media (max-width:760px){.lotstats{grid-template-columns:1fr 1fr}.lotcharts{grid-template-columns:1fr}}
 
 /* INVEST */
@@ -1256,12 +1264,11 @@ function lotHome(){
  return `<div class="wrap"><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><h1 class="pagetitle" style="margin-right:auto">My lot</h1><button class="btn main" data-act="addcar">${ic('plus')}Add car</button></div>
  <p class="mut" style="margin:4px 0 14px">${LOT.length} cars · ${need} need attention · sorted by needs attention first</p>
  ${lotStats()}
- <div class="card"><table class="rows">
- <tr><th class="lotph">Car</th><th></th><th class="num">Your price</th><th class="num d-only">Market</th><th class="num d-only">Days on lot</th><th class="num d-only">Status</th></tr>
- ${rows.map(c=>`<tr class="click" data-lotcar="${c.id}"><td class="lotph">${photo(c,'96px')}</td><td><b>${c.y} ${c.mk} ${c.md}</b><div class="hint">${mi(c.mi)} · ${c.col}</div><div class="p-only hint">${c.days} days on lot, typical ${c.typ}</div><div class="p-only" style="margin-top:4px"><span class="tag ${c.tag}">${{above:'Above market',fair:'Fair',below:'Below market'}[c.tag]}</span></div></td>
- <td class="num"><b>${money(c.you)}</b><div class="hint">${pct(c.vs)}</div></td><td class="num d-only">${money(c.mkt)}</td>
- <td class="num d-only">${c.days}<div class="hint">typical ${c.typ}</div></td><td class="num d-only"><span class="tag ${c.tag}">${{above:'Above market',fair:'Fair',below:'Below market'}[c.tag]}</span></td></tr>`).join('')}
- </table></div>
+ <div class="lotgal">
+ ${rows.map(c=>`<div class="lotcard click" data-lotcar="${c.id}">${photo(c,'100%')}<div class="lc-body"><div class="lc-top"><b>${c.y} ${c.mk} ${c.md}</b><span class="tag ${c.tag}">${{above:'Above market',fair:'Fair',below:'Below market'}[c.tag]}</span></div><div class="hint">${mi(c.mi)} · ${c.col}</div>
+ <div class="lc-price"><b>${money(c.you)}</b><span class="hint">${pct(c.vs)} vs market ${money(c.mkt)}</span></div>
+ <div class="lc-days ${c.days>c.typ?'slow':''}">${c.days} days on lot <span class="hint">· typical ${c.typ}</span></div></div></div>`).join('')}
+ </div>
  <p class="hint" style="text-align:center"><a href="#" data-act="toggleempty">Sketch: show empty lot</a></p></div>`;
 }
 function lotCar(){
