@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=1440">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2"><link rel="shortcut icon" href="favicon.ico?v=2"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>RoadRocket Sketch</title>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
@@ -44,7 +44,7 @@ label.f{display:block;font-size:15px;color:var(--muted);margin:12px 0 6px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 /* SHELL */
-.app{display:grid;grid-template-columns:268px 1fr;height:calc(100vh / 0.9)}
+.app{display:grid;grid-template-columns:268px 1fr;height:calc(100vh / var(--z,1))}
 .app.closed{grid-template-columns:64px 1fr}
 .app.closed .hide-closed{display:none!important}
 .app.closed .side{padding:12px 8px;align-items:center}
@@ -57,7 +57,7 @@ label.f{display:block;font-size:15px;color:var(--muted);margin:12px 0 6px}
 .side h4{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--hint);margin:18px 6px 6px;font-weight:700}
 .side .chatlink{display:block;width:100%;text-align:left;background:none;border:none;padding:8px 10px;border-radius:var(--r-small);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
 .side .chatlink:hover,.side .chatlink.on{background:var(--surf2);color:var(--ink)}
-.mainc{display:flex;flex-direction:column;min-width:0;height:calc(100vh / 0.9)}
+.mainc{display:flex;flex-direction:column;min-width:0;height:calc(100vh / var(--z,1))}
 .top{display:flex;align-items:center;gap:6px;padding:10px 20px;border-bottom:1px solid var(--line);min-height:64px}
 .top .tabs{display:flex;gap:6px;margin-left:auto}
 .tabbtn{background:none;border:none;border-bottom:3px solid transparent;padding:10px 14px;border-radius:var(--r-small);font-weight:500;color:var(--muted);font-size:18px}
@@ -180,7 +180,7 @@ label.f{display:block;font-size:15px;color:var(--muted);margin:12px 0 6px}
 .lotcharts svg text{fill:var(--hint);font-size:13px}
 .dayrow{display:grid;grid-template-columns:minmax(150px,auto) 1fr 34px;gap:10px;align-items:center;font-size:15px;margin:6px 0}
 .dayrow .bar{margin:0}.dayrow b{text-align:right}
-@media (max-width:1px){.lotstats{grid-template-columns:1fr 1fr}.lotcharts{grid-template-columns:1fr}}
+@media (max-width:760px){.lotstats{grid-template-columns:1fr 1fr}.lotcharts{grid-template-columns:1fr}}
 
 /* INVEST */
 .switch{display:inline-flex;border:1px solid var(--line);border-radius:var(--r-small);overflow:hidden;margin:10px 0 16px}
@@ -203,7 +203,7 @@ label.f{display:block;font-size:15px;color:var(--muted);margin:12px 0 6px}
 
 /* OVERLAYS */
 .scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40;display:flex;align-items:center;justify-content:center;padding:16px}
-.sheet{background:var(--bg);border:1px solid var(--line);border-radius:var(--r-big);max-width:560px;width:100%;max-height:calc(88vh / 0.9);overflow:auto;padding:20px;box-shadow:var(--shadow)}
+.sheet{background:var(--bg);border:1px solid var(--line);border-radius:var(--r-big);max-width:560px;width:100%;max-height:calc(88vh / var(--z,1));overflow:auto;padding:20px;box-shadow:var(--shadow)}
 .sheet h2{font-size:28px;margin-bottom:6px}
 .opt{display:flex;gap:14px;align-items:center;width:100%;text-align:left;background:var(--surf);border:1px solid var(--line);border-radius:var(--r-big);padding:14px;margin-top:10px}
 .opt:hover{border-color:var(--brand)}
@@ -220,13 +220,13 @@ label.f{display:block;font-size:15px;color:var(--muted);margin:12px 0 6px}
 .hl{outline:3px solid var(--gold)!important;outline-offset:3px;border-radius:var(--r-small)}
 
 /* SIGNUP */
-.signup{min-height:calc(100vh / 0.9);display:flex;align-items:center;justify-content:center;padding:24px}
+.signup{min-height:calc(100vh / var(--z,1));display:flex;align-items:center;justify-content:center;padding:24px}
 .signup .card{max-width:460px;width:100%;padding:28px}
 .dots{display:flex;gap:6px;margin-bottom:14px}.dots i{width:28px;height:5px;border-radius:9px;background:var(--surf2)}.dots i.on{background:var(--brand)}
 .offline{background:var(--surf2);color:var(--muted);font-size:14px;padding:6px 20px;text-align:center}
 
 /* PHONE */
-@media (max-width:1px){
+@media (max-width:760px){
   :root{--fs:17px}
   .app,.app.closed{grid-template-columns:1fr}
   .side{position:fixed;inset:0 18% 0 0;z-index:50;transform:translateX(-102%);transition:transform .25s;visibility:visible!important}
@@ -270,12 +270,12 @@ label.f{display:block;font-size:15px;color:var(--muted);margin:12px 0 6px}
   .chat{padding:16px 16px 30px}
   .msg-u{max-width:90%}
   .scrim.bottomsheet{align-items:flex-end;padding:0}
-  .scrim.bottomsheet .sheet{border-radius:var(--r-big) var(--r-big) 0 0;max-height:calc(92vh / 0.9)}
+  .scrim.bottomsheet .sheet{border-radius:var(--r-big) var(--r-big) 0 0;max-height:calc(92vh / var(--z,1))}
   .bellpop{position:fixed;left:8px;right:8px;top:60px;width:auto}
   .toast{bottom:140px}
   .tour{left:12px!important;right:12px;max-width:none;bottom:76px!important;top:auto!important}
 }
-@media (min-width:1px){.p-only{display:none!important}}
+@media (min-width:761px){.p-only{display:none!important}}
 
 /* ================= POLISH v3.1 (12.11.2026) ================= */
 :root{
@@ -446,7 +446,7 @@ h1,h2,h3,.head{letter-spacing:-.02em}
 .boxes{max-width:980px}
 .carhead .contacts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .carhead .contacts .btn{width:100%}
-@media (max-width:1px){
+@media (max-width:760px){
   .wrap{padding:18px 16px 28px}
   .top{padding:8px 10px;min-height:56px}
   .home{padding:30px 16px 44px;background:radial-gradient(90% 40% at 50% 22%,var(--tint),transparent 70%)}
@@ -552,7 +552,7 @@ label.f{font-size:13.5px}
 .sheet h2{font-size:22px;font-weight:600}
 .opt{padding:12px 14px}
 .toast{font-size:14px;font-weight:500}
-@media (max-width:1px){
+@media (max-width:760px){
   .wrap{padding:20px 16px 28px}
   .top{min-height:54px;padding:6px 10px}
   .top .ptitle{font-size:19px;font-weight:600}
@@ -580,7 +580,7 @@ label.f{font-size:13.5px}
 
 /* footer line in the sidebar lines up with the line above the ask bar (12.11.2026) */
 :root{--dockh:56px}
-@media (min-width:1px){
+@media (min-width:761px){
   .dock .ask{padding:3px 3px 3px 4px}
   .dock .ask input{font-size:16px;padding:4px 6px;min-height:34px}
   .dock .ask .iconbtn{min-width:34px;min-height:34px}
@@ -590,7 +590,7 @@ label.f{font-size:13.5px}
   .side-foot .vswitch button{width:36px;height:30px}
   .side-foot .vswitch svg.i{width:19px;height:19px}
 }
-@media (min-width:1px){
+@media (min-width:761px){
   .dock{height:var(--dockh)!important;padding-top:0!important;padding-bottom:0!important;display:flex;align-items:center;box-sizing:border-box}
   .dock .ask{flex:1}
   .side-foot{box-sizing:border-box;height:var(--dockh);margin:auto -10px -14px;padding:0 14px;width:calc(100% + 20px);border-top:1px solid var(--hair)}
@@ -668,7 +668,7 @@ label.f{font-size:13.5px}
 .logo b,.logo-s b,.bar h1.lg b{font-style:normal!important;transform:none!important;font-size:1.04em;font-weight:250;font-stretch:112%;letter-spacing:-.02em;margin-left:.06em;color:var(--rr-blue)!important}
 .logo .r,.logo-s .r,.bar h1.lg .r{background:linear-gradient(180deg,currentColor 0 var(--rr-cut-y),transparent var(--rr-cut-y) calc(var(--rr-cut-y) + var(--rr-cut-h)),currentColor calc(var(--rr-cut-y) + var(--rr-cut-h)));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 </style>
-<style>html{zoom:0.9}</style>
+<style>:root{--z:1}@media (min-width:1280px){:root{--z:.9}html{zoom:.9}}</style>
 </head>
 <body>
 <div id="root"></div>
@@ -1248,7 +1248,7 @@ function portfolioBlock(){
  ${benchPicker()}
  <div class="ranges">${['3M','6M','1Y','5Y','All'].map(r=>`<button class="${S.range===r?'on':''}" data-range="${r}">${r}</button>`).join('')}</div>
  <p class="verdict" id="pverdict"></p>
- <div class="chartbox" style="margin-bottom:6px"><svg id="chart" viewBox="0 0 ${false?420:800} ${false?260:320}" style="width:100%;height:auto;display:block"></svg></div>
+ <div class="chartbox" style="margin-bottom:6px"><svg id="chart" viewBox="0 0 ${innerWidth<=760?420:800} ${innerWidth<=760?260:320}" style="width:100%;height:auto;display:block"></svg></div>
  <div class="legend"><span><i style="border-color:var(--link)"></i>Your cars</span><span><i style="border-color:var(--muted);border-top-style:dashed"></i>${b.n}, same start</span><span><i style="border-color:var(--link);border-top-style:dotted"></i>Estimate, next months</span></div>
  <div style="margin:4px 2px 16px">${src('Sketch numbers. Live: your purchase prices, 126+ sales per model, daily index prices')}</div>`;
 }
@@ -1261,7 +1261,7 @@ function chartView(){
  <div>${src('Based on 126 sales and listings, last 10 years')}</div>
  ${benchPicker()}<div class="ranges">${['3M','6M','1Y','5Y','All'].map(r=>`<button class="${S.range===r?'on':''}" data-range="${r}">${r}</button>`).join('')}</div>
  <p class="verdict" id="pverdict"></p>
- <div class="chartbox"><svg id="chart" viewBox="0 0 ${false?420:800} ${false?260:320}" style="width:100%;height:auto;display:block"></svg></div>
+ <div class="chartbox"><svg id="chart" viewBox="0 0 ${innerWidth<=760?420:800} ${innerWidth<=760?260:320}" style="width:100%;height:auto;display:block"></svg></div>
  <p class="hint">Solid line = real prices. Grey dashed line = ${BENCH[S.bench].n} from the same start. <b>Dotted line = estimate, not a fact.</b> Shaded band = likely range for the next 6 months.</p>
  <div class="kv" style="margin-top:12px"><div><span>1-year change</span><b>${(a=>pct((a[a.length-1]/a[a.length-13]-1)*100))(series(w))}</b></div><div><span>Sold, last 12 months</span><b>${w.paid?'31':'64'}</b></div><div><span>Estimate in 6 months</span><b>${money(w.v*(1+w.g*6))} <span class="hint">range ${money(w.v*(1+w.g*6-0.05))} to ${money(w.v*(1+w.g*6+0.05))}</span></b></div></div></div>`;
 }
@@ -1274,7 +1274,7 @@ function drawChart(){
  const carCh=(d[d.length-1]/d[0]-1)*100,bCh=(bs[bs.length-1]/bs[0]-1)*100,gap=carCh-bCh,bn=BENCH[S.bench].n;
  const pv=$('#pverdict');if(pv)pv.innerHTML=`Last ${S.range==='All'?'10 years':S.range}: ${port?'your cars':'this model'} ${pct(carCh)}, ${bn} ${pct(bCh)}. ${gap>=0?'<b>Beat</b>':'<b>Behind</b>'} ${bn} by ${Math.abs(gap).toFixed(1)} points.`;
  const vals=[...d,...lo,...hi,...bs];const mn=Math.min(...vals)*0.98,mx=Math.max(...vals)*1.02;
- const ph=false,W=ph?420:800,H=ph?260:320,L=10,R=70,T=14,B=30,tot=d.length-1+F,cw=W-L-R;
+ const ph=innerWidth<=760,W=ph?420:800,H=ph?260:320,L=10,R=70,T=14,B=30,tot=d.length-1+F,cw=W-L-R;
  const X=i=>L+i/tot*cw,Y=v=>T+(1-(v-mn)/(mx-mn))*(H-T-B);
  const css=getComputedStyle(document.documentElement);const ink=css.getPropertyValue('--muted'),brand=css.getPropertyValue('--link'),line=css.getPropertyValue('--line');
  const base=d.length-1;
@@ -1350,7 +1350,7 @@ function tour(i){
  document.querySelectorAll('.tour').forEach(e=>e.remove());document.querySelectorAll('.hl').forEach(e=>e.classList.remove('hl'));
  if(i>=TOUR.length){toast('Here is a real deal from your searches');go('car','c1','sourcing');return}
  const [t,txt]=TOUR[i];
- const phone=false;const el=document.querySelector(phone?`.bottom [data-tab="${t}"]`:`.tabs [data-tab="${t}"]`);el.classList.add('hl');
+ const phone=innerWidth<=760;const el=document.querySelector(phone?`.bottom [data-tab="${t}"]`:`.tabs [data-tab="${t}"]`);el.classList.add('hl');
  const r=el.getBoundingClientRect();const d=document.createElement('div');d.className='tour';
  d.innerHTML=`<div class="hint" style="color:#dfe6ff;margin-bottom:4px">Step ${i+1} of 4</div><div style="font-size:17px;margin-bottom:12px">${txt}</div><div style="display:flex;justify-content:space-between;align-items:center"><button class="skip" data-tour="skip">Skip tour</button><button class="btn sm" data-tour="${i+1}">${i<3?'Next':'Show me a deal'}</button></div>`;
  document.body.appendChild(d);
@@ -1362,7 +1362,7 @@ function closePops(){document.querySelectorAll('.pop,.scrim').forEach(e=>e.remov
 function toast(t){document.querySelectorAll('.toast').forEach(e=>e.remove());const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2600)}
 function sheet(html,bottom){closePops();const s=document.createElement('div');s.className='scrim'+(bottom?' bottomsheet':'');s.innerHTML=`<div class="sheet">${html}</div>`;s.addEventListener('click',e=>{if(e.target===s)s.remove()});document.body.appendChild(s)}
 function popAt(el,html,cls,alignRight){closePops();const p=document.createElement('div');p.className='pop '+(cls||'');p.innerHTML=html;document.body.appendChild(p);
- if(cls==='bellpop'&&false)return;
+ if(cls==='bellpop'&&innerWidth<=760)return;
  const r=el.getBoundingClientRect();let top=r.bottom+6;if(top+p.offsetHeight>innerHeight)top=r.top-p.offsetHeight-6;p.style.top=top+'px';
  p.style.left=alignRight?Math.max(8,r.right-p.offsetWidth)+'px':Math.max(8,r.left)+'px';}
 
@@ -1400,7 +1400,7 @@ document.addEventListener('click',e=>{
  if(d.upl!==undefined){closePops();const slot=document.querySelector('.ask .attachslot');document.querySelectorAll('.attachslot').forEach(s=>s.innerHTML='');const f={photo:'IMG_2041.jpg',cam:'VIN plate photo',doc:'window_sticker.pdf'}[d.upl];(window._plusBar||slot).querySelector('.attachslot').innerHTML=`<span class="attach">${ic('doc')}${f}</span>`;return}
  switch(d.act){
   case 'back':back();break;
-  case 'side':if(false)document.getElementById('app').classList.toggle('drawer');else{S.sideOpen=!S.sideOpen;document.getElementById('app').classList.toggle('closed',!S.sideOpen)}break;
+  case 'side':if(innerWidth<=760)document.getElementById('app').classList.toggle('drawer');else{S.sideOpen=!S.sideOpen;document.getElementById('app').classList.toggle('closed',!S.sideOpen)}break;
   case 'newchat':tab('intel');document.getElementById('app').classList.remove('drawer');setTimeout(()=>{const i=document.querySelector('#homeask input');i&&i.focus()},50);break;
   case 'ask':{const f=t.closest('form');const q=f.querySelector('input').value;const ctx=S.scr==='car'||S.scr==='lotcar'?(CARS.find(x=>x.id===S.arg)||LOT.find(x=>x.id===S.arg)).md:S.tab==='mylot'?'my lot':'';stopMic();ask(q,ctx);break}
   case 'mic':micToggle(t.closest('form'));break;
@@ -1456,7 +1456,7 @@ function stopMic(){clearInterval(micTimer);document.querySelectorAll('.ask.liste
 
 /* ================= BOOT ================= */
 seedChats();
-if(false)S.sideOpen=true;
+if(innerWidth<=760)S.sideOpen=true;
 const h=location.hash.slice(1);
 if(h==='signup'){S.signedUp=false;S.sign=0}
 render();
