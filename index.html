@@ -1339,7 +1339,7 @@ function drawChart(){
  g+=`<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${brand}" stop-opacity=".26"/><stop offset="1" stop-color="${brand}" stop-opacity="0"/></linearGradient></defs>`;
  g+=`<polygon points="${d.map((v,i)=>`${X(i)},${Y(v)}`).join(' ')} ${X(base)},${H-B} ${X(0)},${H-B}" fill="url(#ga)"/>`;
  g+=`<polygon points="${band}" fill="${brand}" opacity=".12"/>`;
- g+=`<polyline points="${bs.map((v,i)=>`${X(i)},${Y(v)}`).join(' ')}" fill="none" stroke="${ink}" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round" opacity=".85"/><text x="${X(bs.length-1)-6}" y="${Y(bs[bs.length-1])+(bs[bs.length-1]>d[base]?-8:18)}" fill="${ink}" font-size="12.5" font-weight="600" text-anchor="end">${bn}</text>`;
+ g+=`<polyline points="${bs.map((v,i)=>`${X(i)},${Y(v)}`).join(' ')}" fill="none" stroke="${ink}" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round" opacity=".85"/><text x="${X(bs.length-1)-6}" y="${Y(bs[bs.length-1])+(bs[bs.length-1]>d[base]?-8:18)}" fill="${ink}" font-size="12.5" font-weight="600" text-anchor="end">${bn}${port?' '+money(bs[bs.length-1]):''}</text>`;
  g+=`<polyline points="${d.map((v,i)=>`${X(i)},${Y(v)}`).join(' ')}" fill="none" stroke="${brand}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
  g+=`<polyline points="${fc.map((v,i)=>`${X(base+i)},${Y(v)}`).join(' ')}" fill="none" stroke="${brand}" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round"/><circle cx="${X(base)}" cy="${Y(d[base])}" r="4.5" fill="${brand}" stroke="${css.getPropertyValue('--surf')}" stroke-width="3"/>`;
  g+=`<line x1="${X(base)}" x2="${X(base)}" y1="${T}" y2="${H-B}" stroke="${ink}" stroke-dasharray="2 4"/><text x="${X(base)+6}" y="${T+14}" fill="${ink}" font-size="13">Today</text><text x="${X(base+F/2)}" y="${H-10}" fill="${ink}" font-size="13" text-anchor="middle">Estimate</text>`;
@@ -1348,7 +1348,7 @@ function drawChart(){
   g+=`<text x="${X(base)-8}" y="${Y(d[base])-12}" fill="${brand}" font-size="14" font-weight="800" text-anchor="end">You ${money(d[base])}</text>`;
   g+=`<text x="${X(base+F)+6}" y="${Y(fe)+5}" fill="${brand}" font-size="13" font-weight="700">${money(fe)}</text>`;
   g+=`<text x="${X(base+F)+6}" y="${Y(fe)+21}" fill="${ink}" font-size="12">in ${F} mo</text>`;
-  g+=`<text x="${X(0)+4}" y="${Y(d[0])-10}" fill="${ink}" font-size="12.5">${money(d[0])}</text>`;}
+  g+=`<text x="${X(0)+2}" y="${Y(d[0])+20}" fill="${ink}" font-size="12.5">${money(d[0])}</text>`;}
  $('#chart').innerHTML=g;
 }
 
