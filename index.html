@@ -1505,7 +1505,7 @@ function lotHome(){
  if(S.lotEmpty)return `<div class="wrap"><h1 class="pagetitle">My lot</h1><div class="card" style="padding:40px;text-align:center;margin-top:16px"><p style="margin-top:0">Add your cars to see how each one sits against the market.</p><button class="btn main" data-act="addcar">${ic('plus')}Add your cars</button></div><p class="hint" style="text-align:center"><a href="#" data-act="toggleempty">Sketch: show full lot</a></p></div>`;
  const rows=[...LOT].sort((a,b)=>b.score-a.score);
  const need=rows.filter(r=>r.tag==='above'||r.days>r.typ).length;
- return `<div class="wrap"><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><h1 class="pagetitle" style="margin-right:auto">My lot</h1><button class="btn main" data-act="addcar">${ic('plus')}Add car</button></div>
+ return `<div class="wrap"><div class="srchead"><h1 class="pagetitle" style="margin:0">My lot</h1><button class="btn main" data-act="addcar">${ic('plus')}Add car</button></div>
  <p class="mut" style="margin:4px 0 14px">${LOT.length} cars · ${need} need attention · sorted by needs attention first</p>
  ${lotStats()}
  <div class="lotgal">
