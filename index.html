@@ -661,6 +661,17 @@ label.f{font-size:13.5px}
 .combo .opt-i:hover,.combo .opt-i.act{background:var(--surf2);color:var(--ink)}
 .combo .opt-i.free{border-top:1px solid var(--hair);margin-top:4px;padding-top:11px;color:var(--link)}
 
+/* ===== tablet (761-1180 px) (12.11.2026) ===== */
+@media (min-width:761px) and (max-width:1180px){
+  .boxes{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+  .wrap{padding:22px 22px 40px}
+  .pgrid{grid-template-columns:1fr 1fr;row-gap:12px}
+  .lotstats{grid-template-columns:1fr 1fr}
+  .lotcharts{grid-template-columns:1fr}
+  .tiers{grid-template-columns:1fr}
+  .layout2{grid-template-columns:220px 1fr;gap:16px}
+}
+
 /* ===== ROADROCKET LOGO STANDARD v1 (12.11.2026). Spec: RoadRocket/decisions/2026-11-12-logo-standard.md. Change values here only. ===== */
 :root{--rr-tilt:-21deg;--rr-cut-y:59.9%;--rr-cut-h:max(.035em,1px);--rr-blue:#5b7cff}
 :root[data-theme="light"]{--rr-blue:#1a3fb8}
@@ -1456,7 +1467,7 @@ function stopMic(){clearInterval(micTimer);document.querySelectorAll('.ask.liste
 
 /* ================= BOOT ================= */
 seedChats();
-if(innerWidth<=760)S.sideOpen=true;
+if(innerWidth<=760)S.sideOpen=true;if(innerWidth>760&&innerWidth<1100)S.sideOpen=false; /* tablet: chats list folded by default */
 const h=location.hash.slice(1);
 if(h==='signup'){S.signedUp=false;S.sign=0}
 render();
