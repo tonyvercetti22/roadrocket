@@ -1161,7 +1161,7 @@ const GREETS=['What are we hunting for today, {u}?','Hunting for some wheels, {u
 const GREET_PICK=GREETS[Math.floor(Math.random()*GREETS.length)];
 function greeting(){return GREET_PICK.replace('{u}',S.user)}
 function intelHome(){
- const P=[['compare','Compare','Any car vs the market.','scale'],['hot','Hot','Sells the fastest.','flame'],['volume','Volume','Sells the most.','bars'],['top','Top pick','Best buy this month.','trophy'],['comp','Competitors','You vs 5 rivals.','users']];
+ const P=[['top','Top pick','Best buy this month.','trophy'],['compare','Compare','Any car vs the market.','scale'],['hot','Hot','Sells the fastest.','flame'],['volume','Volume','Sells the most.','bars'],['comp','Competitors','You vs 5 rivals.','users']];
  return `<div class="home"><h1 class="logo"><span class="r">Road</span><b>Rocket</b></h1><p class="greet">${greeting()}</p>
  ${askBar('homeask','Ask about any car, VIN or listing link')}
  <div class="boxes">${P.map(p=>`<button class="box" data-pillar="${p[0]}"><span class="bico">${ic(p[3])}</span><span><h3>${p[1]}</h3><p>${p[2]}</p></span><span class="barr">${ic('arrow')}</span></button>`).join('')}</div></div>`;
