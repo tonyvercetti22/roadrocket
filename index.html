@@ -719,9 +719,8 @@ label.f{font-size:13.5px}
   .combo-list{max-height:min(280px,calc(40dvh / var(--z,1)))}
 }
 @media (max-height:500px) and (max-width:1000px){
-  .bottom,.dock{display:none!important}
-  .view{padding-bottom:24px}
-  .app{grid-template-columns:1fr}
+  .dock{display:none!important}
+  .view{padding-bottom:calc(80px + env(safe-area-inset-bottom))}
 }
 @media (orientation:landscape) and (max-width:1000px){
   .side{padding-left:max(10px,env(safe-area-inset-left))}
