@@ -1989,7 +1989,8 @@ if(h&&h!=='signup'){const m={sourcing:'sourcing',mylot:'mylot',invest:'invest'};
    p.style.setProperty('--len',Math.ceil(L));p.classList.remove('draw');void p.getBBox();p.classList.add('draw');
   });
  }
- document.addEventListener('scroll',e=>{const v=e.target;if(v&&v.id==='view')v.classList.toggle('scrolled',v.scrollTop>8)},true);
+ document.addEventListener('scroll',e=>{const v=e.target;if(!v||v.id!=='view')return;v.classList.toggle('scrolled',v.scrollTop>8);
+  const b=v.getBoundingClientRect().bottom;v.querySelectorAll('.rv:not(.in)').forEach(el=>{if(el.getBoundingClientRect().top<b){io&&io.unobserve(el);el.classList.add('in');setTimeout(()=>el.classList.remove('rv','in'),800)}})},true);
  document.addEventListener('keydown',e=>{
   if(e.key!=='Escape'||e.defaultPrevented)return;
   if(document.querySelector('.pop,.scrim,#ibxwrap,.combo.open,.tour'))return;
