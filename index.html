@@ -1217,7 +1217,7 @@ function ask(q,ctx){
 /* ---------- SOURCING ---------- */
 function sourcingHome(){
  return `<div class="wrap">${backBtn()}<div class="srchead"><h1 class="pagetitle" style="margin:0">Sourcing</h1><button class="btn main" data-act="newsearch">${ic('plus')}New search</button></div><div class="sect"><h2>Offers sent</h2><p class="mut" style="margin-top:0">Cars you made an offer on, and where each one stands.</p>
- <div class="card">${OFFERS.map(o=>{const c=CARS.find(x=>x.id===o.car);return `<div class="saved" data-car="${c.id}">${ic('send')}<div><b>${c.y} ${c.mk} ${c.md}</b><div class="hint">You offered ${money(o.amt)} · asking ${money(c.price)} · ${c.seller} · ${o.when}</div></div><span class="new">${o.st}</span></div>`}).join('')}</div></div>
+ <div class="card">${OFFERS.map(o=>{const c=CARS.find(x=>x.id===o.car);return `<div class="saved" data-car="${c.id}">${ic('mail')}<div><b>${c.y} ${c.mk} ${c.md}</b><div class="hint">You offered ${money(o.amt)} · asking ${money(c.price)} · ${c.seller} · ${o.when}</div></div><span class="new">${o.st}</span></div>`}).join('')}</div></div>
  <div class="sect"><h2>Saved searches</h2><p class="mut" style="margin-top:0">New matches since your last visit.</p>
  <div class="card">${SEARCHES.map(s=>`<div class="saved" data-search="${s.id}">${ic('search')}<div><b>${s.name}</b><div class="hint">${s.crit.join(' · ')}</div></div><span class="new">${s.n} new</span></div>`).join('')}</div></div></div>`;
 }
