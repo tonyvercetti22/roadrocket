@@ -975,7 +975,7 @@ const ALERTS=[
 /* ================= STATE ================= */
 const S={tab:'intel',scr:'home',arg:null,stack:[],chats:[],chatId:null,starred:new Set(['c8']),
  sideOpen:true,vehicle:'car',flt:{maxPrice:250000,seller:{Dealer:true,Private:true},trans:{Manual:true,PDK:true,DCT:true},saved:false},
- invMode:'mine',invF:{cat:'Any',c:'Any',y:[1960,2026],b:[50000,1e9],hp:[150,1e9]},range:'1Y',bench:'sp',lotEmpty:false,user:'Thomas',signedUp:true,offline:false,
+ invMode:'mine',invF:{cat:'Any',c:'Any',y:[1960,2026],b:[50000,1e9],hp:[150,1e9]},range:'1Y',bench:null,lotEmpty:false,user:'Thomas',signedUp:true,offline:false,
  prefs:{makes:['Porsche','Ferrari'],region:'Florida + Southeast',band:'$150k to $500k'},
  alerts:{bell:true,sms:true,wa:true,email:true,digest:'7:00 am',max:5,quiet:'9pm to 7am',thr:10}};
 let uid=1;
@@ -1509,10 +1509,10 @@ function bestList(){
  ${hit.length>1?`<h2 style="margin:18px 0 8px">All ${hit.length} matches, best first</h2><div class="card">${hit.map((w,i)=>`<div class="saved" data-chart="${w.id}"><div><b>${i+1}. ${w.name}</b><div class="hint">${w.c} · ${w.cat} · ${w.y} · ${w.hp} hp</div></div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(w.g*1200)} <span class="hint">12 mo est.</span></div><div class="hint">${(v=>(v>=0?'+':'−')+Math.abs(v).toFixed(0))(y5(w))}% last 5 yr</div></span></div>`).join('')}</div>`:''}
  <div style="margin:10px 2px 0">${src('Sketch numbers. Live: sales and listings per model, 10 years. Estimates are not facts.')}</div>`;
 }
-function benchPicker(){return `<div class="benchrow"><span class="lbl">Compare to</span><div class="ranges" style="margin:0">${Object.entries(BENCH).map(([k,b])=>`<button class="${S.bench===k?'on':''}" data-bench="${k}">${b.n}</button>`).join('')}</div></div>`}
+function benchPicker(){return `<div class="benchrow"><span class="lbl">Compare to</span><div class="ranges" style="margin:0"><button class="${S.bench?'':'on'}" data-bench="none">Nothing</button>${Object.entries(BENCH).map(([k,b])=>`<button class="${S.bench===k?'on':''}" data-bench="${k}">${b.n}</button>`).join('')}</div></div>`}
 function portfolioBlock(){
  const paid=MINE.reduce((t,w)=>t+w.paid,0),now=MINE.reduce((t,w)=>t+w.v,0),b=BENCH[S.bench];
- const alt=MINE.reduce((t,w)=>t+w.paid*Math.pow(1+b.y,2026-+w.since),0);const diff=now-alt;
+ const alt=b?MINE.reduce((t,w)=>t+w.paid*Math.pow(1+b.y,2026-+w.since),0):0;const diff=now-alt;
  const f12=MINE.reduce((t,w)=>t+w.v*(1+w.g*12),0);
  const gn=w=>(w.v-w.paid)/w.paid*100,byG=[...MINE].sort((x,y)=>gn(y)-gn(x)),best=byG[0],worst=byG[byG.length-1];
  const row=(w,lbl)=>`<div class="saved" data-chart="${w.id}"><div>${lbl?`<div class="lbl">${lbl}</div>`:''}<b>${w.name}</b><div class="hint">Paid ${money(w.paid)} in ${w.since}</div></div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(gn(w))} <span class="hint">since ${w.since}</span></div></span></div>`;
@@ -1521,7 +1521,7 @@ function portfolioBlock(){
  <button class="btn" data-act="addwatch" style="margin-top:12px">${ic('plus')}Add a car you own</button>`;
  return `<div class="pstrip" style="margin-top:6px">
   <div><span class="lbl">Worth today</span><b>${money(now)}</b><span>${pct((now-paid)/paid*100)} on ${money(paid)} paid</span></div>
-  <div><span class="lbl">Same money in ${b.n}</span><b>${money(alt)}</b><span>${diff>=0?`<b class="up">↑ ${money(diff)} ahead</b>`:`<b class="down">↓ ${money(-diff)} behind</b>`}</span></div>
+  ${b?`<div><span class="lbl">Same money in ${b.n}</span><b>${money(alt)}</b><span class="hint">${diff>=0?`Your cars are ${money(diff)} ahead`:`${money(-diff)} more, but no car to drive or sell`}</span></div>`:`<div><span class="lbl">Profit so far</span><b class="${now>=paid?'up':'down'}">${now>=paid?'+':'−'}${money(Math.abs(now-paid))}</b><span>Best: ${best.name.replace(/^\d{4} /,'')} <b class="up">+${money(best.v-best.paid)}</b></span></div>`}
   <div><span class="lbl">In 12 months</span><b>~${money(f12)}</b><span class="hint">${money(f12*0.92)} to ${money(f12*1.08)}. Estimate</span></div>
  </div>
  <div class="trajhead"><h2 style="margin:0">Trajectory</h2><div class="ranges" style="margin:0">${['1Y','5Y','All'].map(r=>`<button class="${S.range===r?'on':''}" data-range="${r}">${r}</button>`).join('')}</div></div>
@@ -1541,7 +1541,7 @@ function chartView(){
  ${benchPicker()}<div class="ranges">${['3M','6M','1Y','5Y','All'].map(r=>`<button class="${S.range===r?'on':''}" data-range="${r}">${r}</button>`).join('')}</div>
  <p class="verdict" id="pverdict"></p>
  <div class="chartbox"><svg id="chart" viewBox="0 0 ${innerWidth<=760?420:800} ${innerWidth<=760?260:320}" style="width:100%;height:auto;display:block"></svg></div>
- <p class="hint">Solid line = real prices. Grey dashed line = ${BENCH[S.bench].n} from the same start. <b>Dotted line = estimate, not a fact.</b> Shaded band = likely range for the next 6 months.</p>
+ <p class="hint">Solid line = real prices. ${S.bench?`Grey dashed line = ${BENCH[S.bench].n} from the same start.`:''} <b>Dotted line = estimate, not a fact.</b> Shaded band = likely range for the next 6 months.</p>
  <div class="kv" style="margin-top:12px"><div><span>1-year change</span><b>${(a=>pct((a[a.length-1]/a[a.length-13]-1)*100))(series(w))}</b></div><div><span>Sold, last 12 months</span><b>${w.paid?'31':'64'}</b></div><div><span>Estimate in 6 months</span><b>${money(w.v*(1+w.g*6))} <span class="hint">range ${money(w.v*(1+w.g*6-0.05))} to ${money(w.v*(1+w.g*6+0.05))}</span></b></div></div></div>`;
 }
 function drawChart(){
@@ -1549,9 +1549,10 @@ function drawChart(){
  const port=S.scr!=='chart';const n=RN[S.range];let d,fc,lo,hi,F;
  if(port){const all=portSeries();d=all.slice(-n-1);F=Math.min(12,Math.max(3,Math.round(n/5)));fc=[...Array(F+1)].map((_,i)=>MINE.reduce((t,w)=>t+w.v*(1+w.g*i),0));lo=fc.map((v,i)=>v*(1-0.0067*i));hi=fc.map((v,i)=>v*(1+0.0067*i))}
  else{const w=[...WATCH,...MINE,...MKT].find(x=>x.id===S.arg);d=series(w).slice(-n-1);F=Math.min(6,n);fc=[...Array(F+1)].map((_,i)=>w.v*(1+w.g*i));lo=fc.map((v,i)=>v*(1-0.0085*i));hi=fc.map((v,i)=>v*(1+0.0085*i))}
- const bs=benchSeries(d[0],d.length-1,S.bench);
- const carCh=(d[d.length-1]/d[0]-1)*100,bCh=(bs[bs.length-1]/bs[0]-1)*100,gap=carCh-bCh,bn=BENCH[S.bench].n;
- const pv=$('#pverdict');if(pv)pv.innerHTML=`Last ${S.range==='All'?'10 years':S.range}: ${port?'your cars':'this model'} ${pct(carCh)}, ${bn} ${pct(bCh)}. ${gap>=0?'<b>Beat</b>':'<b>Behind</b>'} ${bn} by ${Math.abs(gap).toFixed(1)} points.`;
+ const hb=!!S.bench,bs=hb?benchSeries(d[0],d.length-1,S.bench):[];
+ const carCh=(d[d.length-1]/d[0]-1)*100,bCh=hb?(bs[bs.length-1]/bs[0]-1)*100:0,gap=carCh-bCh,bn=hb?BENCH[S.bench].n:'';
+ const per=S.range==='All'?'10 years':S.range,up=d[d.length-1]-d[0],fch=(fc[fc.length-1]/fc[0]-1)*100;
+ const pv=$('#pverdict');if(pv)pv.innerHTML=hb?`Last ${per}: ${port?'your cars':'this model'} ${pct(carCh)}, ${bn} ${pct(bCh)}. ${gap>=0?`<b>Beat</b> ${bn} by ${gap.toFixed(1)} points.`:`${bn} grew faster this time.`}`:`Last ${per}: ${port?'your cars':'this model'} ${pct(carCh)}, ${up>=0?'up':'down'} <b>${money(Math.abs(up))}</b>. Next ${F} months: ${pct(fch)} <span class="hint">estimate</span>.`;
  const vals=[...d,...lo,...hi,...bs];const mn=Math.min(...vals)*0.98,mx=Math.max(...vals)*1.02;
  const ph=innerWidth<=760,cz=parseFloat(getComputedStyle(document.documentElement).zoom)||1,cwid=$('#chart').getBoundingClientRect().width/cz;
  const W=Math.max(300,Math.round(cwid||(ph?420:800))),H=Math.round(Math.min(port?240:320,Math.max(port?190:220,W*(port?0.3:0.4)))),L=10,R=port?96:70,T=14,B=30,tot=d.length-1+F,cw=W-L-R;
@@ -1564,7 +1565,7 @@ function drawChart(){
  g+=`<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${brand}" stop-opacity=".26"/><stop offset="1" stop-color="${brand}" stop-opacity="0"/></linearGradient></defs>`;
  g+=`<polygon points="${d.map((v,i)=>`${X(i)},${Y(v)}`).join(' ')} ${X(base)},${H-B} ${X(0)},${H-B}" fill="url(#ga)"/>`;
  g+=`<polygon points="${band}" fill="${brand}" opacity=".12"/>`;
- g+=`<polyline points="${bs.map((v,i)=>`${X(i)},${Y(v)}`).join(' ')}" fill="none" stroke="${ink}" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round" opacity=".85"/><text x="${X(bs.length-1)-6}" y="${Y(bs[bs.length-1])+(bs[bs.length-1]>d[base]?-8:18)}" fill="${ink}" font-size="12.5" font-weight="600" text-anchor="end">${bn}${port?' '+money(bs[bs.length-1]):''}</text>`;
+ if(hb)g+=`<polyline points="${bs.map((v,i)=>`${X(i)},${Y(v)}`).join(' ')}" fill="none" stroke="${ink}" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round" opacity=".85"/><text x="${X(bs.length-1)-6}" y="${Y(bs[bs.length-1])+(bs[bs.length-1]>d[base]?-8:18)}" fill="${ink}" font-size="12.5" font-weight="600" text-anchor="end">${bn}${port?' '+money(bs[bs.length-1]):''}</text>`;
  g+=`<polyline points="${d.map((v,i)=>`${X(i)},${Y(v)}`).join(' ')}" fill="none" stroke="${brand}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
  g+=`<polyline points="${fc.map((v,i)=>`${X(base+i)},${Y(v)}`).join(' ')}" fill="none" stroke="${brand}" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round"/><circle cx="${X(base)}" cy="${Y(d[base])}" r="4.5" fill="${brand}" stroke="${css.getPropertyValue('--surf')}" stroke-width="3"/>`;
  g+=`<line x1="${X(base)}" x2="${X(base)}" y1="${T}" y2="${H-B}" stroke="${ink}" stroke-dasharray="2 4"/><text x="${X(base)+6}" y="${T+14}" fill="${ink}" font-size="13">Today</text><text x="${X(base+F/2)}" y="${H-10}" fill="${ink}" font-size="13" text-anchor="middle">Estimate</text>`;
@@ -1679,7 +1680,7 @@ document.addEventListener('click',e=>{
  if(d.chart){go('chart',d.chart);return}
  if(d.inv){S.invMode=d.inv;render();return}
  if(d.ivf){S.invF[d.ivf]=d.val;document.querySelectorAll(`[data-ivf="${d.ivf}"]`).forEach(b=>b.classList.toggle('on',b.dataset.val===d.val));document.getElementById('ivres').innerHTML=bestList();return}
- if(d.bench){S.bench=d.bench;render();return}
+ if(d.bench){S.bench=d.bench==='none'?null:d.bench;render();return}
  if(d.range){S.range=d.range;document.querySelectorAll('[data-range]').forEach(b=>b.classList.toggle('on',b.dataset.range===S.range));drawChart();return}
  if(d.sw){if(d.sw==='dark'){const l=document.documentElement.dataset.theme==='light';document.documentElement.dataset.theme=l?'dark':'light'}else if(d.sw==='offline'){S.offline=!S.offline;shell()}else S.alerts[d.sw]=!S.alerts[d.sw];render(document.getElementById('view').scrollTop);return}
  if(d.size){document.documentElement.dataset.size=d.size;render(document.getElementById('view').scrollTop);return}
