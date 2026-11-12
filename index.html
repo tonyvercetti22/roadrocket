@@ -818,6 +818,11 @@ const SEARCHES=[
  {id:'s3',name:'Ferrari 812, under 5k mi',n:1,crit:['Ferrari 812','Under 5,000 mi','United States']},
  {id:'s4',name:'Manual 911 under 15k mi, under $250k',n:6,crit:['Porsche 911, manual','Under 15,000 mi','Under $250k']}
 ];
+const OFFERS=[
+ {car:'c1',amt:178000,st:'Countered $182k',when:'sent today'},
+ {car:'c7',amt:1540000,st:'Waiting',when:'sent 2 days ago'},
+ {car:'c5',amt:236000,st:'Accepted',when:'sent 4 days ago'}
+];
 const LOT=[
  {id:'l1',y:2019,mk:'Lamborghini',md:'Huracán EVO',mi:9800,col:'Verde Mantis',you:279000,mkt:268500,days:74,typ:41,hist:[['Listed',289000,'74 days ago'],['Lowered',279000,'30 days ago']]},
  {id:'l2',y:2021,mk:'Ferrari',md:'F8 Tributo',mi:4100,col:'Blu Tour de France',you:329900,mkt:318000,days:52,typ:28,hist:[['Listed',329900,'52 days ago']]},
@@ -1211,8 +1216,10 @@ function ask(q,ctx){
 
 /* ---------- SOURCING ---------- */
 function sourcingHome(){
- return `<div class="wrap">${backBtn()}<div class="srchead"><h1 class="pagetitle" style="margin:0">Sourcing</h1><button class="btn main" data-act="newsearch">${ic('plus')}New search</button></div><p class="mut" style="margin-top:0">Your saved searches. New matches since your last visit.</p>
- <div class="card">${SEARCHES.map(s=>`<div class="saved" data-search="${s.id}">${ic('search')}<div><b>${s.name}</b><div class="hint">${s.crit.join(' · ')}</div></div><span class="new">${s.n} new</span></div>`).join('')}</div></div>`;
+ return `<div class="wrap">${backBtn()}<div class="srchead"><h1 class="pagetitle" style="margin:0">Sourcing</h1><button class="btn main" data-act="newsearch">${ic('plus')}New search</button></div><div class="sect"><h2>Offers sent</h2><p class="mut" style="margin-top:0">Cars you made an offer on, and where each one stands.</p>
+ <div class="card">${OFFERS.map(o=>{const c=CARS.find(x=>x.id===o.car);return `<div class="saved" data-car="${c.id}">${ic('send')}<div><b>${c.y} ${c.mk} ${c.md}</b><div class="hint">You offered ${money(o.amt)} · asking ${money(c.price)} · ${c.seller} · ${o.when}</div></div><span class="new">${o.st}</span></div>`}).join('')}</div></div>
+ <div class="sect"><h2>Saved searches</h2><p class="mut" style="margin-top:0">New matches since your last visit.</p>
+ <div class="card">${SEARCHES.map(s=>`<div class="saved" data-search="${s.id}">${ic('search')}<div><b>${s.name}</b><div class="hint">${s.crit.join(' · ')}</div></div><span class="new">${s.n} new</span></div>`).join('')}</div></div></div>`;
 }
 function fltCars(){
  const f=S.flt;return CARS.filter(c=>(S.arg==='all'||c.s===S.arg)&&c.price<=f.maxPrice*(S.arg==='s3'?10:1)&&f.seller[c.st]&&f.trans[c.trans]!==false&&(!f.saved||S.starred.has(c.id))).sort((a,b)=>a.vs-b.vs);
