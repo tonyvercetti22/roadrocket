@@ -1174,8 +1174,9 @@ function compareForm(){
   <div style="display:flex;gap:8px"><input type="text" id="vin" value="${f?'ZFF03RHA8N02xxxxx':''}" placeholder="VIN or https://..."><button class="btn" data-act="fill">Fill</button></div>
   <p class="hint" style="margin:14px 0 0">No VIN? Pick or type the car:</p>
   <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:10px"><div><label class="f">Make</label>${combo('make',f?'Ferrari':'','e.g. Porsche')}</div><div><label class="f">Model</label>${combo('model',f?'812 Competizione A':'','e.g. 911 GT3 Touring')}</div></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label class="f">Year</label><input type="text" value="${f?'2022':''}" placeholder="2022"></div><div><label class="f">Mileage</label><input type="text" value="${f?'2,400':''}" placeholder="6,100"></div></div>
-  <label class="f">Options</label><input type="text" value="${f?'Carbon wheels, telemetry':''}" placeholder="e.g. Paint to Sample, carbon seats">
+  ${rng1('Year',1960,2026,1,f?2022:2022,'year')}
+  ${rng1('Mileage',0,100000,500,f?2500:5000,'mi')}
+  <label class="f">Options</label>${chips('opt',['None','Carbon wheels','Telemetry','Carbon seats','Front lift','Paint to Sample'],'None',1).replace(f?'>Carbon wheels<':'@@','  data-x>Carbon wheels<')}
   ${cmpMore()}
   <button class="btn main" style="width:100%;margin-top:18px" data-act="runcompare">Compare to market</button>
  </div></div>`;
@@ -1236,6 +1237,13 @@ document.addEventListener('keydown',e=>{
  else if(e.key==='Enter'){if(b.classList.contains('open')&&i>=0){e.preventDefault();comboPick(b,opts[i].dataset.v)}}
  else if(e.key==='Escape'||e.key==='Tab'){b.classList.remove('open')}
 });
+/* Tap-only pickers (13.11.2026): no typing needed on search forms */
+const TOPMAKES=['Porsche','Ferrari','Lamborghini','McLaren','Mercedes-AMG','Aston Martin','Bentley','BMW'];
+function makeChips(){const rest=Object.keys(MAKES).filter(m=>!TOPMAKES.includes(m));return `<div class="cmpchips" data-name="make">${['Any',...TOPMAKES].map((o,i)=>`<span class="chip${i?'':' on'}" role="button" tabindex="0">${o}</span>`).join('')}<span class="chip more" role="button" tabindex="0" data-allmakes>+ ${rest.length} more</span>${rest.map(o=>`<span class="chip xtra" role="button" tabindex="0" hidden>${o}</span>`).join('')}</div>`}
+function modelChips(mk){const box=document.getElementById('modelpick');if(!box)return;const l=MAKES[mk];box.innerHTML=`<label class="f">Model</label>`+(l?chips('model',['Any',...l],'Any'):`<p class="hint" style="margin:0">Pick a make first.</p>`)}
+function amt(t){const m=String(t).replace(/[,$\s]/g,'').match(/([\d.]+)([kKmM]?)/);if(!m)return 0;return +m[1]*(m[2].toLowerCase()==='k'?1e3:m[2].toLowerCase()==='m'?1e6:1)}
+document.addEventListener('click',e=>{const a=e.target.closest('[data-allmakes]');if(a){e.stopPropagation();a.parentElement.querySelectorAll('.xtra').forEach(x=>x.hidden=false);a.remove();return}
+ const c=e.target.closest('.cmpchips[data-name="make"] .chip');if(c&&document.getElementById('modelpick'))setTimeout(()=>modelChips(c.textContent),0)});
 /* More criteria (12.11.2026): hidden until opened, chips for choices, drag ranges for numbers */
 function chips(name,opts,on,multi){return `<div class="cmpchips" data-name="${name}"${multi?' data-multi="1"':''}>${opts.map(o=>`<span class="chip${o===on?' on':''}" role="button" tabindex="0">${o}</span>`).join('')}</div>`}
 const HOT=[
@@ -1296,12 +1304,12 @@ function cmpMore(kind){
    <h4>The car</h4>
    <label class="f">Body</label>${chips('body',['Any','Coupe','Convertible','Targa'],'Any')}
    <label class="f">Condition</label>${chips('cond',['Any','Concours','Excellent','Good','Fair'],'Any')}
-   <label class="f">Exterior colour</label><input type="text" placeholder="Any, e.g. Shark Blue or Paint to Sample">
+   <label class="f">Exterior colour</label>${chips('col',['Any','Black','White','Grey / silver','Red','Blue','Yellow','Green','Paint to Sample'],'Any',1)}
    <label class="f">Interior</label>${chips('int',['Any','Black','Red / tan','Two-tone'],'Any')}
    <label class="f">Owners</label>${chips('own',['Any','1','2','3+'],'Any')}
    <label class="f">History</label>${chips('hist',['Any','No accidents','Clean title','Full service history'],'Any',1)}
-   <label class="f">Options</label><input type="text" placeholder="e.g. carbon seats, front lift, Weissach">
-   <label class="f">Must not have</label><input type="text" placeholder="e.g. salvage, wrap, aftermarket exhaust">
+   <label class="f">Options</label>${chips('opt',['Any','Carbon seats','Front lift','Weissach / track pack','Carbon brakes','Sport exhaust','Sport Chrono'],'Any',1)}
+   <label class="f">Must not have</label>${chips('not',['Nothing','Salvage title','Wrap','Aftermarket exhaust','Modified','Track use'],'Nothing',1)}
    <h4>The listing</h4>
    ${rng1('Price vs market, at most',-20,10,1,10,'vs')}
    ${rng1('Days on market, at most',7,180,1,180,'days')}
@@ -1318,7 +1326,7 @@ function cmpMore(kind){
    <label class="f">Condition</label>${chips('cond',['Any','Concours','Excellent','Good','Fair'],'Any')}
    <label class="f">Owners</label>${chips('own',['Any','1','2','3+'],'Any')}
    <label class="f">History</label>${chips('hist',['Any','No accidents','Clean title','Full service history'],'Any',1)}
-   <label class="f">Colour</label><input type="text" placeholder="e.g. Guards Red, any shade">
+   <label class="f">Colour</label>${chips('col',['Any','Black','White','Grey / silver','Red','Blue','Yellow','Paint to Sample'],'Any',1)}
    <h4>Compare against</h4>
    ${rng('Year',1990,2026,1,2019,2024,'year')}
    ${rng('Mileage',0,100000,1000,0,20000,'mi')}
@@ -1393,9 +1401,9 @@ function filterPanel(){
  const f=S.flt;
  const q=S.q||{};
  return `<h4>Make and model</h4><div style="display:grid;gap:6px">${combo('make',q.make||'','Make')}${combo('model',q.model||'','Model')}</div>
- <h4 style="margin-top:14px">Year</h4><div style="display:flex;gap:6px"><input type="text" value="${q.y0||''}" placeholder="From"><input type="text" value="${q.y1||''}" placeholder="To"></div>
+ ${rng('Year',1960,2026,1,+q.y0||1960,+q.y1||2026,'year')}
  <h4 style="margin-top:14px">Max price: ${money(f.maxPrice)}</h4><input type="range" min="150000" max="250000" step="5000" value="${f.maxPrice}" data-flt="maxPrice" style="width:100%">
- <h4 style="margin-top:14px">Max mileage</h4><input type="text" value="${q.mi||''}" placeholder="Any">
+ <h4 style="margin-top:14px">Max mileage</h4>${chips('fmi',['Any','5,000','10,000','25,000','50,000'],q.mi?Number(q.mi).toLocaleString('en-US'):'Any')}
  <h4 style="margin-top:14px">Transmission</h4>${['Manual','PDK'].map(t=>`<label class="ck"><input type="checkbox" data-trans="${t}" ${f.trans[t]?'checked':''}>${t}</label>`).join('')}
  <h4 style="margin-top:14px">Seller</h4>${['Dealer','Private'].map(t=>`<label class="ck"><input type="checkbox" data-seller="${t}" ${f.seller[t]?'checked':''}>${t}</label>`).join('')}
  <h4 style="margin-top:14px">Colour</h4><select><option>Any colour</option><option>Paint to Sample</option></select>
@@ -1415,14 +1423,16 @@ function carRow(c){
 function searchForm(){
  return `<div class="wrap" style="max-width:680px">${backBtn()}<h1 class="pagetitle">New search</h1><p class="mut" style="margin-top:0">Tell us what you are looking for. Results show after you press Search.</p>
  <div class="card" style="padding:18px" id="nsform">
-  <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:10px"><div><label class="f" style="margin-top:0">Make</label>${combo('make','','e.g. Porsche')}</div><div><label class="f" style="margin-top:0">Model</label>${combo('model','','e.g. 911 GT3 Touring')}</div></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label class="f">Year from</label><input type="text" data-q="y0" placeholder="Any"></div><div><label class="f">Year to</label><input type="text" data-q="y1" placeholder="Any"></div></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label class="f">Max price ($)</label><input type="text" data-q="price" placeholder="Any"></div><div><label class="f">Max mileage</label><input type="text" data-q="mi" placeholder="Any"></div></div>
+  <label class="f" style="margin-top:0">Make</label>${makeChips()}
+  <div id="modelpick"><label class="f">Model</label><p class="hint" style="margin:0">Pick a make first.</p></div>
+  ${rng('Year',1960,2026,1,1960,2026,'year').replace('class="rng"','class="rng" data-q="year"')}
+  <label class="f">Max price</label>${chips('price',['Any','$100k','$250k','$500k','$1M','$3M'],'Any')}
+  <label class="f">Max mileage</label>${chips('mi',['Any','5,000','10,000','25,000','50,000'],'Any')}
   <label class="f">Transmission</label><div class="cmpchips" data-name="trans"><span class="chip on">Any</span><span class="chip">Manual</span><span class="chip">PDK / automatic</span></div>
   <label class="f">Seller</label><div class="cmpchips" data-name="seller"><span class="chip on">Any</span><span class="chip">Dealer</span><span class="chip">Private</span></div>
-  <label class="f">Location</label><select data-q="loc"><option>Anywhere in the US</option><option>📍 Near my current location</option><option>Within 150 mi of me</option><option>Florida</option></select>
+  <label class="f">Location</label>${chips('loc',['Anywhere in the US','📍 Near me','Within 150 mi','Florida'],'Anywhere in the US')}
   ${cmpMore('src')}
-  <p class="hint" id="nshint" style="margin:12px 0 0;display:none">Add at least a make or model first.</p>
+  <p class="hint" id="nshint" style="margin:12px 0 0;display:none">Tap a make first.</p>
   <button class="btn main" style="width:100%;margin-top:18px" data-act="runsearch">${ic('search')}Search</button>
  </div></div>`;
 }
@@ -1775,9 +1785,10 @@ document.addEventListener('click',e=>{
   case 'clearflt':S.flt={maxPrice:250000,seller:{Dealer:true,Private:true},trans:{Manual:true,PDK:true,DCT:true},saved:false};render(0);break;
   case 'newsearch':S._pending=true;S.q={};S.flt={maxPrice:250000,seller:{Dealer:true,Private:true},trans:{Manual:true,PDK:true,DCT:true},saved:false};go('results','all');break;
   case 'runsearch':{const fm=document.getElementById('nsform'),v=k=>(fm.querySelector('[data-q="'+k+'"]')||{}).value||'',cb=k=>fm.querySelector('.combo[data-kind="'+k+'"] input').value.trim(),chip=n=>fm.querySelector('.cmpchips[data-name="'+n+'"] .chip.on').textContent;
-   const q={make:cb('make'),model:cb('model'),y0:v('y0'),y1:v('y1'),mi:v('mi'),loc:v('loc')};
+   const ch=n=>{const o=fm.querySelector('.cmpchips[data-name="'+n+'"] .chip.on');return o&&!/^(Any|Anywhere)/.test(o.textContent)?o.textContent:''},yr=fm.querySelector('.rng[data-q="year"]'),y0=+yr.querySelector('.lo').value,y1=+yr.querySelector('.hi').value;
+   const q={make:ch('make'),model:ch('model'),y0:y0>1960?y0:'',y1:y1<2026?y1:'',mi:ch('mi')?amt(ch('mi')):'',loc:ch('loc')};
    if(!q.make&&!q.model){fm.querySelector('#nshint').style.display='block';break}
-   S.q=q;const pr=+v('price').replace(/\D/g,'');if(pr)S.flt.maxPrice=Math.min(250000,Math.max(150000,pr));
+   S.q=q;const pr=amt(ch('price'));if(pr)S.flt.maxPrice=Math.min(250000,Math.max(150000,pr));
    const t=chip('trans'),se=chip('seller');S.flt.trans={Manual:t!=='PDK / automatic',PDK:t!=='Manual',DCT:t!=='Manual'};S.flt.seller={Dealer:se!=='Private',Private:se!=='Dealer'};
    S._pending=false;S._loading=true;render(0);break}
   case 'listing':toast('Opens the original listing in a new tab');break;
