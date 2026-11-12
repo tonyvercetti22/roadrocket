@@ -1225,14 +1225,15 @@ function sourcingHome(){
  <div class="card">${SEARCHES.map(s=>`<div class="saved" data-search="${s.id}">${ic('search')}<div><b>${s.name}</b><div class="hint">${s.crit.join(' · ')}</div></div><span class="new">${s.n} new</span></div>`).join('')}</div></div></div>`;
 }
 function fltCars(){
- const f=S.flt;return CARS.filter(c=>(S.arg==='all'||c.s===S.arg)&&c.price<=f.maxPrice*(S.arg==='s3'?10:1)&&f.seller[c.st]&&f.trans[c.trans]!==false&&(!f.saved||S.starred.has(c.id))).sort((a,b)=>a.vs-b.vs);
+ const f=S.flt,q=S.q||{},has=(a,b)=>!b||a.toLowerCase().includes(b.toLowerCase());return CARS.filter(c=>(S.arg==='all'||c.s===S.arg)&&(S.arg!=='all'||(has(c.mk,q.make)&&has(c.md,q.model)&&(!q.y0||c.y>=+q.y0)&&(!q.y1||c.y<=+q.y1)&&(!q.mi||c.mi<=+String(q.mi).replace(/\D/g,''))))&&c.price<=f.maxPrice*(S.arg==='s3'?10:1)&&f.seller[c.st]&&f.trans[c.trans]!==false&&(!f.saved||S.starred.has(c.id))).sort((a,b)=>a.vs-b.vs);
 }
 function filterPanel(){
  const f=S.flt;
- return `<h4>Make and model</h4><select><option>Porsche 911 GT3</option><option>Any Porsche</option><option>Ferrari</option></select>
- <h4 style="margin-top:14px">Year</h4><div style="display:flex;gap:6px"><input type="text" value="2017"><input type="text" value="2019"></div>
+ const q=S.q||{};
+ return `<h4>Make and model</h4><div style="display:grid;gap:6px">${combo('make',q.make||'','Make')}${combo('model',q.model||'','Model')}</div>
+ <h4 style="margin-top:14px">Year</h4><div style="display:flex;gap:6px"><input type="text" value="${q.y0||''}" placeholder="From"><input type="text" value="${q.y1||''}" placeholder="To"></div>
  <h4 style="margin-top:14px">Max price: ${money(f.maxPrice)}</h4><input type="range" min="150000" max="250000" step="5000" value="${f.maxPrice}" data-flt="maxPrice" style="width:100%">
- <h4 style="margin-top:14px">Mileage</h4><select><option>Under 15,000 mi</option><option>Any</option></select>
+ <h4 style="margin-top:14px">Max mileage</h4><input type="text" value="${q.mi||''}" placeholder="Any">
  <h4 style="margin-top:14px">Transmission</h4>${['Manual','PDK'].map(t=>`<label class="ck"><input type="checkbox" data-trans="${t}" ${f.trans[t]?'checked':''}>${t}</label>`).join('')}
  <h4 style="margin-top:14px">Seller</h4>${['Dealer','Private'].map(t=>`<label class="ck"><input type="checkbox" data-seller="${t}" ${f.seller[t]?'checked':''}>${t}</label>`).join('')}
  <h4 style="margin-top:14px">Colour</h4><select><option>Any colour</option><option>Paint to Sample</option></select>
@@ -1249,8 +1250,22 @@ function carRow(c){
  <div class="price"><div class="p">${money(c.price)}</div><div>${pct(c.vs)} vs market</div><div class="hint">Market ${money(c.mkt)}</div>${starBtn(c.id)}</div>
  ${contacts(c)}</div>`;
 }
+function searchForm(){
+ return `<div class="wrap" style="max-width:680px">${backBtn()}<h1 class="pagetitle">New search</h1><p class="mut" style="margin-top:0">Tell us what you are looking for. Results show after you press Search.</p>
+ <div class="card" style="padding:18px" id="nsform">
+  <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:10px"><div><label class="f" style="margin-top:0">Make</label>${combo('make','','e.g. Porsche')}</div><div><label class="f" style="margin-top:0">Model</label>${combo('model','','e.g. 911 GT3 Touring')}</div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label class="f">Year from</label><input type="text" data-q="y0" placeholder="Any"></div><div><label class="f">Year to</label><input type="text" data-q="y1" placeholder="Any"></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label class="f">Max price ($)</label><input type="text" data-q="price" placeholder="Any"></div><div><label class="f">Max mileage</label><input type="text" data-q="mi" placeholder="Any"></div></div>
+  <label class="f">Transmission</label><div class="cmpchips" data-name="trans"><span class="chip on">Any</span><span class="chip">Manual</span><span class="chip">PDK / automatic</span></div>
+  <label class="f">Seller</label><div class="cmpchips" data-name="seller"><span class="chip on">Any</span><span class="chip">Dealer</span><span class="chip">Private</span></div>
+  <label class="f">Location</label><select data-q="loc"><option>Anywhere in the US</option><option>📍 Near my current location</option><option>Within 150 mi of me</option><option>Florida</option></select>
+  <p class="hint" id="nshint" style="margin:12px 0 0;display:none">Add at least a make or model first.</p>
+  <button class="btn main" style="width:100%;margin-top:18px" data-act="runsearch">${ic('search')}Search</button>
+ </div></div>`;
+}
 function results(){
- const s=SEARCHES.find(x=>x.id===S.arg)||{name:'All cars',crit:[]};const cs=fltCars();const tags=activeTags();
+ if(S.arg==='all'&&S._pending)return searchForm();
+ const q=S.q||{};const s=SEARCHES.find(x=>x.id===S.arg)||{name:[q.make,q.model].filter(Boolean).join(' ')||'Your search',crit:[]};const cs=fltCars();const tags=activeTags();
  const list=S._loading?'<div class="skel"></div><div class="skel"></div><div class="skel"></div>':cs.length?cs.map(carRow).join('')+`<p class="hint" style="text-align:center;padding:18px">You are caught up. ${cs.length} cars match.</p>`:'<p class="mut" style="padding:20px 0">No cars match these filters.</p>';
  return `<div class="wrap" style="max-width:1200px">${backBtn()}<h1 class="pagetitle">${s.name}</h1>
  <p class="mut" style="margin:0 0 6px">${cs.length} cars, best price first, adjusted for miles and year.</p>
@@ -1567,7 +1582,13 @@ document.addEventListener('click',e=>{
   case 'filters':sheet(`<div style="display:flex;justify-content:space-between;align-items:center"><h2>Filters</h2><button class="iconbtn" data-act="closesheet">${ic('x')}</button></div>${filterPanel()}<button class="btn main" style="width:100%;margin-top:18px" data-act="closesheet">Show ${fltCars().length} cars</button>`,true);break;
   case 'closesheet':closePops();render(0);break;
   case 'clearflt':S.flt={maxPrice:250000,seller:{Dealer:true,Private:true},trans:{Manual:true,PDK:true,DCT:true},saved:false};render(0);break;
-  case 'newsearch':S._loading=true;go('results','all');break;
+  case 'newsearch':S._pending=true;S.q={};S.flt={maxPrice:250000,seller:{Dealer:true,Private:true},trans:{Manual:true,PDK:true,DCT:true},saved:false};go('results','all');break;
+  case 'runsearch':{const fm=document.getElementById('nsform'),v=k=>(fm.querySelector('[data-q="'+k+'"]')||{}).value||'',cb=k=>fm.querySelector('.combo[data-kind="'+k+'"] input').value.trim(),chip=n=>fm.querySelector('.cmpchips[data-name="'+n+'"] .chip.on').textContent;
+   const q={make:cb('make'),model:cb('model'),y0:v('y0'),y1:v('y1'),mi:v('mi'),loc:v('loc')};
+   if(!q.make&&!q.model){fm.querySelector('#nshint').style.display='block';break}
+   S.q=q;const pr=+v('price').replace(/\D/g,'');if(pr)S.flt.maxPrice=Math.min(250000,Math.max(150000,pr));
+   const t=chip('trans'),se=chip('seller');S.flt.trans={Manual:t!=='PDK / automatic',PDK:t!=='Manual',DCT:t!=='Manual'};S.flt.seller={Dealer:se!=='Private',Private:se!=='Dealer'};
+   S._pending=false;S._loading=true;render(0);break}
   case 'listing':toast('Opens the original listing in a new tab');break;
   case 'addcar':sheet(`<h2>Add your cars</h2><p class="mut" style="margin-top:0">Pick one. You can mix them.</p>
    <button class="opt" data-add="feed">${ic('feed')}<div><b>Connect your website or feed</b><span>Automatic. Your lot stays up to date.</span></div></button>
