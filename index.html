@@ -840,6 +840,36 @@ body:has(#ibxwrap) .msgfab{display:none}
 .ranktbl .hint{white-space:nowrap}
 .rkn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--surf2);font-weight:700;font-size:14px;color:var(--muted)}
 .rkn.top{background:color-mix(in srgb,var(--brand) 25%,transparent);color:var(--link)}
+/* ===== ONE SYSTEM (Thomas 13.11.2026): every page shares width, type, number boxes, spacing and motion. Fibonacci 8/13/21/34/55/89 ===== */
+:root{--page-w:1080px;--ease-out:cubic-bezier(.16,1,.3,1)}
+.wrap{max-width:var(--page-w)!important;padding:34px 34px 89px}
+.pagetitle{font-size:27px;font-weight:700;margin:0 0 8px}
+.wrap h2{font-size:20px;font-weight:600;letter-spacing:-.01em}
+.wrap>h2{margin:34px 0 8px!important}
+.sect{margin-top:34px}.sect h2,.acc h2{margin-bottom:8px}
+.wrap h3{font-size:17px;font-weight:600}
+.trajhead{margin:34px 0 8px}.trajhead h2{margin:0!important}
+.srchead{min-height:55px;margin-bottom:8px;transition:box-shadow .2s var(--ease)}
+.view.scrolled .srchead{box-shadow:0 1px 0 var(--hair2)}
+.srchead .switch{margin:0}
+/* number boxes: one look on My lot and Invest */
+.lotstats{gap:13px;margin:0 0 21px}
+.pstrip{gap:13px;border:0!important;background:none!important;box-shadow:none!important;margin:8px 0 21px!important}
+.lotstats>div,.pstrip>div{background:var(--surf);border:1px solid var(--hair)!important;border-radius:var(--r-big);padding:21px!important;box-shadow:var(--e1);display:flex;flex-direction:column;gap:2px}
+:root:not([data-theme="light"]) .lotstats>div,:root:not([data-theme="light"]) .pstrip>div{background-image:var(--carbon-ghost);background-size:9px 9px}
+.lotstats>div>span:first-child,.pstrip .lbl{font-size:14px;color:var(--muted)}
+.lotstats>div>span:not(:first-child),.pstrip>div>span:not(.lbl){font-size:15px;color:var(--muted)}
+.lotstats b,.pstrip>div>b{font-size:26px!important;font-weight:800!important;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin:2px 0}
+.lotcharts .card{padding:21px}.chartbox{padding:21px 21px 13px}
+/* motion: calm, short, never blocks */
+@keyframes rr-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.view.enter>*{animation:rr-in .34s var(--ease-out) both}
+.rv{opacity:0;transform:translateY(13px)}
+.rv.in{opacity:1;transform:none;transition:opacity .55s var(--ease-out),transform .55s var(--ease-out)}
+@keyframes rr-draw{to{stroke-dashoffset:0}}
+.draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:rr-draw .89s var(--ease-out) .13s forwards}
+.lotcard:hover,.ltile:hover{transform:translateY(-2px)}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.draw{stroke-dasharray:none;stroke-dashoffset:0}}
 </style>
 <style>:root{--z:1}@media (min-width:1280px){:root{--z:.9}html{zoom:.9}}</style>
 </head>
@@ -1345,7 +1375,7 @@ function rngPaint(r){
  if(hi&&a>b){if(document.activeElement===lo){a=b;lo.value=a}else{b=a;hi.value=b}}
  const pc=v=>(v-min)/(max-min)*100,i=r.querySelector('i');
  if(hi){i.style.left=pc(a)+'%';i.style.right=(100-pc(b))+'%'}else{i.style.left='0';i.style.right=(100-pc(a))+'%'}
- const fm=v=>f==='pidx'?(v>=max?'any':v<=min?'$0':money(PSTEPS[v])):f==='own'?(v>=max?'any':v+(v>1?' owners':' owner')):f==='ago'?(v>=max?'any time':v===1?'24 hours':v+' days'):f==='vs'?(v>=max?'any price':(v>0?'+':'')+v+'%'):f==='days'?(v>=max?'any':v+' days'):f==='mi'?(v>=max?'any':v.toLocaleString('en-US')+' mi'):f==='dist'?(v>=max?'Nationwide':'within '+v.toLocaleString('en-US')+' mi'):f==='usd'?(v>=max?money(v)+'+':money(v)):f==='hp'?(v>=max?v+'+ hp':v+' hp'):v;
+ const fm=v=>f==='pidx'?(v>=max?'any':v<=min?'$0':money(PSTEPS[v])):f==='own'?(v>=max?'any':v+(v>1?' owners':' owner')):f==='ago'?(v>=max?(max===365?'1 year':'any time'):v===1?'24 hours':v+' days'):f==='vs'?(v>=max?'any price':(v>0?'+':'')+v+'%'):f==='days'?(v>=max?'any':v+' days'):f==='mi'?(v>=max?'any':v.toLocaleString('en-US')+' mi'):f==='dist'?(v>=max?'Nationwide':'within '+v.toLocaleString('en-US')+' mi'):f==='usd'?(v>=max?money(v)+'+':money(v)):f==='hp'?(v>=max?v+'+ hp':v+' hp'):v;
  r.querySelector('output').textContent=hi?(f==='pidx'&&a<=min&&b>=max?'Any price':f==='year'&&a<=min&&b>=max?'Any year':f==='mi'&&a===0&&b>=max?'Any mileage':fm(a)+' to '+fm(b)):fm(a);
 }
 function cmpCount(){document.querySelectorAll('.cmpmore').forEach(cmpCount1)}
@@ -1911,6 +1941,60 @@ if(h==='signup'){S.signedUp=false;S.sign=0}
 render();
 if(h&&h!=='signup'){const m={sourcing:'sourcing',mylot:'mylot',invest:'invest'};if(m[h])tab(m[h])}
 
+/* ===== Motion + polish layer (Thomas 13.11.2026): page fade-in, scroll reveal, count-up, chart draw, sticky hairline, Esc = back ===== */
+(function(){
+ const RM=matchMedia('(prefers-reduced-motion: reduce)');
+ const _render=render;let lastKey=null;
+ render=function(sc){
+  const k=[S.signedUp,S.tab,S.scr,S.arg,S.chatId,S.invMode,S.lotEmpty,S._loading].join('|');
+  const changed=k!==lastKey;lastKey=k;
+  _render(sc);
+  const v=document.getElementById('view');if(!v)return;
+  v.classList.toggle('scrolled',v.scrollTop>8);
+  if(!changed||RM.matches)return;
+  v.classList.remove('enter');void v.offsetWidth;v.classList.add('enter');
+  clearTimeout(v._et);v._et=setTimeout(()=>v.classList.remove('enter'),420);
+  reveal(v);countUp(v);drawLines(v);
+ };
+ let io=null;
+ function reveal(v){
+  if(io)io.disconnect();
+  const all=[...v.querySelectorAll('.card,.lotcard,.lotstats>div,.pstrip>div,.chartbox,.ltile,.sect,.carrow,.box,.lotcharts')];
+  const top=all.filter(e=>!all.some(o=>o!==e&&o.contains(e)));
+  const vb=v.getBoundingClientRect().bottom;
+  const below=top.filter(e=>e.getBoundingClientRect().top>vb-8);
+  if(!below.length)return;
+  io=new IntersectionObserver(ents=>{let i=0;ents.forEach(en=>{if(!en.isIntersecting)return;const el=en.target;io.unobserve(el);
+   setTimeout(()=>{el.classList.add('in');const done=()=>{el.classList.remove('rv','in');el.removeEventListener('transitionend',done)};el.addEventListener('transitionend',done);setTimeout(done,800)},Math.min(i++,4)*55)})},{root:v,rootMargin:'0px 0px -5% 0px'});
+  below.forEach(e=>{e.classList.add('rv');io.observe(e)});
+ }
+ function countUp(v){
+  v.querySelectorAll('.lotstats b,.pstrip>div>b,.ltb .lv').forEach(el=>{
+   if(el.children.length)return;const t=el.textContent;const m=t.match(/^([^\d]*)([\d][\d,]*\.?\d*)(.*)$/);if(!m)return;
+   const raw=m[2],n=parseFloat(raw.replace(/,/g,''));if(!isFinite(n)||n===0)return;
+   const dec=(raw.split('.')[1]||'').length,comma=raw.includes(',');
+   const fmt=x=>comma?x.toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec}):x.toFixed(dec);
+   const from=n*0.82,t0=performance.now(),D=610;
+   (function step(now){const p=Math.min(1,(now-t0)/D),e=1-Math.pow(1-p,3);if(!el.isConnected)return;
+    el.textContent=p<1?m[1]+fmt(from+(n-from)*e)+m[3]:t;if(p<1)requestAnimationFrame(step)})(t0);
+  });
+ }
+ function drawLines(v){
+  v.querySelectorAll('#lotchart path,#lotchart polyline,#chart path,#chart polyline').forEach(p=>{
+   const cs=getComputedStyle(p);if(cs.stroke==='none'||(cs.fill!=='none'&&!/rgba\(0, 0, 0, 0\)/.test(cs.fill)))return;
+   if(cs.strokeDasharray!=='none'||p.getAttribute('stroke-dasharray'))return;
+   let L=0;try{L=p.getTotalLength()}catch(e){}if(L<80)return;
+   p.style.setProperty('--len',Math.ceil(L));p.classList.remove('draw');void p.getBBox();p.classList.add('draw');
+  });
+ }
+ document.addEventListener('scroll',e=>{const v=e.target;if(v&&v.id==='view')v.classList.toggle('scrolled',v.scrollTop>8)},true);
+ document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape'||e.defaultPrevented)return;
+  if(document.querySelector('.pop,.scrim,#ibxwrap,.combo.open,.tour'))return;
+  const a=document.activeElement;if(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))return;
+  if(S.stack&&S.stack.length)back();
+ });
+})();
 </script>
 </body>
 </html>
