@@ -826,6 +826,16 @@ body:has(#ibxwrap) .msgfab{display:none}
 /* subtle greeting 13.11 */
 .home .greet{font-weight:300;font-size:16px;letter-spacing:.01em;opacity:.7}
 .ctyrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0 4px}.ctyrow .ctylbl{color:var(--muted);font-size:15px;min-width:70px}.ctyrow .cmpchips .chip{min-height:32px;padding:0 12px;font-size:14px}
+
+/* ===== Rank by: every column sortable, rank number (13.11.2026) ===== */
+.rankby{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:21px}
+.rankby .chip{cursor:pointer}
+.ranktbl th.hs button{background:none;border:none;padding:0;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer}
+.ranktbl th.hs.on{color:var(--ink)}
+.ranktbl td.hot{font-weight:800;color:var(--ink)}
+.ranktbl td.rk,.ranktbl th.rk{width:34px;padding-right:0}
+.rkn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--surf2);font-weight:700;font-size:14px;color:var(--muted)}
+.rkn.top{background:color-mix(in srgb,var(--brand) 25%,transparent);color:var(--link)}
 </style>
 <style>:root{--z:1}@media (min-width:1280px){:root{--z:.9}html{zoom:.9}}</style>
 </head>
@@ -1244,15 +1254,22 @@ const HOT=[
  {n:'Lamborghini Huracán',y:2019,hp:631,v:220000,d:83,ch:14,u:142,uc:4.4,m:6.6,sc:76}];
 const CTY={Global:{d:1.12,u:3.1},US:{d:1,u:1},UK:{d:1.18,u:.34},Germany:{d:1.09,u:.41},UAE:{d:.86,u:.22},Japan:{d:1.24,u:.27}};
 function hotFor(c){const k=CTY[c]||CTY.US;if(c==='US'||!CTY[c])return HOT;return HOT.map((w,i)=>{const j=1+((i*37+c.length*13)%17-8)/100;return {...w,d:Math.max(4,Math.round(w.d*k.d*j)),u:Math.max(1,Math.round(w.u*k.u*j)),ch:Math.round(w.ch*j+((i+c.length)%5-2)),uc:+(w.uc*j).toFixed(1)}})}
-function hotRefresh(box){const f={};box.querySelectorAll('.rng[data-hot]').forEach(x=>{const lo=+x.querySelector('.lo').value,hi=+x.querySelector('.hi').value,mx=+x.dataset.max;f[x.dataset.hot]=[lo,hi>=mx&&x.dataset.hot!=='y'?1e9:hi]});const on=box.querySelector('.ctyrow .chip.on');f.c=on?on.textContent:'US';const n=box.querySelector('.ctyname');if(n)n.textContent=f.c==='Global'?'worldwide':f.c;box.querySelector('.hotres').innerHTML=hotList(f,box.dataset.mode)}
+function hotRefresh(box){const f={};box.querySelectorAll('.rng[data-hot]').forEach(x=>{const lo=+x.querySelector('.lo').value,hi=+x.querySelector('.hi').value,mx=+x.dataset.max;f[x.dataset.hot]=[lo,hi>=mx&&x.dataset.hot!=='y'?1e9:hi]});const on=box.querySelector('.ctyrow .chip.on');f.c=on?on.textContent:'US';f.sort=box.dataset.sort;const n=box.querySelector('.ctyname');if(n)n.textContent=f.c==='Global'?'worldwide':f.c;box.querySelector('.hotres').innerHTML=hotList(f,box.dataset.mode)}
 function dragBox(mode,lbl){lbl=lbl.replace(', US,',', <span class="ctyname">US</span>,');return `<div class="pcard hotbox" data-mode="${mode}"><div class="lbl">${lbl}</div><p class="mut" style="margin:4px 0 0">Drag the lines. The list updates as you go.</p>
  <div class="ctyrow"><span class="ctylbl">Country</span>${chips('cty',['Global','US','UK','Germany','UAE','Japan'],'US')}</div>
  ${rng('Year',1960,2026,1,1960,2026,'year').replace('class="rng"','class="rng" data-hot="y"')}
  ${rng('Budget',50000,3000000,10000,50000,3000000,'usd').replace('class="rng"','class="rng" data-hot="b"')}
  ${rng('Horsepower',150,900,10,150,900,'hp').replace('class="rng"','class="rng" data-hot="hp"')}
  <div class="hotres">${hotList({y:[1960,2026],b:[50000,1e9],hp:[150,1e9]},mode)}</div></div>`}
+const HSORT={d:['Fastest to sell',(a,b)=>a.d-b.d],u:['Most sold',(a,b)=>b.u-a.u],ch:['Speeding up most',(a,b)=>a.ch-b.ch],m:['Best margin',(a,b)=>b.m-a.m]};
+function dch(p){const c=p<0?'up':p>0?'down':'mut';const a=p<0?'↓':p>0?'↑':'';return `<span class="${c}" title="${p<0?'Selling faster than last month':'Selling slower than last month'}">${a} ${p>0?'+':p<0?'−':''}${Math.abs(p)}%</span>`}
+function rankTable(hit,k,nm){
+ const col=(key,lbl)=>`<th class="num hs ${k===key?'on':''}"><button type="button" data-hsort="${key}">${lbl}${k===key?' ▾':''}</button></th>`;
+ return `<div class="rankby"><span class="ctylbl">Rank by</span>${Object.entries(HSORT).map(([key,[l]])=>`<button type="button" class="chip ${k===key?'on':''}" data-hsort="${key}">${l}</button>`).join('')}</div>
+ <table class="rows ranktbl" style="margin-top:8px"><tr><th class="rk">#</th><th>Model</th>${col('d','Days to sell')}${col('u','Sold this month')}${col('m','Margin')}${col('ch','Days vs last month')}</tr>
+ ${hit.map((w,i)=>`<tr><td class="rk"><span class="rkn ${i<3?'top':''}">${i+1}</span></td><td>${nm(w)}</td><td class="num ${k==='d'?'hot':''}">${w.d}</td><td class="num ${k==='u'?'hot':''}">${w.u}<div class="hint">${pct(w.uc)}</div></td><td class="num ${k==='m'?'hot':''}">${w.m}%</td><td class="num ${k==='ch'?'hot':''}">${dch(w.ch)}</td></tr>`).join('')}</table>`}
 function hotList(f,mode='hot'){
- const srt={hot:(a,b)=>a.d-b.d,volume:(a,b)=>b.u-a.u,top:(a,b)=>b.sc-a.sc}[mode];
+ const sk=f.sort||(mode==='volume'?'u':'d');const srt=mode==='top'?(a,b)=>b.sc-a.sc:HSORT[sk][1];
  const inR=w=>w.y>=f.y[0]&&w.y<=f.y[1]&&w.v>=f.b[0]&&w.v<=f.b[1]&&w.hp>=f.hp[0]&&w.hp<=f.hp[1];
  const SRC=hotFor(f.c||'US');let hit=SRC.filter(inR).sort(srt),near=false;
  if(!hit.length){near=true;const off=(v,lo,hi,sp)=>v<lo?(lo-v)/sp:v>hi?(v-hi)/sp:0;
@@ -1260,8 +1277,7 @@ function hotList(f,mode='hot'){
  const out=w=>{const m=[];if(w.y<f.y[0]||w.y>f.y[1])m.push(w.y);if(w.v<f.b[0]||w.v>f.b[1])m.push(money(w.v));if(w.hp<f.hp[0]||w.hp>f.hp[1])m.push(w.hp+' hp');return m.join(', ')};
  const nm=w=>`${w.n}<div class="hint">${w.y} · ${money(w.v)} · ${w.hp} hp${near?` · outside: ${out(w)}`:''}</div>`;
  const head=near?`<p class="mut" style="margin:14px 0 0"><b>Nothing fits every line exactly.</b> These are the ${hit.length} closest.</p>`:'';
- if(mode==='volume')return `${head}<table class="rows" style="margin-top:12px"><tr><th>Model</th><th class="num">Units</th><th class="num">vs last month</th></tr>
- ${hit.map(w=>`<tr><td>${nm(w)}</td><td class="num">${w.u}</td><td class="num">${pct(w.uc)}</td></tr>`).join('')}</table>`;
+ if(mode==='volume'||mode==='hot')return head+rankTable(hit,sk,nm);
  if(mode==='top'){const t=hit[0];return `${head}<div style="margin-top:14px"><div class="lbl">Top pick for these lines</div><div class="big">${t.n}</div><div class="hint">${t.y} · ${money(t.v)} · ${t.hp} hp${near?` · outside: ${out(t)}`:''}</div>
  <div class="pgrid"><div><span class="lbl">Sells in, average</span><b>${t.d} days</b></div><div><span class="lbl">Sold this month</span><b>${t.u}</b></div><div><span class="lbl">Typical dealer margin</span><b>${t.m}%</b></div><div><span class="lbl">Score</span><b>${t.sc} / 100</b></div></div></div>
  ${hit.length>1?`<table class="rows" style="margin-top:14px"><tr><th>Runners-up</th><th class="num">Days</th><th class="num">Sold</th><th class="num">Score</th></tr>${hit.slice(1).map(w=>`<tr><td>${nm(w)}</td><td class="num">${w.d}</td><td class="num">${w.u}</td><td class="num">${w.sc}</td></tr>`).join('')}</table>`:''}`}
@@ -1870,6 +1886,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('click',e=>{if(e.target.closest('#ibxwrap [data-car],#ibxwrap [data-lotcar]'))ibxClose()},true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('ibxwrap'))ibxClose()});
 
+document.addEventListener('click',e=>{const b=e.target.closest('[data-hsort]');if(!b)return;e.stopImmediatePropagation();const box=b.closest('.hotbox');box.dataset.sort=b.dataset.hsort;hotRefresh(box)},true);
 /* ================= BOOT ================= */
 seedChats();
 if(innerWidth<=760)S.sideOpen=true;if(innerWidth>760&&innerWidth<1100)S.sideOpen=false; /* tablet: chats list folded by default */
