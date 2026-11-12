@@ -603,6 +603,7 @@ label.f{font-size:13.5px}
 /* ===== LOGO v6 (12.11.2026): optical size match + subtle speed cut ===== */
 .logo b,.logo-s b,.bar h1.lg b{font-size:1.04em;font-weight:250}
 .logo .r{background:linear-gradient(180deg,currentColor 0 59.9%,transparent 59.9% 62.9%,currentColor 62.9%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.logo-s .r{background:linear-gradient(180deg,currentColor 0 59.9%,transparent 59.9% calc(59.9% + 1.6px),currentColor calc(59.9% + 1.6px));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 </style>
 <style>html{zoom:0.9}</style>
 </head>
@@ -812,7 +813,7 @@ function shell(){
  $('#root').innerHTML=`
  <div class="app ${S.sideOpen?'':'closed'}" id="app">
   <aside class="side" aria-label="Your chats">
-   <div class="side-top"><button class="iconbtn dsk" data-act="side" aria-label="Show or hide chats">${ic('menu')}</button><button class="logo-s hide-closed" data-go="home">Road<b>Rocket</b></button></div>
+   <div class="side-top"><button class="iconbtn dsk" data-act="side" aria-label="Show or hide chats">${ic('menu')}</button><button class="logo-s hide-closed" data-go="home"><span class="r">Road</span><b>Rocket</b></button></div>
    <button class="btn newchat" style="margin-top:12px" data-act="newchat" aria-label="New chat">${ic('plus')}<span class="hide-closed">New chat</span></button>
    <div id="chatlist" class="hide-closed"></div>
    <div class="side-foot">
