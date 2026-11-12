@@ -886,6 +886,7 @@ function money(n){
   if(n>=1e3){let k=n/1e3;return '$'+(Math.abs(k-Math.round(k))<0.05?Math.round(k):k.toFixed(1))+'k'}
   return '$'+n;
 }
+function val(p,dec=1){const a=Math.abs(p).toFixed(dec);if(Math.abs(p)<0.05)return `<span class="mut">At market</span>`;return p<0?`<span class="up">${a}% undervalued</span>`:`<span class="down">${a}% overvalued</span>`}
 function pct(p,dec=1){const s=p>0?'+':p<0?'−':'';const a=p>0?'↑':p<0?'↓':'';return `<span class="${p>0?'up':p<0?'down':'mut'}">${a} ${s}${Math.abs(p).toFixed(dec)}%</span>`}
 function mi(n){return n.toLocaleString('en-US')+' mi'}
 
@@ -1355,11 +1356,11 @@ function compareResult(){
  return `<div class="wrap" style="max-width:860px">${backBtn()}<h1 class="pagetitle">Compare</h1>
  <div class="pcard"><div class="lbl">${c.y} ${c.mk} ${c.md}${c.tr?', '+c.tr:''}, ${mi(c.mi)}</div>
  <div class="lbl" style="margin-top:10px">US average price</div><div class="big">${money(c.mkt)}</div>
- <div class="pgrid"><div><span class="lbl">Comps</span><b>${n}, last 90 days</b></div><div><span class="lbl">Usually sells in</span><b>${c.typ||21} days</b></div><div><span class="lbl">Price trend, 6 months</span><b>${pct(3.8)}</b></div><div><span class="lbl">${c.you?'Your price':'This listing'}</span><b>${money(price)}, ${pct(vs)}</b></div></div>
+ <div class="pgrid"><div><span class="lbl">Comps</span><b>${n}, last 90 days</b></div><div><span class="lbl">Usually sells in</span><b>${c.typ||21} days</b></div><div><span class="lbl">Price trend, 6 months</span><b>${pct(3.8)}</b></div><div><span class="lbl">${c.you?'Your price':'This listing'}</span><b>${money(price)}, ${val(vs)}</b></div></div>
  <div style="margin-top:10px">${src(`Based on ${n} listings, last 90 days`)}</div></div>
  <details class="card" style="padding:4px 14px;margin-top:12px" ${S._openComps?'open':''}><summary style="padding:10px 0;font-weight:600;cursor:pointer;color:var(--link)">See all ${n} comps</summary>
- <table class="rows"><tr><th>Year</th><th class="d-only">Miles</th><th class="d-only">Location</th><th class="d-only">Seller</th><th class="num">Price</th><th class="num">vs mkt</th><th class="num d-only">Days listed</th></tr>
- ${comps.map(r=>`<tr><td>${r.y}</td><td class="d-only">${mi(r.mi)}</td><td class="d-only">${r.loc}</td><td class="d-only">${r.st}</td><td class="num">${money(r.p)}</td><td class="num">${pct((r.p-c.mkt)/c.mkt*100)}</td><td class="num d-only">${r.d}</td></tr>`).join('')}
+ <table class="rows"><tr><th>Year</th><th class="d-only">Miles</th><th class="d-only">Location</th><th class="d-only">Seller</th><th class="num">Price</th><th class="num">Under / overvalued</th><th class="num d-only">Days listed</th></tr>
+ ${comps.map(r=>`<tr><td>${r.y}</td><td class="d-only">${mi(r.mi)}</td><td class="d-only">${r.loc}</td><td class="d-only">${r.st}</td><td class="num">${money(r.p)}</td><td class="num">${val((r.p-c.mkt)/c.mkt*100)}</td><td class="num d-only">${r.d}</td></tr>`).join('')}
  </table><p class="hint">Phone shows 3 columns; desktop shows all.</p></details>
  <div class="fups" style="margin-top:14px"><span class="chip" data-fup="What price sells it in 2 weeks?">What price sells it in 2 weeks?</span><span class="chip" data-fup="Show the price history">Show the price history</span></div></div>`;
 }
