@@ -1053,7 +1053,23 @@ document.addEventListener('keydown',e=>{
 function chips(name,opts,on,multi){return `<div class="cmpchips" data-name="${name}"${multi?' data-multi="1"':''}>${opts.map(o=>`<span class="chip${o===on?' on':''}" role="button" tabindex="0">${o}</span>`).join('')}</div>`}
 function rng(label,min,max,step,lo,hi,fmt){return `<div class="rng" data-min="${min}" data-max="${max}" data-fmt="${fmt}" data-lo0="${lo}" data-hi0="${hi}"><div class="rng-top"><span>${label}</span><output></output></div><div class="rng-track"><i></i><input type="range" class="lo" min="${min}" max="${max}" step="${step}" value="${lo}" aria-label="${label} from"><input type="range" class="hi" min="${min}" max="${max}" step="${step}" value="${hi}" aria-label="${label} to"></div></div>`}
 function rng1(label,min,max,step,v,fmt){return `<div class="rng one" data-min="${min}" data-max="${max}" data-fmt="${fmt}" data-lo0="${v}"><div class="rng-top"><span>${label}</span><output></output></div><div class="rng-track"><i></i><input type="range" class="lo" min="${min}" max="${max}" step="${step}" value="${v}" aria-label="${label}"></div></div>`}
-function cmpMore(){
+function cmpMore(kind){
+ if(kind==='src')return `<div class="cmpmore${S.srcMoreOpen?' open':''}" data-k="src">
+  <button type="button" class="cmpmore-btn" data-cmpmore><span class="pm">+</span> More criteria <span class="hint cmpcount"></span></button>
+  <div class="cmpmore-body">
+   <h4>The car</h4>
+   <label class="f">Body</label>${chips('body',['Any','Coupe','Convertible','Targa'],'Any')}
+   <label class="f">Condition</label>${chips('cond',['Any','Concours','Excellent','Good','Fair'],'Any')}
+   <label class="f">Owners</label>${chips('own',['Any','1','2','3+'],'Any')}
+   <label class="f">History</label>${chips('hist',['Any','No accidents','Clean title','Full service history'],'Any',1)}
+   <label class="f">Options</label><input type="text" placeholder="e.g. Paint to Sample, carbon seats">
+   <h4>The listing</h4>
+   ${rng1('Price vs market, at most',-20,10,1,10,'vs')}
+   ${rng1('Days on market, at most',7,180,1,180,'days')}
+   <label class="f">Listed in the last</label>${chips('win',['Any','24 hours','7 days','30 days'],'Any')}
+   <label class="f">Price dropped</label>${chips('drop',['Any','Yes, recently'],'Any')}
+   <button type="button" class="cmpreset" data-cmpreset>Reset criteria</button>
+  </div></div>`;
  return `<div class="cmpmore${S.cmpMoreOpen?' open':''}">
   <button type="button" class="cmpmore-btn" data-cmpmore><span class="pm">+</span> More criteria <span class="hint cmpcount"></span></button>
   <div class="cmpmore-body">
@@ -1079,18 +1095,18 @@ function rngPaint(r){
  if(hi&&a>b){if(document.activeElement===lo){a=b;lo.value=a}else{b=a;hi.value=b}}
  const pc=v=>(v-min)/(max-min)*100,i=r.querySelector('i');
  if(hi){i.style.left=pc(a)+'%';i.style.right=(100-pc(b))+'%'}else{i.style.left='0';i.style.right=(100-pc(a))+'%'}
- const fm=v=>f==='mi'?(v>=max?'any':v.toLocaleString('en-US')+' mi'):f==='dist'?(v>=max?'Nationwide':'within '+v.toLocaleString('en-US')+' mi'):v;
+ const fm=v=>f==='vs'?(v>=max?'any price':(v>0?'+':'')+v+'%'):f==='days'?(v>=max?'any':v+' days'):f==='mi'?(v>=max?'any':v.toLocaleString('en-US')+' mi'):f==='dist'?(v>=max?'Nationwide':'within '+v.toLocaleString('en-US')+' mi'):v;
  r.querySelector('output').textContent=hi?(f==='mi'&&a===0&&b>=max?'Any mileage':fm(a)+' to '+fm(b)):fm(a);
 }
-function cmpCount(){
- const box=document.querySelector('.cmpmore');if(!box)return;
+function cmpCount(){document.querySelectorAll('.cmpmore').forEach(cmpCount1)}
+function cmpCount1(box){
  let n=0;box.querySelectorAll('.cmpchips').forEach(c=>{const on=c.querySelector('.chip.on'),first=c.querySelector('.chip');if(on&&!first.classList.contains('on')&&!(c.dataset.name==='win'&&on.textContent==='90 days'))n++});
  box.querySelectorAll('.rng').forEach(r=>{const lo=r.querySelector('.lo'),hi=r.querySelector('.hi');if(lo.value!==r.dataset.lo0||(hi&&hi.value!==r.dataset.hi0))n++});
  box.querySelectorAll('.cmpmore-body input[type=text]').forEach(x=>{if(x.value.trim())n++});
  box.querySelector('.cmpcount').textContent=n?`· ${n} set`:'';
 }
 document.addEventListener('click',e=>{
- const m=e.target.closest('[data-cmpmore]');if(m){e.stopPropagation();const b=m.closest('.cmpmore');b.classList.toggle('open');S.cmpMoreOpen=b.classList.contains('open');return}
+ const m=e.target.closest('[data-cmpmore]');if(m){e.stopPropagation();const b=m.closest('.cmpmore');b.classList.toggle('open');S[b.dataset.k==='src'?'srcMoreOpen':'cmpMoreOpen']=b.classList.contains('open');return}
  const rs=e.target.closest('[data-cmpreset]');if(rs){e.stopPropagation();const b=rs.closest('.cmpmore');b.querySelectorAll('.cmpchips').forEach(c=>{c.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));const d=c.dataset.name==='win'?[...c.children].find(x=>x.textContent==='90 days'):c.firstElementChild;d.classList.add('on')});b.querySelectorAll('.rng').forEach(r=>{r.querySelector('.lo').value=r.dataset.lo0;const h=r.querySelector('.hi');if(h)h.value=r.dataset.hi0;rngPaint(r)});b.querySelectorAll('input[type=text]').forEach(x=>x.value='');cmpCount();return}
  const c=e.target.closest('.cmpchips .chip');if(c){e.stopPropagation();const g=c.parentElement,all=[...g.querySelectorAll('.chip')];if(g.dataset.multi){if(c===all[0]){all.forEach(x=>x.classList.toggle('on',x===c))}else{c.classList.toggle('on');all[0].classList.remove('on');if(!all.some(x=>x.classList.contains('on')))all[0].classList.add('on')}}else all.forEach(x=>x.classList.toggle('on',x===c));cmpCount()}
 },true);
@@ -1144,7 +1160,8 @@ function filterPanel(){
  <h4 style="margin-top:14px">Colour</h4><select><option>Any colour</option><option>Paint to Sample</option></select>
  <h4 style="margin-top:14px">Location</h4><select><option>Florida</option><option>Within 150 mi of me</option><option>United States</option></select>
  <label class="ck" style="margin-top:14px"><input type="checkbox" data-saved ${f.saved?'checked':''}>Saved cars only ${ic('star')}</label>
- <h4 style="margin-top:14px">Sort</h4><select><option>Best price first (adjusted for miles, year)</option><option>Newest listing</option></select>`;
+ <h4 style="margin-top:14px">Sort</h4><select><option>Best price first (adjusted for miles, year)</option><option>Newest listing</option></select>
+ ${cmpMore('src')}`;
 }
 function activeTags(){const f=S.flt,t=[];if(f.maxPrice<250000)t.push('Under '+money(f.maxPrice));Object.keys(f.seller).forEach(k=>{if(!f.seller[k])t.push('No '+k.toLowerCase())});Object.keys(f.trans).forEach(k=>{if(!f.trans[k])t.push('No '+k)});if(f.saved)t.push('Saved only');return t}
 function carRow(c){
