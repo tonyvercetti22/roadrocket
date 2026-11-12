@@ -760,8 +760,9 @@ label.f{font-size:13.5px}
 .msgfab.on{background:var(--brand);border-color:var(--brand);color:#fff}
 .ibxwrap{position:fixed;inset:0;z-index:40;display:flex;justify-content:flex-end}
 .ibxwrap .ibxscrim{position:absolute;inset:0;background:rgba(0,0,0,.45)}
-.ibx{position:relative;width:min(1040px,calc(100vw - 89px));height:100%;background:var(--bg);border-left:1px solid var(--line);box-shadow:var(--shadow);display:grid;grid-template-columns:380px 1fr;grid-template-rows:auto 1fr;animation:ibxin .18s ease-out}
-@keyframes ibxin{from{transform:translateX(34px);opacity:.4}to{transform:none;opacity:1}}
+.ibx{position:relative;width:min(1040px,calc(100% - 89px));height:100%;background:var(--bg);border-left:1px solid var(--line);box-shadow:var(--shadow);display:grid;grid-template-columns:380px 1fr;grid-template-rows:auto 1fr;animation:ibxin .18s ease-out}
+@keyframes ibxin{from{transform:translateX(34px)}to{transform:none}}
+body:has(#ibxwrap) .msgfab{display:none}
 .ibx-head{grid-column:1/-1;display:flex;align-items:center;gap:13px;padding:13px 21px;border-bottom:1px solid var(--line)}
 .ibx-head h2{font-size:24px}
 .ibx-head .x{margin-left:auto}
