@@ -43,7 +43,7 @@ label.f{display:block;font-size:15px;color:var(--muted);margin:12px 0 6px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 /* SHELL */
-.app{display:grid;grid-template-columns:268px 1fr;height:100vh}
+.app{display:grid;grid-template-columns:268px 1fr;height:calc(100vh / 0.9)}
 .app.closed{grid-template-columns:64px 1fr}
 .app.closed .hide-closed{display:none!important}
 .app.closed .side{padding:12px 8px;align-items:center}
@@ -56,7 +56,7 @@ label.f{display:block;font-size:15px;color:var(--muted);margin:12px 0 6px}
 .side h4{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--hint);margin:18px 6px 6px;font-weight:700}
 .side .chatlink{display:block;width:100%;text-align:left;background:none;border:none;padding:8px 10px;border-radius:var(--r-small);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
 .side .chatlink:hover,.side .chatlink.on{background:var(--surf2);color:var(--ink)}
-.mainc{display:flex;flex-direction:column;min-width:0;height:100vh}
+.mainc{display:flex;flex-direction:column;min-width:0;height:calc(100vh / 0.9)}
 .top{display:flex;align-items:center;gap:6px;padding:10px 20px;border-bottom:1px solid var(--line);min-height:64px}
 .top .tabs{display:flex;gap:6px;margin-left:auto}
 .tabbtn{background:none;border:none;border-bottom:3px solid transparent;padding:10px 14px;border-radius:var(--r-small);font-weight:500;color:var(--muted);font-size:18px}
@@ -202,7 +202,7 @@ label.f{display:block;font-size:15px;color:var(--muted);margin:12px 0 6px}
 
 /* OVERLAYS */
 .scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40;display:flex;align-items:center;justify-content:center;padding:16px}
-.sheet{background:var(--bg);border:1px solid var(--line);border-radius:var(--r-big);max-width:560px;width:100%;max-height:88vh;overflow:auto;padding:20px;box-shadow:var(--shadow)}
+.sheet{background:var(--bg);border:1px solid var(--line);border-radius:var(--r-big);max-width:560px;width:100%;max-height:calc(88vh / 0.9);overflow:auto;padding:20px;box-shadow:var(--shadow)}
 .sheet h2{font-size:28px;margin-bottom:6px}
 .opt{display:flex;gap:14px;align-items:center;width:100%;text-align:left;background:var(--surf);border:1px solid var(--line);border-radius:var(--r-big);padding:14px;margin-top:10px}
 .opt:hover{border-color:var(--brand)}
@@ -219,7 +219,7 @@ label.f{display:block;font-size:15px;color:var(--muted);margin:12px 0 6px}
 .hl{outline:3px solid var(--gold)!important;outline-offset:3px;border-radius:var(--r-small)}
 
 /* SIGNUP */
-.signup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.signup{min-height:calc(100vh / 0.9);display:flex;align-items:center;justify-content:center;padding:24px}
 .signup .card{max-width:460px;width:100%;padding:28px}
 .dots{display:flex;gap:6px;margin-bottom:14px}.dots i{width:28px;height:5px;border-radius:9px;background:var(--surf2)}.dots i.on{background:var(--brand)}
 .offline{background:var(--surf2);color:var(--muted);font-size:14px;padding:6px 20px;text-align:center}
@@ -269,7 +269,7 @@ label.f{display:block;font-size:15px;color:var(--muted);margin:12px 0 6px}
   .chat{padding:16px 16px 30px}
   .msg-u{max-width:90%}
   .scrim.bottomsheet{align-items:flex-end;padding:0}
-  .scrim.bottomsheet .sheet{border-radius:var(--r-big) var(--r-big) 0 0;max-height:92vh}
+  .scrim.bottomsheet .sheet{border-radius:var(--r-big) var(--r-big) 0 0;max-height:calc(92vh / 0.9)}
   .bellpop{position:fixed;left:8px;right:8px;top:60px;width:auto}
   .toast{bottom:140px}
   .tour{left:12px!important;right:12px;max-width:none;bottom:76px!important;top:auto!important}
@@ -600,6 +600,7 @@ label.f{font-size:13.5px}
 .logo,.logo-s,.bar h1.lg{display:inline-block;font-family:"Archivo",var(--head,sans-serif)!important;font-style:normal!important;font-stretch:125%;font-weight:900!important;letter-spacing:-.045em!important;white-space:nowrap;transform:skewX(-14deg)}
 .logo b,.logo-s b,.bar h1.lg b{font-weight:200;font-stretch:112%;letter-spacing:-.02em;margin-left:.06em}
 </style>
+<style>html{zoom:0.9}</style>
 </head>
 <body>
 <div id="root"></div>
