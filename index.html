@@ -166,7 +166,6 @@ label.f{display:block;font-size:15px;color:var(--muted);margin:12px 0 6px}
 .carhead{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px}
 .sect{margin-top:26px}
 .sect h2{font-size:26px;margin-bottom:10px}
-h2.h2i{display:flex;align-items:center;gap:10px}h2.h2i svg.i{width:22px;height:22px;color:var(--link)}
 .kv{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .kv div{background:var(--surf);border:1px solid var(--line);border-radius:var(--r-big);padding:12px 14px}
 .kv span{display:block;font-size:14px;color:var(--muted)}.kv b{font-size:20px}
@@ -185,6 +184,7 @@ h2.h2i{display:flex;align-items:center;gap:10px}h2.h2i svg.i{width:22px;height:2
 .lotgal{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
 .lotcard{background:var(--surf);border:1px solid var(--hair,var(--line));border-radius:12px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .15s}
 .lotcard:hover{box-shadow:0 6px 18px rgba(0,0,0,.08);transform:translateY(-2px)}
+.lc-live{font-size:14px;font-weight:600;color:var(--brand);margin-top:4px}
 .lotcard .photo{border-radius:0;aspect-ratio:16/10;height:auto}
 .lc-body{padding:12px 14px 14px}.lc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .lc-top b{font-size:16px;line-height:1.3}.lc-top .tag{flex-shrink:0}
@@ -832,6 +832,8 @@ const LOT=[
  {id:'l5',y:2020,mk:'McLaren',md:'720S',mi:7700,col:'Papaya Spark',you:239000,mkt:241000,days:12,typ:35,hist:[['Listed',239000,'12 days ago']]},
  {id:'l6',y:2017,mk:'Ford',md:'GT',mi:1900,col:'Liquid Blue',you:1120000,mkt:1090000,days:9,typ:44,hist:[['Listed',1120000,'9 days ago']]}
 ];
+const PLAT=[['web','Your website','Instant','fixed'],['ebay','eBay Motors','Instant','fixed'],['autotrader','AutoTrader','Instant','fixed'],['cargurus','CarGurus','Instant','fixed'],['hemmings','Hemmings','Instant','fixed'],['fb','Facebook Marketplace','Instant','fixed'],['bat','Bring a Trailer','Auction · they review it first','auction'],['cnb','Cars & Bids','Auction · they review it first','auction']];
+const LIVE={l1:{web:'74 days',ebay:'30 days',autotrader:'30 days'},l2:{web:'52 days'},l3:{web:'33 days',hemmings:'33 days'},l5:{web:'12 days',ebay:'12 days'}};
 LOT.forEach((c,i)=>{c.vs=(c.you-c.mkt)/c.mkt*100;c.tag=c.vs>3?'above':c.vs<-3?'below':'fair';c.color=PAL[(i+3)%PAL.length];c.score=(c.days/c.typ)+Math.max(c.vs,0)/2});
 const SOLD=[ /* sketch data: cars sold in the last 90 days */
  {y:2018,mk:'Porsche',md:'911 GT2 RS',price:338000,days:21,ago:84},
@@ -1217,9 +1219,9 @@ function ask(q,ctx){
 
 /* ---------- SOURCING ---------- */
 function sourcingHome(){
- return `<div class="wrap">${backBtn()}<div class="srchead"><h1 class="pagetitle" style="margin:0">Buy</h1><button class="btn main" data-act="newsearch">${ic('plus')}New search</button></div><div class="sect"><h2 class="h2i">${ic('mail')}Offers sent</h2><p class="mut" style="margin-top:0">Cars you made an offer on, and where each one stands.</p>
+ return `<div class="wrap">${backBtn()}<div class="srchead"><h1 class="pagetitle" style="margin:0">Buy</h1><button class="btn main" data-act="newsearch">${ic('plus')}New search</button></div><div class="sect"><h2>Offers sent</h2><p class="mut" style="margin-top:0">Cars you made an offer on, and where each one stands.</p>
  <div class="card">${OFFERS.map(o=>{const c=CARS.find(x=>x.id===o.car);return `<div class="saved" data-car="${c.id}">${ic('mail')}<div><b>${c.y} ${c.mk} ${c.md}</b><div class="hint">You offered ${money(o.amt)} · asking ${money(c.price)} · ${c.seller} · ${o.when}</div></div><span class="new">${o.st}</span></div>`}).join('')}</div></div>
- <div class="sect"><h2 class="h2i">${ic('search')}Saved searches</h2><p class="mut" style="margin-top:0">New matches since your last visit.</p>
+ <div class="sect"><h2>Saved searches</h2><p class="mut" style="margin-top:0">New matches since your last visit.</p>
  <div class="card">${SEARCHES.map(s=>`<div class="saved" data-search="${s.id}">${ic('search')}<div><b>${s.name}</b><div class="hint">${s.crit.join(' · ')}</div></div><span class="new">${s.n} new</span></div>`).join('')}</div></div></div>`;
 }
 function fltCars(){
@@ -1267,9 +1269,9 @@ function carPage(){
   <button class="btn main" style="width:100%;min-height:52px;font-size:18px" data-act="cmpcar" data-id="${c.id}">Compare to market</button>
   ${contacts(c)}
   <p class="hint" style="margin-top:10px">${c.st==='Private'?'Private seller':c.seller+' (dealer)'} · ${c.loc} · <a href="#" data-act="listing">Open original listing ${ic('ext')}</a></p></div></div>
- <div class="sect"><h2 class="h2i">${ic('bars')}Market</h2><div class="kv"><div><span>US average, this spec</span><b>${money(c.mkt)}</b></div><div><span>Usually sells in</span><b>14 days</b></div><div><span>6-month trend</span><b>${pct(3.8)}</b></div></div></div>
- <div class="sect"><h2 class="h2i">${ic('invest')}Price history</h2><div class="card"><table class="rows">${c.hist.map(h=>`<tr><td>${h[0]}</td><td class="num">${money(h[1])}</td><td class="num mut">${h[2]}</td></tr>`).join('')}</table></div></div>
- <div class="sect"><h2 class="h2i">${ic('car')}Specs</h2><div class="kv"><div><span>Transmission</span><b>${c.trans}</b></div><div><span>Mileage</span><b>${mi(c.mi)}</b></div><div><span>VIN</span><b style="font-size:16px">${c.vin}</b></div></div></div></div>`;
+ <div class="sect"><h2>Market</h2><div class="kv"><div><span>US average, this spec</span><b>${money(c.mkt)}</b></div><div><span>Usually sells in</span><b>14 days</b></div><div><span>6-month trend</span><b>${pct(3.8)}</b></div></div></div>
+ <div class="sect"><h2>Price history</h2><div class="card"><table class="rows">${c.hist.map(h=>`<tr><td>${h[0]}</td><td class="num">${money(h[1])}</td><td class="num mut">${h[2]}</td></tr>`).join('')}</table></div></div>
+ <div class="sect"><h2>Specs</h2><div class="kv"><div><span>Transmission</span><b>${c.trans}</b></div><div><span>Mileage</span><b>${mi(c.mi)}</b></div><div><span>VIN</span><b style="font-size:16px">${c.vin}</b></div></div></div></div>`;
 }
 
 /* ---------- MY LOT ---------- */
@@ -1319,7 +1321,7 @@ function lotHome(){
  <div class="lotgal">
  ${rows.map(c=>`<div class="lotcard click" data-lotcar="${c.id}">${photo(c,'100%')}<div class="lc-body"><div class="lc-top"><b>${c.y} ${c.mk} ${c.md}</b><span class="tag ${c.tag}">${{above:'Above market',fair:'Fair',below:'Below market'}[c.tag]}</span></div><div class="hint">${mi(c.mi)} · ${c.col}</div>
  <div class="lc-price"><b>${money(c.you)}</b><span class="hint">${pct(c.vs)} vs market ${money(c.mkt)}</span></div>
- <div class="lc-days ${c.days>c.typ?'slow':''}">${c.days} days on lot <span class="hint">· typical ${c.typ}</span></div></div></div>`).join('')}
+ <div class="lc-days ${c.days>c.typ?'slow':''}">${c.days} days on lot <span class="hint">· typical ${c.typ}</span></div><div class="lc-live">${liveCount(c.id)?`Live on ${liveCount(c.id)} site${liveCount(c.id)>1?'s':''}`:'<span class="hint">Not listed yet</span>'}</div></div></div>`).join('')}
  </div>
  <p class="hint" style="text-align:center"><a href="#" data-act="toggleempty">Sketch: show empty lot</a></p></div>`;
 }
@@ -1331,13 +1333,27 @@ function lotCar(){
  <h1 class="pagetitle">${c.y} ${c.mk} ${c.md}</h1><div class="mut">${mi(c.mi)} · ${c.col} · on your lot</div>
  <div class="head" style="font-size:36px;margin:16px 0 6px">You ${money(c.you)}, market ${money(c.mkt)}, ${Math.abs(c.vs).toFixed(1)}% ${under?'under':'over'}</div>
  <div>${src('Based on 16 listings, last 90 days')}</div>
- <button class="btn main" style="width:100%;min-height:52px;font-size:18px;margin-top:14px" data-act="cmpcar" data-id="${c.id}">Compare to market</button>
+ <button class="btn main" style="width:100%;min-height:52px;font-size:18px;margin-top:14px" data-act="sell" data-id="${c.id}">Sell this car</button>
+ <button class="btn" style="width:100%;margin-top:8px" data-act="cmpcar" data-id="${c.id}">Compare to market</button>
  <div class="sect" style="margin-top:18px"><b>Days on lot: ${c.days}</b> <span class="mut">vs typical ${c.typ} for this model</span>
  <div class="bar"><i style="width:${Math.min(100,c.days/Math.max(c.days,c.typ)*100)}%;background:${c.days>c.typ?'var(--down)':'var(--up)'}"></i><em style="left:${c.typ/Math.max(c.days,c.typ)*100}%"></em></div><div class="hint">Black line = typical</div></div></div></div>
- <div class="sect"><h2 class="h2i">${ic('scale')}Comps</h2><div class="card"><table class="rows"><tr><th>Year</th><th>Miles</th><th class="d-only">Location</th><th class="num">Price</th><th class="num">vs you</th><th class="num d-only">Days listed</th></tr>
+ ${listedBlock(c)}
+ <div class="sect"><h2>Comps</h2><div class="card"><table class="rows"><tr><th>Year</th><th>Miles</th><th class="d-only">Location</th><th class="num">Price</th><th class="num">vs you</th><th class="num d-only">Days listed</th></tr>
  ${comps.map(r=>`<tr><td>${r.y}</td><td>${mi(r.mi)}</td><td class="d-only">${r.loc}</td><td class="num">${money(r.p)}</td><td class="num">${pct((r.p-c.you)/c.you*100)}</td><td class="num d-only">${r.d}</td></tr>`).join('')}</table></div></div>
- <div class="sect"><h2 class="h2i">${ic('invest')}Your price history</h2><div class="card"><table class="rows">${c.hist.map(h=>`<tr><td>${h[0]}</td><td class="num">${money(h[1])}</td><td class="num mut">${h[2]}</td></tr>`).join('')}</table></div></div></div>`;
+ <div class="sect"><h2>Your price history</h2><div class="card"><table class="rows">${c.hist.map(h=>`<tr><td>${h[0]}</td><td class="num">${money(h[1])}</td><td class="num mut">${h[2]}</td></tr>`).join('')}</table></div></div></div>`;
 }
+
+function liveCount(id){return Object.keys(LIVE[id]||{}).length}
+function listedBlock(c){const L=LIVE[c.id]||{};const on=PLAT.filter(p=>L[p[0]]);
+ return `<div class="sect"><h2>Where it is listed</h2>${on.length?`<div class="card"><table class="rows"><tr><th>Site</th><th class="num">Price</th><th class="num">Live for</th><th></th></tr>${on.map(p=>`<tr><td>${p[1]}</td><td class="num">${money(c.you)}</td><td class="num mut">${L[p[0]]}</td><td class="num"><a href="#" data-act="unlist" data-id="${c.id}" data-p="${p[0]}">Take down</a></td></tr>`).join('')}</table></div><p class="hint">Change the price here and it changes on every site.</p>`:`<p class="mut" style="margin-top:0">Not listed anywhere yet. Tap Sell this car to publish it.</p>`}</div>`}
+function sellSheet(id){const c=LOT.find(x=>x.id===id);const L=LIVE[id]||{};
+ sheet(`<h2 style="margin-top:0">Sell your ${c.y} ${c.md}</h2><p class="mut" style="margin-top:0">Write it once, publish it everywhere.</p>
+ <label class="f">Price</label><input type="text" id="sellprice" value="${money(c.you)}"><p class="hint" style="margin:4px 0 0">Market for this spec: ${money(c.mkt)} · ${pct(c.vs)} vs market</p>
+ <label class="f">Description</label><textarea id="selldesc" rows="4" style="width:100%">${c.y} ${c.mk} ${c.md} in ${c.col}, ${mi(c.mi)}. Clean history, full service records, two keys. Written by RoadRocket from your car's details, edit as you like.</textarea>
+ <p class="hint" style="margin:4px 0 0">Photos: 24 from your lot · VIN and spec filled in</p>
+ <label class="f">Publish to</label>${PLAT.map(p=>`<label class="ck"><input type="checkbox" data-plat="${p[0]}" ${L[p[0]]?'checked disabled':p[3]==='fixed'?'checked':''}>${p[1]} <span class="hint" style="margin-left:auto">${L[p[0]]?'Already live':p[2]}</span></label>`).join('')}
+ <button class="btn main" style="width:100%;min-height:52px;font-size:18px;margin-top:16px" data-act="publish" data-id="${id}">Publish</button>
+ <p class="hint" style="text-align:center">You can take it down from any site in one tap. When it sells, it comes off everywhere.</p>`)}
 
 /* ---------- INVEST ---------- */
 function investHome(){
@@ -1421,30 +1437,30 @@ function sw(on,key){return `<button class="sw ${on?'on':''}" data-sw="${key}" ar
 function account(){
  const a=S.alerts,dark=document.documentElement.dataset.theme!=='light';
  return `<div class="wrap acc" style="max-width:760px">${backBtn()}<h1 class="pagetitle">Settings</h1>
- <section id="sec-prefs"><h2 class="h2i">${ic('star')}What RoadRocket remembers</h2><p class="mut" style="margin-top:0">Used for answers, watchlist and alerts. Edit any time.</p>
+ <section id="sec-prefs"><h2>What RoadRocket remembers</h2><p class="mut" style="margin-top:0">Used for answers, watchlist and alerts. Edit any time.</p>
  <div class="tg"><span>Makes</span><span>${S.prefs.makes.map(m=>`<span class="chip">${m} ×</span>`).join(' ')} <span class="chip">+ Add</span></span></div>
  <div class="tg"><span>Region</span><b>${S.prefs.region}</b></div><div class="tg"><span>Price band</span><b>${S.prefs.band}</b></div></section>
- <section id="sec-alerts"><h2 class="h2i">${ic('bell')}Alerts</h2>
+ <section id="sec-alerts"><h2>Alerts</h2>
  ${[['bell','In-app bell'],['sms','SMS'],['wa','WhatsApp'],['email','Email digest']].map(([k,l])=>`<div class="tg"><span>${l}</span>${sw(a[k],k)}</div>`).join('')}
  <div class="tg"><span>Instant alert only when a car is</span><b>${a.thr}%+ under market</b></div>
  <div class="tg"><span>Everything else: daily digest at</span><b>${a.digest}</b></div>
  <div class="tg"><span>Max instant alerts per day</span><b>${a.max}</b></div>
  <div class="tg"><span>Quiet hours</span><b>${a.quiet}</b></div></section>
- <section id="sec-team"><h2 class="h2i">${ic('users')}Team</h2>
+ <section id="sec-team"><h2>Team</h2>
  <div class="tg"><span><b>Thomas</b> <span class="hint">you</span></span><span class="chip">Owner</span></div>
  <div class="tg"><span><b>Marco R.</b> <span class="hint">buyer</span></span><span class="chip">Team</span></div>
  <div class="tg"><span><b>Dana K.</b> <span class="hint">sales</span></span><span class="chip">Team</span></div>
  <p class="hint">Owner: billing, team, settings, all data. Team: everything else. Each person has their own alerts and private chats.</p>
  <button class="btn" data-act="invite">${ic('plus')}Invite staff</button></section>
- <section id="sec-billing"><h2 class="h2i">${ic('doc')}Plan and billing</h2><p class="mut" style="margin-top:0">Free trial: 18 days left. No card on file.</p>
+ <section id="sec-billing"><h2>Plan and billing</h2><p class="mut" style="margin-top:0">Free trial: 18 days left. No card on file.</p>
  <div class="tiers">${[['Starter','$199/mo','1 seat, Buy + Intel'],['Pro','$499/mo','3 seats, all tabs'],['Group','$1,200/mo','10 seats, several lots']].map(t=>`<div class="card"><h3 style="font-size:24px">${t[0]}</h3><b>${t[1]}</b><p class="hint" style="margin:6px 0 10px">${t[2]}</p><button class="btn sm" data-act="plan">Choose</button></div>`).join('')}</div>
  <p class="hint">Extra seats: $49/mo each. Prices are placeholders.</p>
  <button class="btn" data-act="stripe">Manage billing or cancel</button></section>
- <section id="sec-display"><h2 class="h2i">${ic('home')}Display</h2>
+ <section id="sec-display"><h2>Display</h2>
  <div class="tg"><span>Dark look</span>${sw(dark,'dark')}</div>
  <div class="tg"><span>Text size</span><span><button class="btn sm ${document.documentElement.dataset.size!=='big'?'main':''}" data-size="norm">A</button> <button class="btn sm ${document.documentElement.dataset.size==='big'?'main':''}" data-size="big">A+</button></span></div>
  <div class="tg"><span>Sketch: show bad-signal state</span>${sw(S.offline,'offline')}</div></section>
- <section id="sec-help"><h2 class="h2i">${ic('text')}Help</h2><p><a href="#" data-act="faq">FAQ</a> · <a href="#" data-act="emailus">Email us</a></p></section></div>`;
+ <section id="sec-help"><h2>Help</h2><p><a href="#" data-act="faq">FAQ</a> · <a href="#" data-act="emailus">Email us</a></p></section></div>`;
 }
 
 /* ---------- SIGNUP + TOUR ---------- */
@@ -1542,6 +1558,9 @@ document.addEventListener('click',e=>{
   case 'runcompare':go('cresult',null);break;
   case 'cmpcar':S._openComps=false;go('cresult',d.id,S.tab);break;
   case 'listings':sheet(`<h2>The listings behind this price</h2><p class="hint" style="margin-top:0">Counts and dates only. Tap a car to open it.</p><table class="rows">${CARS.slice(0,6).map(c=>`<tr class="click" data-car="${c.id}"><td>${c.y} ${c.md}</td><td class="d-only">${c.loc}</td><td class="num">${money(c.price)}</td><td class="num">${c.days}d</td></tr>`).join('')}</table><p class="hint">+ 8 more</p>`,true);break;
+  case 'sell':sellSheet(d.id);break;
+  case 'publish':{const L=LIVE[d.id]=LIVE[d.id]||{};const pick=[...document.querySelectorAll('[data-plat]')].filter(x=>x.checked&&!x.disabled).map(x=>x.dataset.plat);pick.forEach(k=>L[k]='just now');document.querySelectorAll('.scrim').forEach(x=>x.remove());toast(pick.length?`Published to ${pick.length} site${pick.length>1?'s':''}. Auctions go live once they approve it.`:'Pick at least one site');render(document.getElementById('view').scrollTop);break}
+  case 'unlist':{const L=LIVE[d.id]||{};delete L[d.p];toast('Taken down');render(document.getElementById('view').scrollTop);break}
   case 'copy':toast('Answer copied');break;
   case 'share':toast('Share link copied. Your chats stay private unless you share a link.');break;
   case 'swap':toast('Pick another dealer to compare against (search by name)');break;
