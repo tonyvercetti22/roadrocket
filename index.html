@@ -1176,7 +1176,7 @@ function compareForm(){
   <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:10px"><div><label class="f">Make</label>${combo('make',f?'Ferrari':'','e.g. Porsche')}</div><div><label class="f">Model</label>${combo('model',f?'812 Competizione A':'','e.g. 911 GT3 Touring')}</div></div>
   ${rng1('Year',1960,2026,1,f?2022:2022,'year')}
   ${rng1('Mileage',0,100000,500,f?2500:5000,'mi')}
-  <label class="f">Options</label>${chips('opt',['None','Carbon wheels','Telemetry','Carbon seats','Front lift','Paint to Sample'],'None',1).replace(f?'>Carbon wheels<':'@@','  data-x>Carbon wheels<')}
+  <label class="f">Options</label>${chips('opt',['None','Carbon wheels','Telemetry','Carbon seats','Front lift','Paint to Sample'],f?'Carbon wheels':'None',1)}
   ${cmpMore()}
   <button class="btn main" style="width:100%;margin-top:18px" data-act="runcompare">Compare to market</button>
  </div></div>`;
@@ -1242,8 +1242,8 @@ const TOPMAKES=['Porsche','Ferrari','Lamborghini','McLaren','Mercedes-AMG','Asto
 function makeChips(){const rest=Object.keys(MAKES).filter(m=>!TOPMAKES.includes(m));return `<div class="cmpchips" data-name="make">${['Any',...TOPMAKES].map((o,i)=>`<span class="chip${i?'':' on'}" role="button" tabindex="0">${o}</span>`).join('')}<span class="chip more" role="button" tabindex="0" data-allmakes>+ ${rest.length} more</span>${rest.map(o=>`<span class="chip xtra" role="button" tabindex="0" hidden>${o}</span>`).join('')}</div>`}
 function modelChips(mk){const box=document.getElementById('modelpick');if(!box)return;const l=MAKES[mk];box.innerHTML=`<label class="f">Model</label>`+(l?chips('model',['Any',...l],'Any'):`<p class="hint" style="margin:0">Pick a make first.</p>`)}
 function amt(t){const m=String(t).replace(/[,$\s]/g,'').match(/([\d.]+)([kKmM]?)/);if(!m)return 0;return +m[1]*(m[2].toLowerCase()==='k'?1e3:m[2].toLowerCase()==='m'?1e6:1)}
-document.addEventListener('click',e=>{const a=e.target.closest('[data-allmakes]');if(a){e.stopPropagation();a.parentElement.querySelectorAll('.xtra').forEach(x=>x.hidden=false);a.remove();return}
- const c=e.target.closest('.cmpchips[data-name="make"] .chip');if(c&&document.getElementById('modelpick'))setTimeout(()=>modelChips(c.textContent),0)});
+document.addEventListener('click',e=>{const a=e.target.closest('[data-allmakes]');if(a){e.stopImmediatePropagation();a.parentElement.querySelectorAll('.xtra').forEach(x=>x.hidden=false);a.remove();return}
+ const c=e.target.closest('.cmpchips[data-name="make"] .chip');if(c&&document.getElementById('modelpick'))setTimeout(()=>modelChips(c.textContent),0)},true);
 /* More criteria (12.11.2026): hidden until opened, chips for choices, drag ranges for numbers */
 function chips(name,opts,on,multi){return `<div class="cmpchips" data-name="${name}"${multi?' data-multi="1"':''}>${opts.map(o=>`<span class="chip${o===on?' on':''}" role="button" tabindex="0">${o}</span>`).join('')}</div>`}
 const HOT=[
