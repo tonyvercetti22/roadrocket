@@ -653,6 +653,7 @@ label.f{font-size:13.5px}
 
 /* ===== make/model picker (12.11.2026) ===== */
 .combo{position:relative}
+.card:has(.combo){overflow:visible}
 .combo-list{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:40;max-height:280px;overflow:auto;background:var(--surf);border:1px solid var(--hair2);border-radius:var(--r-big);box-shadow:var(--e2,0 14px 34px -14px rgba(0,0,0,.7));padding:6px}
 .combo.open .combo-list{display:block}
 .combo .opt-i{padding:9px 12px;border-radius:var(--r-small);font-size:15.5px;color:var(--muted);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
