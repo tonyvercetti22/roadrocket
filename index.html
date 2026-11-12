@@ -825,6 +825,7 @@ body:has(#ibxwrap) .msgfab{display:none}
 }
 /* subtle greeting 13.11 */
 .home .greet{font-weight:300;font-size:16px;letter-spacing:.01em;opacity:.7}
+.ctyrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0 4px}.ctyrow .ctylbl{color:var(--muted);font-size:15px;min-width:70px}.ctyrow .cmpchips .chip{min-height:32px;padding:0 12px;font-size:14px}
 </style>
 <style>:root{--z:1}@media (min-width:1280px){:root{--z:.9}html{zoom:.9}}</style>
 </head>
@@ -1241,7 +1242,11 @@ const HOT=[
  {n:'Ferrari 308 GTB',y:1979,hp:240,v:95000,d:52,ch:4,u:11,uc:10,m:12.5,sc:72},
  {n:'Nissan GT-R',y:2017,hp:565,v:88000,d:58,ch:7,u:39,uc:-1.2,m:8.8,sc:69},
  {n:'Lamborghini Huracán',y:2019,hp:631,v:220000,d:83,ch:14,u:142,uc:4.4,m:6.6,sc:76}];
-function dragBox(mode,lbl){return `<div class="pcard hotbox" data-mode="${mode}"><div class="lbl">${lbl}</div><p class="mut" style="margin:4px 0 0">Drag the lines. The list updates as you go.</p>
+const CTY={Global:{d:1.12,u:3.1},US:{d:1,u:1},UK:{d:1.18,u:.34},Germany:{d:1.09,u:.41},UAE:{d:.86,u:.22},Japan:{d:1.24,u:.27}};
+function hotFor(c){const k=CTY[c]||CTY.US;if(c==='US'||!CTY[c])return HOT;return HOT.map((w,i)=>{const j=1+((i*37+c.length*13)%17-8)/100;return {...w,d:Math.max(4,Math.round(w.d*k.d*j)),u:Math.max(1,Math.round(w.u*k.u*j)),ch:Math.round(w.ch*j+((i+c.length)%5-2)),uc:+(w.uc*j).toFixed(1)}})}
+function hotRefresh(box){const f={};box.querySelectorAll('.rng[data-hot]').forEach(x=>{const lo=+x.querySelector('.lo').value,hi=+x.querySelector('.hi').value,mx=+x.dataset.max;f[x.dataset.hot]=[lo,hi>=mx&&x.dataset.hot!=='y'?1e9:hi]});const on=box.querySelector('.ctyrow .chip.on');f.c=on?on.textContent:'US';const n=box.querySelector('.ctyname');if(n)n.textContent=f.c==='Global'?'worldwide':f.c;box.querySelector('.hotres').innerHTML=hotList(f,box.dataset.mode)}
+function dragBox(mode,lbl){lbl=lbl.replace(', US,',', <span class="ctyname">US</span>,');return `<div class="pcard hotbox" data-mode="${mode}"><div class="lbl">${lbl}</div><p class="mut" style="margin:4px 0 0">Drag the lines. The list updates as you go.</p>
+ <div class="ctyrow"><span class="ctylbl">Country</span>${chips('cty',['Global','US','UK','Germany','UAE','Japan'],'US')}</div>
  ${rng('Year',1960,2026,1,1960,2026,'year').replace('class="rng"','class="rng" data-hot="y"')}
  ${rng('Budget',50000,3000000,10000,50000,3000000,'usd').replace('class="rng"','class="rng" data-hot="b"')}
  ${rng('Horsepower',150,900,10,150,900,'hp').replace('class="rng"','class="rng" data-hot="hp"')}
@@ -1249,9 +1254,9 @@ function dragBox(mode,lbl){return `<div class="pcard hotbox" data-mode="${mode}"
 function hotList(f,mode='hot'){
  const srt={hot:(a,b)=>a.d-b.d,volume:(a,b)=>b.u-a.u,top:(a,b)=>b.sc-a.sc}[mode];
  const inR=w=>w.y>=f.y[0]&&w.y<=f.y[1]&&w.v>=f.b[0]&&w.v<=f.b[1]&&w.hp>=f.hp[0]&&w.hp<=f.hp[1];
- let hit=HOT.filter(inR).sort(srt),near=false;
+ const SRC=hotFor(f.c||'US');let hit=SRC.filter(inR).sort(srt),near=false;
  if(!hit.length){near=true;const off=(v,lo,hi,sp)=>v<lo?(lo-v)/sp:v>hi?(v-hi)/sp:0;
-  hit=HOT.map(w=>({...w,_d:off(w.y,f.y[0],f.y[1],66)+off(w.v,f.b[0],f.b[1],2950000)+off(w.hp,f.hp[0],f.hp[1],750)})).sort((a,b)=>a._d-b._d).slice(0,5).sort(srt)}
+  hit=SRC.map(w=>({...w,_d:off(w.y,f.y[0],f.y[1],66)+off(w.v,f.b[0],f.b[1],2950000)+off(w.hp,f.hp[0],f.hp[1],750)})).sort((a,b)=>a._d-b._d).slice(0,5).sort(srt)}
  const out=w=>{const m=[];if(w.y<f.y[0]||w.y>f.y[1])m.push(w.y);if(w.v<f.b[0]||w.v>f.b[1])m.push(money(w.v));if(w.hp<f.hp[0]||w.hp>f.hp[1])m.push(w.hp+' hp');return m.join(', ')};
  const nm=w=>`${w.n}<div class="hint">${w.y} · ${money(w.v)} · ${w.hp} hp${near?` · outside: ${out(w)}`:''}</div>`;
  const head=near?`<p class="mut" style="margin:14px 0 0"><b>Nothing fits every line exactly.</b> These are the ${hit.length} closest.</p>`:'';
@@ -1325,7 +1330,7 @@ document.addEventListener('click',e=>{
  const rs=e.target.closest('[data-cmpreset]');if(rs){e.stopPropagation();const b=rs.closest('.cmpmore');b.querySelectorAll('.cmpchips').forEach(c=>{c.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));const d=c.dataset.name==='win'?[...c.children].find(x=>x.textContent==='90 days'):c.firstElementChild;d.classList.add('on')});b.querySelectorAll('.rng').forEach(r=>{r.querySelector('.lo').value=r.dataset.lo0;const h=r.querySelector('.hi');if(h)h.value=r.dataset.hi0;rngPaint(r)});b.querySelectorAll('input[type=text]').forEach(x=>x.value='');cmpCount();return}
  const c=e.target.closest('.cmpchips .chip');if(c){e.stopPropagation();const g=c.parentElement,all=[...g.querySelectorAll('.chip')];if(g.dataset.multi){if(c===all[0]){all.forEach(x=>x.classList.toggle('on',x===c))}else{c.classList.toggle('on');all[0].classList.remove('on');if(!all.some(x=>x.classList.contains('on')))all[0].classList.add('on')}}else all.forEach(x=>x.classList.toggle('on',x===c));cmpCount()}
 },true);
-document.addEventListener('input',e=>{const r=e.target.closest('.rng');if(r&&r.dataset.hot){rngPaint(r);const box=r.closest('.hotbox'),f={};box.querySelectorAll('.rng[data-hot]').forEach(x=>{const lo=+x.querySelector('.lo').value,hi=+x.querySelector('.hi').value,mx=+x.dataset.max;f[x.dataset.hot]=[lo,hi>=mx&&x.dataset.hot!=='y'?1e9:hi]});box.querySelector('.hotres').innerHTML=hotList(f,box.dataset.mode);return}if(r&&r.dataset.iv){rngPaint(r);const lo=+r.querySelector('.lo').value,hi=+r.querySelector('.hi').value,mx=+r.dataset.max;S.invF[r.dataset.iv]=[lo,hi>=mx&&r.dataset.iv!=='y'?1e9:hi];document.getElementById('ivres').innerHTML=bestList();return}if(r){rngPaint(r);cmpCount()}else if(e.target.closest('.cmpmore'))cmpCount()});
+document.addEventListener('input',e=>{const r=e.target.closest('.rng');if(r&&r.dataset.hot){rngPaint(r);hotRefresh(r.closest('.hotbox'));return}if(r&&r.dataset.iv){rngPaint(r);const lo=+r.querySelector('.lo').value,hi=+r.querySelector('.hi').value,mx=+r.dataset.max;S.invF[r.dataset.iv]=[lo,hi>=mx&&r.dataset.iv!=='y'?1e9:hi];document.getElementById('ivres').innerHTML=bestList();return}if(r){rngPaint(r);cmpCount()}else if(e.target.closest('.cmpmore'))cmpCount()});
 new MutationObserver(()=>{document.querySelectorAll('.rng:not([data-ok])').forEach(r=>{r.dataset.ok=1;rngPaint(r)})}).observe(document.documentElement,{childList:true,subtree:true});
 function compareResult(){
  const c=S.arg?(CARS.find(x=>x.id===S.arg)||LOT.find(x=>x.id===S.arg)):CARS.find(x=>x.id==='c7');
@@ -1872,6 +1877,8 @@ const h=location.hash.slice(1);
 if(h==='signup'){S.signedUp=false;S.sign=0}
 render();
 if(h&&h!=='signup'){const m={sourcing:'sourcing',mylot:'mylot',invest:'invest'};if(m[h])tab(m[h])}
+
+document.addEventListener('click',e=>{const c=e.target.closest('.ctyrow .chip');if(!c)return;c.parentElement.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));hotRefresh(c.closest('.hotbox'))});
 </script>
 </body>
 </html>
