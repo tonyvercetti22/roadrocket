@@ -602,6 +602,12 @@ label.f{font-size:13.5px}
 .newchat svg.i{width:16px;height:16px;stroke-width:1.8;opacity:.8}
 .newchat:hover{background:var(--surf2)!important;color:var(--ink)}
 
+/* ===== see-through side + top bars (12.11.2026) ===== */
+:root{--gr-side:linear-gradient(180deg,rgba(31,34,40,.55) 0%,rgba(22,24,29,.4) 55%,rgba(18,20,24,.3) 100%);--gr-join:rgba(31,34,40,.55)}
+:root[data-theme="light"]{--gr-side:linear-gradient(180deg,rgba(247,248,250,.65) 0%,rgba(238,240,243,.5) 100%);--gr-join:rgba(247,248,250,.65)}
+.side{-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3)}
+.top{background:linear-gradient(90deg,var(--gr-join) 0%,transparent 70%)!important;-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3)}
+
 /* ===== ROADROCKET LOGO STANDARD v1 (12.11.2026). Spec: RoadRocket/decisions/2026-11-12-logo-standard.md. Change values here only. ===== */
 :root{--rr-tilt:-21deg;--rr-cut-y:59.9%;--rr-cut-h:max(.035em,1px);--rr-blue:#5b7cff}
 :root[data-theme="light"]{--rr-blue:#1a3fb8}
