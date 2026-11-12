@@ -768,7 +768,11 @@ body:has(#ibxwrap) .msgfab{display:none}
 .ibx-head .x{margin-left:auto}
 .ibx-seg{display:inline-flex;background:var(--surf);border:1px solid var(--line);border-radius:999px;padding:3px;margin-left:21px}
 .ibx-seg button{border:none;background:none;border-radius:999px;padding:6px 21px;font-weight:600;font-size:16px;color:var(--muted)}
-.ibx-seg button.on{background:var(--brand);color:#fff}
+:root{--buy:#5b7cff;--sell:#9a6bff}:root[data-theme="light"]{--buy:#1a3fb8;--sell:#5b2fc0}
+.ibx-seg button[data-iside="Buy"].on{background:var(--buy);color:#fff}
+.ibx-seg button[data-iside="Sell"].on{background:var(--sell);color:#fff}
+.ibx-seg button[data-iside="Buy"]:not(.on):hover{color:var(--buy)}
+.ibx-seg button[data-iside="Sell"]:not(.on):hover{color:var(--sell)}
 .ibx-seg .n{font-weight:500;opacity:.8;margin-left:6px;font-size:14px}
 .ibx-list{border-right:1px solid var(--line);overflow:auto;display:flex;flex-direction:column}
 .ibx-plats{display:flex;gap:8px;flex-wrap:wrap;padding:13px 13px 8px}
