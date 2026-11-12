@@ -752,6 +752,72 @@ label.f{font-size:13.5px}
 .boxes{gap:13px;margin-top:89px}
 .box{padding:21px}
 @media (max-width:767px){.boxes{margin-top:55px;gap:13px}}
+
+/* ===== Messages: mini CRM inbox, Buy / Sell, all platforms (13.11.2026) ===== */
+.msgfab{position:fixed;right:21px;bottom:8px;z-index:25;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 13px;border-radius:999px;border:1px solid var(--line);background:var(--surf);color:var(--ink);font-weight:600;font-size:15px;box-shadow:0 4px 18px rgba(0,0,0,.35)}
+.msgfab:hover{border-color:var(--brand)}
+.msgfab .badge{position:static;margin-left:2px}
+.msgfab.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.ibxwrap{position:fixed;inset:0;z-index:40;display:flex;justify-content:flex-end}
+.ibxwrap .ibxscrim{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.ibx{position:relative;width:min(1040px,calc(100vw - 89px));height:100%;background:var(--bg);border-left:1px solid var(--line);box-shadow:var(--shadow);display:grid;grid-template-columns:380px 1fr;grid-template-rows:auto 1fr;animation:ibxin .18s ease-out}
+@keyframes ibxin{from{transform:translateX(34px);opacity:.4}to{transform:none;opacity:1}}
+.ibx-head{grid-column:1/-1;display:flex;align-items:center;gap:13px;padding:13px 21px;border-bottom:1px solid var(--line)}
+.ibx-head h2{font-size:24px}
+.ibx-head .x{margin-left:auto}
+.ibx-seg{display:inline-flex;background:var(--surf);border:1px solid var(--line);border-radius:999px;padding:3px;margin-left:21px}
+.ibx-seg button{border:none;background:none;border-radius:999px;padding:6px 21px;font-weight:600;font-size:16px;color:var(--muted)}
+.ibx-seg button.on{background:var(--brand);color:#fff}
+.ibx-seg .n{font-weight:500;opacity:.8;margin-left:6px;font-size:14px}
+.ibx-list{border-right:1px solid var(--line);overflow:auto;display:flex;flex-direction:column}
+.ibx-plats{display:flex;gap:8px;flex-wrap:wrap;padding:13px 13px 8px}
+.ibx-plats .chip{cursor:pointer;font-size:14px;padding:3px 10px}
+.ibx-stages{display:flex;gap:8px;padding:0 13px 13px;border-bottom:1px solid var(--line)}
+.ibx-stages .st{flex:1;text-align:center;font-size:13px;color:var(--hint);border:1px solid var(--line);border-radius:var(--r-small);padding:5px 4px;background:none}
+.ibx-stages .st b{display:block;font-size:17px;color:var(--ink)}
+.ibx-stages .st.on{border-color:var(--brand)}
+.thr{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--line);padding:13px 13px 13px 16px;position:relative}
+.thr:hover{background:var(--surf)}
+.thr.on{background:var(--surf2)}
+.thr.unread::before{content:'';position:absolute;left:5px;top:21px;width:7px;height:7px;border-radius:50%;background:var(--brand)}
+.thr .r1{display:flex;align-items:center;gap:8px}
+.thr .nm{font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thr .tm{margin-left:auto;font-size:13px;color:var(--hint);white-space:nowrap}
+.thr .car{font-size:14px;color:var(--muted);margin-top:2px}
+.thr .last{font-size:14px;color:var(--hint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.thr.unread .last{color:var(--ink)}
+.pl{display:inline-flex;align-items:center;font-size:12px;font-weight:700;border-radius:999px;padding:2px 8px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.stg{font-size:12px;font-weight:700;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.stg.New{background:color-mix(in srgb,var(--brand) 22%,transparent);color:var(--link)}
+.stg.Talking{background:var(--surf2);color:var(--muted)}
+.stg.Offer{background:color-mix(in srgb,var(--gold) 22%,transparent);color:var(--gold)}
+.stg.Deal{background:color-mix(in srgb,var(--up) 22%,transparent);color:var(--up)}
+.ibx-thread{display:flex;flex-direction:column;min-height:0}
+.ibx-th-head{padding:13px 21px;border-bottom:1px solid var(--line);display:flex;gap:13px;align-items:flex-start}
+.ibx-th-head .who{flex:1;min-width:0}
+.ibx-th-head h3{font-size:19px}
+.ibx-th-head .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px;font-size:14px}
+.ibx-crm{display:flex;gap:8px;padding:8px 21px;border-bottom:1px solid var(--line);align-items:center;flex-wrap:wrap;font-size:14px;background:var(--surf)}
+.ibx-crm .stbtn{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:3px 12px;font-size:14px;color:var(--muted)}
+.ibx-crm .stbtn.on{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+.ibx-crm .money{margin-left:auto;color:var(--muted)}
+.ibx-msgs{flex:1;overflow:auto;padding:21px;display:flex;flex-direction:column;gap:13px}
+.bub{max-width:72%;padding:10px 14px;border-radius:12px;font-size:16px;line-height:1.45;background:var(--surf);border:1px solid var(--line)}
+.bub.me{align-self:flex-end;background:var(--brand);border-color:var(--brand);color:#fff}
+.bub .bt{display:block;font-size:12px;opacity:.75;margin-top:4px}
+.ibx-note{align-self:center;font-size:13px;color:var(--hint)}
+.ibx-ai{margin:0 21px 8px;display:flex;gap:8px;flex-wrap:wrap}
+.ibx-ai .chip{cursor:pointer}
+.ibx-compose{border-top:1px solid var(--line);padding:13px 21px;display:flex;gap:8px;align-items:center}
+.ibx-compose input{flex:1}
+.ibx-compose .via{font-size:13px;color:var(--hint);white-space:nowrap}
+.ibx-empty{padding:34px 21px;color:var(--hint)}
+@media (max-width:760px){
+  .msgfab{bottom:calc(132px + env(safe-area-inset-bottom));right:13px;padding:0 13px}
+  .ibx{width:100vw;grid-template-columns:1fr}
+  .ibx.open-th .ibx-list{display:none}
+  .ibx:not(.open-th) .ibx-thread{display:none}
+}
 </style>
 <style>:root{--z:1}@media (min-width:1280px){:root{--z:.9}html{zoom:.9}}</style>
 </head>
@@ -1017,6 +1083,7 @@ function shell(){
    <div class="view" id="view"></div>
    <div class="dock" id="dock"></div>
   </div>
+  <button class="msgfab" data-act="inbox" aria-label="Messages: all buyer and seller conversations">${ic('text')}Messages<span class="badge" id="msgbadge">${IBX.filter(t=>t.unread).length}</span></button>
   <nav class="bottom" aria-label="Main">
    ${[['intel','home'],['sourcing','search'],['mylot','lot'],['invest','invest']].map(([t,i])=>`<button data-tab="${t}"><span class="pill">${ic(i)}</span>${TITLES[t]}</button>`).join('')}
   </nav>
@@ -1678,6 +1745,82 @@ function micToggle(f){
  micTimer=setInterval(()=>{if(i<words.length){inp.value+=(i?' ':'')+words[i++]}else stopMic()},260);
 }
 function stopMic(){clearInterval(micTimer);document.querySelectorAll('.ask.listening').forEach(f=>{f.classList.remove('listening');f.querySelector('input').placeholder='Ask about any car, VIN or listing link'})}
+
+
+/* ================= MESSAGES: mini CRM inbox (13.11.2026) ================= */
+/* Every buyer and seller conversation, from every site, in one place. Buy = you are buying a car. Sell = someone wants one of yours. */
+const IBX_PL={wa:'WhatsApp',sms:'Text',email:'Email',ebay:'eBay Motors',bat:'Bring a Trailer',autotrader:'AutoTrader',cargurus:'CarGurus',fb:'Facebook',ig:'Instagram',web:'Your website'};
+const IBX_ST=['New','Talking','Offer','Deal'];
+const IBX=[
+ {id:'m1',side:'Sell',name:'Mark Delaney',car:'l1',pl:'autotrader',stage:'Offer',t:'12 min',unread:1,msgs:[['them','Hi, is the Huracán EVO still available? Any room on price?','Yesterday 16:40'],['me','Yes it is. Fresh service, 9,800 mi. Happy to talk.','Yesterday 17:02'],['them','I can do $262k cash, pick up this weekend.','12 min ago']]},
+ {id:'m2',side:'Sell',name:'Priya Shah',car:'l2',pl:'wa',stage:'Talking',t:'1 h',unread:1,msgs:[['them','Saw the F8 on your site. Can you send the PPI report?','Today 09:14'],['me','Sending it now, plus the service book.','Today 09:31'],['them','Thanks. Can I see it Saturday morning?','1 h ago']]},
+ {id:'m3',side:'Sell',name:'@classic.garage.ny',car:'l3',pl:'ig',stage:'New',t:'3 h',unread:1,msgs:[['them','Is the 993 Turbo Polar Silver matching numbers?','3 h ago']]},
+ {id:'m4',side:'Sell',name:'James Ortega',car:'l5',pl:'ebay',stage:'Talking',t:'Yesterday',unread:0,msgs:[['them','Would you take a trade, 2019 Porsche Cayenne?','Yesterday 11:05'],['me','Possibly. Send VIN and mileage and I will price it.','Yesterday 11:40']]},
+ {id:'m5',side:'Sell',name:'Rob Klein',car:'l6',pl:'email',stage:'Deal',t:'2 d',unread:0,msgs:[['them','Wire sent for the deposit, $50k.','2 d ago'],['me','Received, thank you. Car is yours, delivery Tuesday.','2 d ago']]},
+ {id:'m6',side:'Buy',name:'Naples Motorsports',car:'c1',pl:'email',stage:'Offer',t:'40 min',unread:1,msgs:[['me','Interested in the 2018 GT3. Would you take $178k?','Today 08:10'],['them','Lowest is $182k. It has the clubsport package.','40 min ago']]},
+ {id:'m7',side:'Buy',name:'Dan (private seller)',car:'c8',pl:'sms',stage:'Talking',t:'2 h',unread:0,msgs:[['me','Hi Dan, is the GT3 Touring still for sale?','Today 07:55'],['them','Yes. Two people coming tomorrow.','2 h ago']]},
+ {id:'m8',side:'Buy',name:'Greenwich Exotics',car:'c7',pl:'cargurus',stage:'New',t:'Yesterday',unread:0,msgs:[['me','Is the 812 Competizione Aperta price negotiable after the drop?','Yesterday 15:20']]},
+ {id:'m9',side:'Buy',name:'BaT seller: 993driver',car:'c5',pl:'bat',stage:'Talking',t:'3 d',unread:0,msgs:[['me','Any paint meter readings on the 993 Turbo?','3 d ago'],['them','All original except front bumper. Readings in the gallery.','3 d ago']]}
+];
+const IB={side:'Sell',pl:'all',stage:'all',open:null};
+function ibxCar(t){const c=t.side==='Sell'?LOT.find(x=>x.id===t.car):CARS.find(x=>x.id===t.car);return c||{y:'',md:''}}
+function ibxPriceLine(t){const c=ibxCar(t);
+ if(t.side==='Sell')return `Your price ${money(c.you)} · market ${money(c.mkt)} · ${c.days} days on lot`;
+ return c.price?`Asking ${money(c.price)}${c.mkt?' · market '+money(c.mkt):''}`:'';}
+function ibxRows(){
+ const L=IBX.filter(t=>t.side===IB.side&&(IB.pl==='all'||t.pl===IB.pl)&&(IB.stage==='all'||t.stage===IB.stage));
+ if(!L.length)return `<div class="ibx-empty">No conversations here yet.</div>`;
+ return L.map(t=>{const c=ibxCar(t);return `<button class="thr ${t.unread?'unread':''} ${IB.open===t.id?'on':''}" data-ith="${t.id}">
+  <div class="r1"><span class="nm">${t.name}</span><span class="tm">${t.t}</span></div>
+  <div class="car">${c.y} ${c.md}</div>
+  <div class="r1" style="margin-top:6px"><span class="pl">${IBX_PL[t.pl]}</span><span class="stg ${t.stage}">${t.stage}</span><span class="last" style="flex:1">${t.msgs[t.msgs.length-1][1]}</span></div></button>`}).join('');}
+function ibxThread(){
+ const t=IBX.find(x=>x.id===IB.open);
+ if(!t)return `<div class="ibx-empty"><b style="color:var(--ink)">Pick a conversation</b><br>Every message from every site lands here. Reply from one box, it goes out on the same channel.</div>`;
+ const c=ibxCar(t),last=t.msgs[t.msgs.length-1][0]==='them';
+ const ai=t.side==='Sell'?['Counter at market price','Book a viewing','Send the PPI report']:['Offer 3% under market','Ask for service records','Book an inspection'];
+ return `<div class="ibx-th-head"><button class="iconbtn phonly" data-act="ibxback" aria-label="Back to conversations">${ic('back')}</button><div class="who"><h3>${t.name}</h3>
+  <div class="meta"><span class="pl">${IBX_PL[t.pl]}</span><span>${t.side==='Sell'?'Wants your':'Selling a'} <b>${c.y} ${c.md}</b></span></div></div>
+  <button class="btn sm" data-${t.side==='Sell'?'lotcar':'car'}="${t.car}">Open car</button></div>
+ <div class="ibx-crm"><span class="hint">Stage</span>${IBX_ST.map(s=>`<button class="stbtn ${t.stage===s?'on':''}" data-ist="${s}">${s}</button>`).join('')}<span class="money">${ibxPriceLine(t)}</span></div>
+ <div class="ibx-msgs" id="ibxmsgs"><div class="ibx-note">Conversation on ${IBX_PL[t.pl]}</div>${t.msgs.map(m=>`<div class="bub ${m[0]==='me'?'me':''}">${m[1]}<span class="bt">${m[2]}</span></div>`).join('')}</div>
+ ${last?`<div class="ibx-ai"><span class="hint" style="align-self:center">Suggested reply:</span>${ai.map(a=>`<button class="chip" data-iai="${a}">${a}</button>`).join('')}</div>`:''}
+ <form class="ibx-compose" onsubmit="return false"><input type="text" id="ibxin" placeholder="Reply to ${t.name.split(' ')[0]}" aria-label="Reply"><span class="via">via ${IBX_PL[t.pl]}</span><button class="btn main sm" data-act="ibxsend">Send</button></form>`;}
+function ibxCounts(){return IBX_ST.map(s=>`<button class="st ${IB.stage===s?'on':''}" data-istf="${s}"><b>${IBX.filter(t=>t.side===IB.side&&t.stage===s).length}</b>${s}</button>`).join('')}
+function ibxPlats(){const used=[...new Set(IBX.filter(t=>t.side===IB.side).map(t=>t.pl))];
+ return [`<span class="chip ${IB.pl==='all'?'on':''}" data-ipf="all">All sites</span>`].concat(used.map(p=>`<span class="chip ${IB.pl===p?'on':''}" data-ipf="${p}">${IBX_PL[p]}</span>`)).join('');}
+function ibxDraw(){
+ let w=document.getElementById('ibxwrap');
+ if(!w){w=document.createElement('div');w.id='ibxwrap';w.className='ibxwrap';document.body.appendChild(w)}
+ const n=s=>IBX.filter(t=>t.side===s&&t.unread).length;
+ w.innerHTML=`<div class="ibxscrim" data-act="ibxclose"></div><section class="ibx ${IB.open?'open-th':''}" role="dialog" aria-label="Messages">
+  <div class="ibx-head"><h2>Messages</h2>
+   <div class="ibx-seg" role="tablist">${['Buy','Sell'].map(s=>`<button role="tab" class="${IB.side===s?'on':''}" data-iside="${s}">${s}${n(s)?`<span class="n">${n(s)} new</span>`:''}</button>`).join('')}</div>
+   <button class="iconbtn x" data-act="ibxclose" aria-label="Close messages">${ic('x')}</button></div>
+  <div class="ibx-list"><div class="ibx-plats">${ibxPlats()}</div><div class="ibx-stages">${ibxCounts()}</div>${ibxRows()}</div>
+  <div class="ibx-thread">${ibxThread()}</div></section>`;
+ const m=document.getElementById('ibxmsgs');if(m)m.scrollTop=m.scrollHeight;
+ const b=document.getElementById('msgbadge');if(b){const u=IBX.filter(t=>t.unread).length;b.textContent=u;b.style.display=u?'':'none'}
+ document.querySelector('.msgfab')?.classList.add('on');
+}
+function ibxClose(){document.getElementById('ibxwrap')?.remove();document.querySelector('.msgfab')?.classList.remove('on')}
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-act^="ibx"],[data-act="inbox"],[data-iside],[data-ipf],[data-istf],[data-ith],[data-ist],[data-iai]');if(!t)return;
+ const d=t.dataset;e.stopImmediatePropagation();
+ if(d.act==='inbox'){document.getElementById('ibxwrap')?ibxClose():ibxDraw();return}
+ if(d.act==='ibxclose'){ibxClose();return}
+ if(d.act==='ibxback'){IB.open=null;ibxDraw();return}
+ if(d.iside){IB.side=d.iside;IB.pl='all';IB.stage='all';IB.open=null;ibxDraw();return}
+ if(d.ipf){IB.pl=d.ipf;ibxDraw();return}
+ if(d.istf){IB.stage=IB.stage===d.istf?'all':d.istf;ibxDraw();return}
+ if(d.ith){IB.open=d.ith;const th=IBX.find(x=>x.id===d.ith);th.unread=0;ibxDraw();return}
+ if(d.ist){const th=IBX.find(x=>x.id===IB.open);th.stage=d.ist;ibxDraw();toast('Moved to '+d.ist);return}
+ if(d.iai){const i=document.getElementById('ibxin');i.value={'Counter at market price':'Thanks for the offer. Market on this car is '+money(ibxCar(IBX.find(x=>x.id===IB.open)).mkt||0)+' right now. I can meet you there.','Book a viewing':'Happy to show it. Saturday 10:00 or 14:00, which works?','Send the PPI report':'Here is the full inspection report. Any questions, ask away.','Offer 3% under market':'Would you take '+money(Math.round((ibxCar(IBX.find(x=>x.id===IB.open)).mkt||ibxCar(IBX.find(x=>x.id===IB.open)).price||0)*0.97/500)*500)+'? I can move fast.','Ask for service records':'Could you send the service records and any paint meter readings?','Book an inspection':'I would like a pre-purchase inspection. Can my inspector come this week?'}[d.iai];i.focus();return}
+ if(d.act==='ibxsend'){const i=document.getElementById('ibxin');const v=i.value.trim();if(!v)return;const th=IBX.find(x=>x.id===IB.open);th.msgs.push(['me',v,'Just now']);th.t='now';if(th.stage==='New')th.stage='Talking';ibxDraw();toast('Sent via '+IBX_PL[th.pl]);return}
+},true);
+/* opening a car from the inbox closes the inbox first */
+document.addEventListener('click',e=>{if(e.target.closest('#ibxwrap [data-car],#ibxwrap [data-lotcar]'))ibxClose()},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('ibxwrap'))ibxClose()});
 
 /* ================= BOOT ================= */
 seedChats();
