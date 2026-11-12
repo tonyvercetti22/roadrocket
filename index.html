@@ -1012,13 +1012,11 @@ function answer(q,kind){
   else kind='gt3';
  }
  if(kind==='hot')return `<p>Hypercars and limited Porsches sell fastest in the US this month. Volume supercars sit much longer.</p>
- <div class="pcard"><div class="lbl">Average days on market, US, this month</div>
- <table class="rows"><tr><th>Model</th><th class="num">Days</th><th class="num">vs last month</th></tr>
- <tr><td>Pagani Zonda</td><td class="num">3</td><td class="num">${pct(-25,0)}</td></tr>
- <tr><td>McLaren Senna</td><td class="num">9</td><td class="num">${pct(-10,0)}</td></tr>
- <tr><td>Porsche 911 GT3 (992)</td><td class="num">12</td><td class="num">${pct(-8,0)}</td></tr>
- <tr><td>Ferrari SF90</td><td class="num">18</td><td class="num">${pct(6,0)}</td></tr>
- <tr><td>Lamborghini Huracán</td><td class="num">83</td><td class="num">${pct(14,0)}</td></tr></table></div>
+ <div class="pcard hotbox"><div class="lbl">Average days on market, US, this month</div><p class="mut" style="margin:4px 0 0">Drag the lines. The list updates as you go.</p>
+ ${rng('Year',1960,2026,1,1960,2026,'year').replace('class="rng"','class="rng" data-hot="y"')}
+ ${rng('Budget',50000,3000000,10000,50000,3000000,'usd').replace('class="rng"','class="rng" data-hot="b"')}
+ ${rng('Horsepower',150,900,10,150,900,'hp').replace('class="rng"','class="rng" data-hot="hp"')}
+ <div class="hotres">${hotList({y:[1960,2026],b:[50000,1e9],hp:[150,1e9]})}</div></div>
  ${src('Based on 1,240 listings that left the market, last 30 days')}${tail(['Only Porsche','Only my region','Which of these do I have?'])}`;
  if(kind==='volume')return `<p>The Huracán is the volume leader by a wide margin. Units are estimated from listings that left the market.</p>
  <div class="pcard"><div class="lbl">Estimated units sold, US, this month</div>
@@ -1234,6 +1232,31 @@ document.addEventListener('keydown',e=>{
 });
 /* More criteria (12.11.2026): hidden until opened, chips for choices, drag ranges for numbers */
 function chips(name,opts,on,multi){return `<div class="cmpchips" data-name="${name}"${multi?' data-multi="1"':''}>${opts.map(o=>`<span class="chip${o===on?' on':''}" role="button" tabindex="0">${o}</span>`).join('')}</div>`}
+const HOT=[
+ {n:'Pagani Zonda',y:2005,hp:555,v:2400000,d:3,ch:-25},
+ {n:'McLaren Senna',y:2019,hp:789,v:1150000,d:9,ch:-10},
+ {n:'Porsche 911 GT3 (992)',y:2022,hp:502,v:235000,d:12,ch:-8},
+ {n:'Porsche 911 Turbo S (992)',y:2021,hp:640,v:215000,d:15,ch:-4},
+ {n:'Ferrari SF90',y:2021,hp:986,v:520000,d:18,ch:6},
+ {n:'Porsche 911 Carrera (991)',y:2014,hp:350,v:72000,d:21,ch:-3},
+ {n:'Mercedes-AMG G63',y:2020,hp:577,v:165000,d:24,ch:2},
+ {n:'Ferrari F40',y:1990,hp:471,v:2900000,d:27,ch:-6},
+ {n:'Porsche 930 Turbo',y:1987,hp:282,v:155000,d:31,ch:-5},
+ {n:'Chevrolet Corvette C8',y:2021,hp:495,v:68000,d:35,ch:3},
+ {n:'Lamborghini Urus',y:2021,hp:641,v:214000,d:44,ch:9},
+ {n:'Ferrari 308 GTB',y:1979,hp:240,v:95000,d:52,ch:4},
+ {n:'Nissan GT-R',y:2017,hp:565,v:88000,d:58,ch:7},
+ {n:'Lamborghini Huracán',y:2019,hp:631,v:220000,d:83,ch:14}];
+function hotList(f){
+ const inR=w=>w.y>=f.y[0]&&w.y<=f.y[1]&&w.v>=f.b[0]&&w.v<=f.b[1]&&w.hp>=f.hp[0]&&w.hp<=f.hp[1];
+ let hit=HOT.filter(inR).sort((a,b)=>a.d-b.d),near=false;
+ if(!hit.length){near=true;const off=(v,lo,hi,sp)=>v<lo?(lo-v)/sp:v>hi?(v-hi)/sp:0;
+  hit=HOT.map(w=>({...w,_d:off(w.y,f.y[0],f.y[1],66)+off(w.v,f.b[0],f.b[1],2950000)+off(w.hp,f.hp[0],f.hp[1],750)})).sort((a,b)=>a._d-b._d).slice(0,5).sort((a,b)=>a.d-b.d)}
+ const out=w=>{const m=[];if(w.y<f.y[0]||w.y>f.y[1])m.push(w.y);if(w.v<f.b[0]||w.v>f.b[1])m.push(money(w.v));if(w.hp<f.hp[0]||w.hp>f.hp[1])m.push(w.hp+' hp');return m.join(', ')};
+ return `${near?`<p class="mut" style="margin:14px 0 0"><b>Nothing fits every line exactly.</b> These are the ${hit.length} closest, fastest first.</p>`:''}
+ <table class="rows" style="margin-top:12px"><tr><th>Model</th><th class="num">Days</th><th class="num">vs last month</th></tr>
+ ${hit.map(w=>`<tr><td>${w.n}<div class="hint">${w.y} · ${money(w.v)} · ${w.hp} hp${near?` · outside: ${out(w)}`:''}</div></td><td class="num">${w.d}</td><td class="num">${pct(w.ch,0)}</td></tr>`).join('')}</table>`;
+}
 function rng(label,min,max,step,lo,hi,fmt){return `<div class="rng" data-min="${min}" data-max="${max}" data-fmt="${fmt}" data-lo0="${lo}" data-hi0="${hi}"><div class="rng-top"><span>${label}</span><output></output></div><div class="rng-track"><i></i><input type="range" class="lo" min="${min}" max="${max}" step="${step}" value="${lo}" aria-label="${label} from"><input type="range" class="hi" min="${min}" max="${max}" step="${step}" value="${hi}" aria-label="${label} to"></div></div>`}
 function rng1(label,min,max,step,v,fmt){return `<div class="rng one" data-min="${min}" data-max="${max}" data-fmt="${fmt}" data-lo0="${v}"><div class="rng-top"><span>${label}</span><output></output></div><div class="rng-track"><i></i><input type="range" class="lo" min="${min}" max="${max}" step="${step}" value="${v}" aria-label="${label}"></div></div>`}
 function cmpMore(kind){
@@ -1296,7 +1319,7 @@ document.addEventListener('click',e=>{
  const rs=e.target.closest('[data-cmpreset]');if(rs){e.stopPropagation();const b=rs.closest('.cmpmore');b.querySelectorAll('.cmpchips').forEach(c=>{c.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));const d=c.dataset.name==='win'?[...c.children].find(x=>x.textContent==='90 days'):c.firstElementChild;d.classList.add('on')});b.querySelectorAll('.rng').forEach(r=>{r.querySelector('.lo').value=r.dataset.lo0;const h=r.querySelector('.hi');if(h)h.value=r.dataset.hi0;rngPaint(r)});b.querySelectorAll('input[type=text]').forEach(x=>x.value='');cmpCount();return}
  const c=e.target.closest('.cmpchips .chip');if(c){e.stopPropagation();const g=c.parentElement,all=[...g.querySelectorAll('.chip')];if(g.dataset.multi){if(c===all[0]){all.forEach(x=>x.classList.toggle('on',x===c))}else{c.classList.toggle('on');all[0].classList.remove('on');if(!all.some(x=>x.classList.contains('on')))all[0].classList.add('on')}}else all.forEach(x=>x.classList.toggle('on',x===c));cmpCount()}
 },true);
-document.addEventListener('input',e=>{const r=e.target.closest('.rng');if(r&&r.dataset.iv){rngPaint(r);const lo=+r.querySelector('.lo').value,hi=+r.querySelector('.hi').value,mx=+r.dataset.max;S.invF[r.dataset.iv]=[lo,hi>=mx&&r.dataset.iv!=='y'?1e9:hi];document.getElementById('ivres').innerHTML=bestList();return}if(r){rngPaint(r);cmpCount()}else if(e.target.closest('.cmpmore'))cmpCount()});
+document.addEventListener('input',e=>{const r=e.target.closest('.rng');if(r&&r.dataset.hot){rngPaint(r);const box=r.closest('.hotbox'),f={};box.querySelectorAll('.rng[data-hot]').forEach(x=>{const lo=+x.querySelector('.lo').value,hi=+x.querySelector('.hi').value,mx=+x.dataset.max;f[x.dataset.hot]=[lo,hi>=mx&&x.dataset.hot!=='y'?1e9:hi]});box.querySelector('.hotres').innerHTML=hotList(f);return}if(r&&r.dataset.iv){rngPaint(r);const lo=+r.querySelector('.lo').value,hi=+r.querySelector('.hi').value,mx=+r.dataset.max;S.invF[r.dataset.iv]=[lo,hi>=mx&&r.dataset.iv!=='y'?1e9:hi];document.getElementById('ivres').innerHTML=bestList();return}if(r){rngPaint(r);cmpCount()}else if(e.target.closest('.cmpmore'))cmpCount()});
 new MutationObserver(()=>{document.querySelectorAll('.rng:not([data-ok])').forEach(r=>{r.dataset.ok=1;rngPaint(r)})}).observe(document.documentElement,{childList:true,subtree:true});
 function compareResult(){
  const c=S.arg?(CARS.find(x=>x.id===S.arg)||LOT.find(x=>x.id===S.arg)):CARS.find(x=>x.id==='c7');
