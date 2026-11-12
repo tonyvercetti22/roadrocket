@@ -446,6 +446,7 @@ h1,h2,h3,.head{letter-spacing:-.02em}
 .pstrip>div:first-child{border-left:0}
 .pstrip .lbl{font-size:13.5px;color:var(--muted)}
 .pstrip>div>b{font-family:var(--head);font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.bwcard{margin-top:18px}.bwcard .lbl{margin-bottom:4px}.allcars{margin-top:10px}.allcars summary{cursor:pointer;color:var(--mut,#9aa0aa);padding:6px 2px}.allcars .card{margin-top:6px}
 .trajhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
 @media(max-width:760px){.lotstrip{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}.ltile{min-width:68%;scroll-snap-align:start}.pstrip{grid-template-columns:1fr}.pstrip>div{border-left:0;border-top:1px solid var(--hair)}.pstrip>div:first-child{border-top:0}}
 
@@ -1292,12 +1293,12 @@ function portfolioBlock(){
  const paid=MINE.reduce((t,w)=>t+w.paid,0),now=MINE.reduce((t,w)=>t+w.v,0),b=BENCH[S.bench];
  const alt=MINE.reduce((t,w)=>t+w.paid*Math.pow(1+b.y,2026-+w.since),0);const diff=now-alt;
  const f12=MINE.reduce((t,w)=>t+w.v*(1+w.g*12),0);
- const tiles=MINE.map(w=>{const gain=(w.v-w.paid)/w.paid*100;return `<div class="ltile" data-chart="${w.id}">${photo({id:w.img,color:w.color,y:'',mk:'',md:w.name},'100%')}
-  <div class="ltb"><b class="ln">${w.name}</b><div class="lv">${money(w.v)}</div><div>${pct(gain)} <span class="hint">since ${w.since}</span></div><div class="hint">Paid ${money(w.paid)}</div>${spark(w)}</div></div>`}).join('')
-   +`<button class="ltile ladd" data-act="addwatch">${ic('plus')}<span>Add a car you own</span></button>`;
- return `<h2 class="lothead">Your lot <span class="hint">${MINE.length} cars</span></h2>
- <div class="lotstrip">${tiles}</div>
- <div class="pstrip">
+ const gn=w=>(w.v-w.paid)/w.paid*100,byG=[...MINE].sort((x,y)=>gn(y)-gn(x)),best=byG[0],worst=byG[byG.length-1];
+ const row=(w,lbl)=>`<div class="saved" data-chart="${w.id}"><div>${lbl?`<div class="lbl">${lbl}</div>`:''}<b>${w.name}</b><div class="hint">Paid ${money(w.paid)} in ${w.since}</div></div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(gn(w))} <span class="hint">since ${w.since}</span></div></span></div>`;
+ const bw=`<div class="card bwcard">${row(best,'Best appreciation in your lot')}${worst!==best?row(worst,'Worst depreciation in your lot'):''}</div>
+ <details class="allcars"><summary>All ${MINE.length} cars</summary><div class="card">${byG.map(w=>row(w)).join('')}</div></details>
+ <button class="btn" data-act="addwatch" style="margin-top:12px">${ic('plus')}Add a car you own</button>`;
+ return `<div class="pstrip" style="margin-top:6px">
   <div><span class="lbl">Worth today</span><b>${money(now)}</b><span>${pct((now-paid)/paid*100)} on ${money(paid)} paid</span></div>
   <div><span class="lbl">Same money in ${b.n}</span><b>${money(alt)}</b><span>${diff>=0?`<b class="up">↑ ${money(diff)} ahead</b>`:`<b class="down">↓ ${money(-diff)} behind</b>`}</span></div>
   <div><span class="lbl">In 12 months</span><b>~${money(f12)}</b><span class="hint">${money(f12*0.92)} to ${money(f12*1.08)}. Estimate</span></div>
@@ -1306,7 +1307,8 @@ function portfolioBlock(){
  <p class="verdict" id="pverdict"></p>
  <div class="chartbox" style="margin-bottom:6px"><svg id="chart" viewBox="0 0 ${innerWidth<=760?420:800} ${innerWidth<=760?220:240}" style="width:100%;height:auto;display:block"></svg></div>
  ${benchPicker()}
- <div style="margin:4px 2px 16px">${src('Sketch numbers. Live: your purchase prices, 126+ sales per model, daily index prices')}</div>`;
+ ${bw}
+ <div style="margin:14px 2px 16px">${src('Sketch numbers. Live: your purchase prices, 126+ sales per model, daily index prices')}</div>`;
 }
 function spark(w){const a=series(w).slice(-7),mn=Math.min(...a),mx=Math.max(...a),X=i=>2+i/(a.length-1)*92,Y=v=>28-(v-mn)/((mx-mn)||1)*24;const c=w.ch>=0?'var(--up)':'var(--down)';const pts=a.map((v,i)=>X(i).toFixed(1)+','+Y(v).toFixed(1)).join(' ');return `<svg class="spark" viewBox="0 0 96 32" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="${c}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${X(a.length-1)}" cy="${Y(a[a.length-1])}" r="2.2" fill="${c}"/></svg>`}
 function series(w){let v=w.v,a=[];let r=w.seed*9301%233;for(let i=0;i<120;i++){r=(r*9301+49297)%233280;const noise=(r/233280-0.5)*0.035;a.unshift(v);v=v/(1+w.g+noise)}return a}
