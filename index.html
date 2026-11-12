@@ -963,7 +963,7 @@ function render(scroll){
 /* ---------- INTEL ---------- */
 function greeting(){const h=new Date().getHours();return h<12?'Good morning':h<18?'Good afternoon':'Good evening'}
 function intelHome(){
- const P=[['compare','Compare','Any car vs the market: price, comps, how fast it sells.','scale'],['hot','Hot','What sells fastest right now, by model.','flame'],['volume','Volume','What sells the most units this month.','bars'],['top','Top pick','The best car to stock this month, scored.','trophy'],['comp','Competitors','You vs the 5 dealers nearest to you.','users']];
+ const P=[['compare','Compare','Check any car against the market.','scale'],['hot','Hot','Cars that sell the fastest.','flame'],['volume','Volume','Cars that sell the most.','bars'],['top','Top pick','The best car to buy this month.','trophy'],['comp','Competitors','You vs your 5 nearest dealers.','users']];
  return `<div class="home"><h1 class="logo"><span class="r">Road</span><b>Rocket</b></h1><p class="greet">${greeting()}, ${S.user}.</p>
  ${askBar('homeask','Ask about any car, VIN or listing link')}
  <div class="boxes">${P.map(p=>`<button class="box" data-pillar="${p[0]}"><span class="bico">${ic(p[3])}</span><span><h3>${p[1]}</h3><p>${p[2]}</p></span><span class="barr">${ic('arrow')}</span></button>`).join('')}</div></div>`;
