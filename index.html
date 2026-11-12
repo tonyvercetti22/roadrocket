@@ -1137,9 +1137,12 @@ function cmpMore(kind){
    <h4>The car</h4>
    <label class="f">Body</label>${chips('body',['Any','Coupe','Convertible','Targa'],'Any')}
    <label class="f">Condition</label>${chips('cond',['Any','Concours','Excellent','Good','Fair'],'Any')}
+   <label class="f">Exterior colour</label><input type="text" placeholder="Any, e.g. Shark Blue or Paint to Sample">
+   <label class="f">Interior</label>${chips('int',['Any','Black','Red / tan','Two-tone'],'Any')}
    <label class="f">Owners</label>${chips('own',['Any','1','2','3+'],'Any')}
    <label class="f">History</label>${chips('hist',['Any','No accidents','Clean title','Full service history'],'Any',1)}
-   <label class="f">Options</label><input type="text" placeholder="e.g. Paint to Sample, carbon seats">
+   <label class="f">Options</label><input type="text" placeholder="e.g. carbon seats, front lift, Weissach">
+   <label class="f">Must not have</label><input type="text" placeholder="e.g. salvage, wrap, aftermarket exhaust">
    <h4>The listing</h4>
    ${rng1('Price vs market, at most',-20,10,1,10,'vs')}
    ${rng1('Days on market, at most',7,180,1,180,'days')}
@@ -1259,6 +1262,7 @@ function searchForm(){
   <label class="f">Transmission</label><div class="cmpchips" data-name="trans"><span class="chip on">Any</span><span class="chip">Manual</span><span class="chip">PDK / automatic</span></div>
   <label class="f">Seller</label><div class="cmpchips" data-name="seller"><span class="chip on">Any</span><span class="chip">Dealer</span><span class="chip">Private</span></div>
   <label class="f">Location</label><select data-q="loc"><option>Anywhere in the US</option><option>📍 Near my current location</option><option>Within 150 mi of me</option><option>Florida</option></select>
+  ${cmpMore('src')}
   <p class="hint" id="nshint" style="margin:12px 0 0;display:none">Add at least a make or model first.</p>
   <button class="btn main" style="width:100%;margin-top:18px" data-act="runsearch">${ic('search')}Search</button>
  </div></div>`;
