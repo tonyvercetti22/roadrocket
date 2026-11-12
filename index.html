@@ -819,7 +819,7 @@ const ALERTS=[
 /* ================= STATE ================= */
 const S={tab:'intel',scr:'home',arg:null,stack:[],chats:[],chatId:null,starred:new Set(['c8']),
  sideOpen:true,vehicle:'car',flt:{maxPrice:250000,seller:{Dealer:true,Private:true},trans:{Manual:true,PDK:true,DCT:true},saved:false},
- invMode:'market',range:'1Y',bench:'sp',lotEmpty:false,user:'Thomas',signedUp:true,offline:false,
+ invMode:'mine',range:'1Y',bench:'sp',lotEmpty:false,user:'Thomas',signedUp:true,offline:false,
  prefs:{makes:['Porsche','Ferrari'],region:'Florida + Southeast',band:'$150k to $500k'},
  alerts:{bell:true,sms:true,wa:true,email:true,digest:'7:00 am',max:5,quiet:'9pm to 7am',thr:10}};
 let uid=1;
@@ -1284,7 +1284,7 @@ function lotCar(){
 function investHome(){
  const m=S.invMode==='market';const list=m?WATCH:MINE;
  return `<div class="wrap" style="max-width:900px"><h1 class="pagetitle">Invest</h1>
- <div class="switch" role="tablist"><button class="${m?'on':''}" data-inv="market">Market</button><button class="${m?'':'on'}" data-inv="mine">My cars</button></div>
+ <div class="switch" role="tablist"><button class="${m?'':'on'}" data-inv="mine">My cars</button><button class="${m?'on':''}" data-inv="market">Market</button></div>
  ${m?`<p class="mut" style="margin-top:0">Your watchlist: from your preferences and every star. 6-month trend.</p>`:portfolioBlock()}
  ${m?`<div class="card">${list.map(w=>`<div class="saved" data-chart="${w.id}"><div><b>${w.name}</b>${w.paid?`<div class="hint">Bought ${w.since} for ${money(w.paid)}</div>`:''}</div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(w.ch)} <span class="hint">6 mo</span></div></span></div>`).join('')}</div>
  <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn" data-act="addwatch">${ic('plus')}Add model</button></div>`:''}</div>`;
