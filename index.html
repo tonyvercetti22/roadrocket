@@ -626,6 +626,31 @@ label.f{font-size:13.5px}
 .back:hover{background:var(--surf2)}
 .filters{top:58px}
 
+/* ===== Compare: More criteria (12.11.2026) ===== */
+.cmpmore{margin-top:16px;border-top:1px solid var(--hair)}
+.cmpmore-btn{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;padding:14px 2px 4px;font-weight:600;font-size:16px;color:var(--ink);text-align:left}
+.cmpmore-btn .pm{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid var(--hair2);font-size:18px;line-height:1;transition:transform .2s var(--ease,ease)}
+.cmpmore.open .cmpmore-btn .pm{transform:rotate(45deg)}
+.cmpmore-btn:hover .pm{border-color:var(--brand);color:var(--link)}
+.cmpmore-body{display:none;padding-top:4px}
+.cmpmore.open .cmpmore-body{display:block}
+.cmpmore-body h4{margin:18px 0 2px;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--hint);font-weight:700}
+.cmpchips{display:flex;flex-wrap:wrap;gap:8px}
+.cmpchips .chip{cursor:pointer;min-height:38px;padding:0 14px;font-size:15px;user-select:none}
+.cmpchips .chip:hover{border-color:var(--brand)}
+.rng{margin-top:16px}
+.rng-top{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;color:var(--muted);margin-bottom:10px}
+.rng-top output{color:var(--ink);font-weight:650;font-variant-numeric:tabular-nums}
+.rng-track{position:relative;height:28px}
+.rng-track::before{content:"";position:absolute;left:0;right:0;top:12px;height:4px;border-radius:4px;background:var(--surf2)}
+.rng-track i{position:absolute;top:12px;height:4px;border-radius:4px;background:var(--brand)}
+.rng-track input{position:absolute;inset:0;width:100%;margin:0;background:none;pointer-events:none;-webkit-appearance:none;appearance:none;height:28px}
+.rng-track input::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--brand);box-shadow:0 2px 8px rgba(0,0,0,.45);cursor:grab}
+.rng-track input::-moz-range-thumb{pointer-events:auto;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--brand);cursor:grab}
+.rng-track input:active::-webkit-slider-thumb{cursor:grabbing;transform:scale(1.08)}
+.cmpreset{margin-top:18px;background:none;border:none;color:var(--muted);text-decoration:underline;text-underline-offset:3px;font-size:14.5px;padding:4px 0}
+.cmpreset:hover{color:var(--ink)}
+
 /* ===== ROADROCKET LOGO STANDARD v1 (12.11.2026). Spec: RoadRocket/decisions/2026-11-12-logo-standard.md. Change values here only. ===== */
 :root{--rr-tilt:-21deg;--rr-cut-y:59.9%;--rr-cut-h:max(.035em,1px);--rr-blue:#5b7cff}
 :root[data-theme="light"]{--rr-blue:#1a3fb8}
@@ -935,7 +960,7 @@ function intelHome(){
 }
 function compareForm(){
  const f=S.cmpFill;
- return `<div class="wrap" style="max-width:640px">${backBtn()}<h1 class="pagetitle">Compare</h1><p class="mut" style="margin-top:0">Any car against the US market.</p>
+ return `<div class="wrap" style="max-width:680px">${backBtn()}<h1 class="pagetitle">Compare</h1><p class="mut" style="margin-top:0">Any car against the US market.</p>
  <div class="card" style="padding:18px">
   <label class="f" style="margin-top:0">Paste a VIN or listing link (fills everything)</label>
   <div style="display:flex;gap:8px"><input type="text" id="vin" value="${f?'ZFF03RHA8N02xxxxx':''}" placeholder="VIN or https://..."><button class="btn" data-act="fill">Fill</button></div>
@@ -943,9 +968,57 @@ function compareForm(){
   <label class="f">Model</label><input type="text" value="${f?'Ferrari 812 Competizione A':''}" placeholder="e.g. Porsche 911 GT3 Touring">
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label class="f">Year</label><input type="text" value="${f?'2022':''}" placeholder="2022"></div><div><label class="f">Mileage</label><input type="text" value="${f?'2,400':''}" placeholder="6,100"></div></div>
   <label class="f">Options</label><input type="text" value="${f?'Carbon wheels, telemetry':''}" placeholder="e.g. Paint to Sample, carbon seats">
+  ${cmpMore()}
   <button class="btn main" style="width:100%;margin-top:18px" data-act="runcompare">Compare to market</button>
  </div></div>`;
 }
+/* More criteria (12.11.2026): hidden until opened, chips for choices, drag ranges for numbers */
+function chips(name,opts,on){return `<div class="cmpchips" data-name="${name}">${opts.map(o=>`<span class="chip${o===on?' on':''}" role="button" tabindex="0">${o}</span>`).join('')}</div>`}
+function rng(label,min,max,step,lo,hi,fmt){return `<div class="rng" data-min="${min}" data-max="${max}" data-fmt="${fmt}" data-lo0="${lo}" data-hi0="${hi}"><div class="rng-top"><span>${label}</span><output></output></div><div class="rng-track"><i></i><input type="range" class="lo" min="${min}" max="${max}" step="${step}" value="${lo}" aria-label="${label} from"><input type="range" class="hi" min="${min}" max="${max}" step="${step}" value="${hi}" aria-label="${label} to"></div></div>`}
+function rng1(label,min,max,step,v,fmt){return `<div class="rng one" data-min="${min}" data-max="${max}" data-fmt="${fmt}" data-lo0="${v}"><div class="rng-top"><span>${label}</span><output></output></div><div class="rng-track"><i></i><input type="range" class="lo" min="${min}" max="${max}" step="${step}" value="${v}" aria-label="${label}"></div></div>`}
+function cmpMore(){
+ return `<div class="cmpmore${S.cmpMoreOpen?' open':''}">
+  <button type="button" class="cmpmore-btn" data-cmpmore><span class="pm">+</span> More criteria <span class="hint cmpcount"></span></button>
+  <div class="cmpmore-body">
+   <h4>The car</h4>
+   <label class="f">Gearbox</label>${chips('gear',['Any','Manual','Automatic / PDK'],'Any')}
+   <label class="f">Body</label>${chips('body',['Any','Coupe','Convertible','Targa'],'Any')}
+   <label class="f">Condition</label>${chips('cond',['Any','Concours','Excellent','Good','Fair'],'Any')}
+   <label class="f">Owners</label>${chips('own',['Any','1','2','3+'],'Any')}
+   <label class="f">History</label>${chips('hist',['Any','No accidents','Clean title','Full service history'],'Any')}
+   <label class="f">Colour</label><input type="text" placeholder="e.g. Guards Red, any shade">
+   <h4>Compare against</h4>
+   ${rng('Year',1990,2026,1,2019,2024,'year')}
+   ${rng('Mileage',0,100000,1000,0,20000,'mi')}
+   ${rng1('Distance from you',50,3000,50,3000,'dist')}
+   <label class="f">Sold or listed in the last</label>${chips('win',['30 days','90 days','1 year'],'90 days')}
+   <label class="f">Include</label>${chips('src',['All','Dealer sales','Private sales','Auctions'],'All')}
+   <button type="button" class="cmpreset" data-cmpreset>Reset criteria</button>
+  </div></div>`;
+}
+function rngPaint(r){
+ const min=+r.dataset.min,max=+r.dataset.max,f=r.dataset.fmt,lo=r.querySelector('.lo'),hi=r.querySelector('.hi');
+ let a=+lo.value,b=hi?+hi.value:null;
+ if(hi&&a>b){if(document.activeElement===lo){a=b;lo.value=a}else{b=a;hi.value=b}}
+ const pc=v=>(v-min)/(max-min)*100,i=r.querySelector('i');
+ if(hi){i.style.left=pc(a)+'%';i.style.right=(100-pc(b))+'%'}else{i.style.left='0';i.style.right=(100-pc(a))+'%'}
+ const fm=v=>f==='mi'?(v>=max?'any':v.toLocaleString('en-US')+' mi'):f==='dist'?(v>=max?'Nationwide':'within '+v.toLocaleString('en-US')+' mi'):v;
+ r.querySelector('output').textContent=hi?(f==='mi'&&a===0&&b>=max?'Any mileage':fm(a)+' to '+fm(b)):fm(a);
+}
+function cmpCount(){
+ const box=document.querySelector('.cmpmore');if(!box)return;
+ let n=0;box.querySelectorAll('.cmpchips').forEach(c=>{const on=c.querySelector('.chip.on'),first=c.querySelector('.chip');if(on&&on!==first&&!(c.dataset.name==='win'&&on.textContent==='90 days'))n++});
+ box.querySelectorAll('.rng').forEach(r=>{const lo=r.querySelector('.lo'),hi=r.querySelector('.hi');if(lo.value!==r.dataset.lo0||(hi&&hi.value!==r.dataset.hi0))n++});
+ box.querySelectorAll('.cmpmore-body input[type=text]').forEach(x=>{if(x.value.trim())n++});
+ box.querySelector('.cmpcount').textContent=n?`· ${n} set`:'';
+}
+document.addEventListener('click',e=>{
+ const m=e.target.closest('[data-cmpmore]');if(m){e.stopPropagation();const b=m.closest('.cmpmore');b.classList.toggle('open');S.cmpMoreOpen=b.classList.contains('open');return}
+ const rs=e.target.closest('[data-cmpreset]');if(rs){e.stopPropagation();const b=rs.closest('.cmpmore');b.querySelectorAll('.cmpchips').forEach(c=>{c.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));const d=c.dataset.name==='win'?[...c.children].find(x=>x.textContent==='90 days'):c.firstElementChild;d.classList.add('on')});b.querySelectorAll('.rng').forEach(r=>{r.querySelector('.lo').value=r.dataset.lo0;const h=r.querySelector('.hi');if(h)h.value=r.dataset.hi0;rngPaint(r)});b.querySelectorAll('input[type=text]').forEach(x=>x.value='');cmpCount();return}
+ const c=e.target.closest('.cmpchips .chip');if(c){e.stopPropagation();c.parentElement.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));cmpCount()}
+},true);
+document.addEventListener('input',e=>{const r=e.target.closest('.rng');if(r){rngPaint(r);cmpCount()}else if(e.target.closest('.cmpmore'))cmpCount()});
+new MutationObserver(()=>{document.querySelectorAll('.rng:not([data-ok])').forEach(r=>{r.dataset.ok=1;rngPaint(r)})}).observe(document.documentElement,{childList:true,subtree:true});
 function compareResult(){
  const c=S.arg?(CARS.find(x=>x.id===S.arg)||LOT.find(x=>x.id===S.arg)):CARS.find(x=>x.id==='c7');
  const price=c.price||c.you,vs=(price-c.mkt)/c.mkt*100;const n=Math.round(14+c.mkt/200000);
