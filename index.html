@@ -1209,7 +1209,9 @@ function lotStats(){
  const slow=LOT.filter(c=>c.days>c.typ),slowV=slow.reduce((a,c)=>a+c.you,0);
  const ser=lotValueSeries(),mx=Math.max(...ser.map(p=>p[1]))*1.08,W=560,H=170,L=58,B=24;
  const X=d=>L+(90-d)/90*(W-L-8),Y=v=>8+(1-v/mx)*(H-B-8);
- let path='';ser.forEach((p,i)=>{const x=X(p[0]).toFixed(1),y=Y(p[1]).toFixed(1);path+=(i?(' H'+x+' V'+y):('M'+x+' '+y))});
+ const sm=ser.map((p,i)=>{if(i===0||i===ser.length-1)return p;let a=0,n=0;for(let j=i-7;j<=i+7;j++){if(j>=0&&j<ser.length){a+=ser[j][1];n++}}return [p[0],a/n]});
+ const P=sm.filter((p,i)=>i%3===0||i===sm.length-1).map(p=>[X(p[0]),Y(p[1])]);
+ let path='M'+P[0][0].toFixed(1)+' '+P[0][1].toFixed(1);for(let i=0;i<P.length-1;i++){const p0=P[i-1]||P[i],p1=P[i],p2=P[i+1],p3=P[i+2]||p2;path+=' C'+(p1[0]+(p2[0]-p0[0])/6).toFixed(1)+' '+(p1[1]+(p2[1]-p0[1])/6).toFixed(1)+' '+(p2[0]-(p3[0]-p1[0])/6).toFixed(1)+' '+(p2[1]-(p3[1]-p1[1])/6).toFixed(1)+' '+p2[0].toFixed(1)+' '+p2[1].toFixed(1)}
  const last=ser[ser.length-1];
  const grid=[.25,.5,.75,1].map(f=>{const v=mx/1.08*f;return `<line x1="${L}" x2="${W-8}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end">${money(v)}</text>`}).join('');
  const xl=[[90,'90 days ago','start'],[60,'60','middle'],[30,'30','middle'],[0,'Today','end']].map(a=>`<text x="${X(a[0])}" y="${H-4}" text-anchor="${a[2]}">${a[1]}</text>`).join('');
