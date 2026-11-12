@@ -599,6 +599,10 @@ label.f{font-size:13.5px}
 /* ===== LOGO v5 (12.11.2026): Road heavy, Rocket thin, both tilted the same ===== */
 .logo,.logo-s,.bar h1.lg{display:inline-block;font-family:"Archivo",var(--head,sans-serif)!important;font-style:normal!important;font-stretch:125%;font-weight:900!important;letter-spacing:-.045em!important;white-space:nowrap;transform:skewX(-21deg)}
 .logo b,.logo-s b,.bar h1.lg b{font-style:normal!important;transform:none!important;font-weight:200;font-stretch:112%;letter-spacing:-.02em;margin-left:.06em}
+
+/* ===== LOGO v6 (12.11.2026): optical size match + subtle speed cut ===== */
+.logo b,.logo-s b,.bar h1.lg b{font-size:1.04em;font-weight:250}
+.logo .r{background:linear-gradient(180deg,currentColor 0 57%,transparent 57% 59.5%,currentColor 59.5%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 </style>
 <style>html{zoom:0.9}</style>
 </head>
@@ -896,7 +900,7 @@ function render(scroll){
 function greeting(){const h=new Date().getHours();return h<12?'Good morning':h<18?'Good afternoon':'Good evening'}
 function intelHome(){
  const P=[['compare','Compare','Any car vs the market: price, comps, how fast it sells.','scale'],['hot','Hot','What sells fastest right now, by model.','flame'],['volume','Volume','What sells the most units this month.','bars'],['top','Top pick','The best car to stock this month, scored.','trophy'],['comp','Competitors','You vs the 5 dealers nearest to you.','users']];
- return `<div class="home"><h1 class="logo">Road<b>Rocket</b></h1><p class="greet">${greeting()}, ${S.user}.</p>
+ return `<div class="home"><h1 class="logo"><span class="r">Road</span><b>Rocket</b></h1><p class="greet">${greeting()}, ${S.user}.</p>
  ${askBar('homeask','Ask about any car, VIN or listing link')}
  <div class="boxes">${P.map(p=>`<button class="box" data-pillar="${p[0]}"><span class="bico">${ic(p[3])}</span><span><h3>${p[1]}</h3><p>${p[2]}</p></span><span class="barr">${ic('arrow')}</span></button>`).join('')}</div></div>`;
 }
@@ -1153,7 +1157,7 @@ function account(){
 /* ---------- SIGNUP + TOUR ---------- */
 function signupView(){
  const st=S.sign||0;
- if(st===0)return `<div class="signup"><div class="card"><h1 class="logo" style="font-size:44px">Road<b>Rocket</b></h1>
+ if(st===0)return `<div class="signup"><div class="card"><h1 class="logo" style="font-size:44px"><span class="r">Road</span><b>Rocket</b></h1>
  <p class="mut">Start your 1-month free trial. No card needed.</p>
  <button class="btn" style="width:100%;margin-top:8px" data-act="sgoogle">${ic('google')}Continue with Google</button>
  <p class="hint" style="text-align:center;margin:12px 0">or</p>
