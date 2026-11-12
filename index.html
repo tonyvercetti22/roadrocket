@@ -1413,7 +1413,7 @@ function portfolioBlock(){
 function spark(w){const a=series(w).slice(-7),mn=Math.min(...a),mx=Math.max(...a),X=i=>2+i/(a.length-1)*92,Y=v=>28-(v-mn)/((mx-mn)||1)*24;const c=w.ch>=0?'var(--up)':'var(--down)';const pts=a.map((v,i)=>X(i).toFixed(1)+','+Y(v).toFixed(1)).join(' ');return `<svg class="spark" viewBox="0 0 96 32" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="${c}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${X(a.length-1)}" cy="${Y(a[a.length-1])}" r="2.2" fill="${c}"/></svg>`}
 function series(w){let v=w.v,a=[];let r=w.seed*9301%233;for(let i=0;i<120;i++){r=(r*9301+49297)%233280;const noise=(r/233280-0.5)*0.035;a.unshift(v);v=v/(1+w.g+noise)}return a}
 function chartView(){
- const w=[...WATCH,...MINE].find(x=>x.id===S.arg);
+ const w=[...WATCH,...MINE,...MKT].find(x=>x.id===S.arg);
  return `<div class="wrap" style="max-width:900px">${backBtn()}<h1 class="pagetitle">${w.name}</h1>
  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="head" style="font-size:44px">${money(w.v)}</span><span>${pct(w.ch)} <span class="hint">6 months</span></span>${starBtn(w.id)}</div>
  <div>${src('Based on 126 sales and listings, last 10 years')}</div>
@@ -1427,7 +1427,7 @@ function drawChart(){
  if(!$('#chart'))return;
  const port=S.scr!=='chart';const n=RN[S.range];let d,fc,lo,hi,F;
  if(port){const all=portSeries();d=all.slice(-n-1);F=Math.min(12,Math.max(3,Math.round(n/5)));fc=[...Array(F+1)].map((_,i)=>MINE.reduce((t,w)=>t+w.v*(1+w.g*i),0));lo=fc.map((v,i)=>v*(1-0.0067*i));hi=fc.map((v,i)=>v*(1+0.0067*i))}
- else{const w=[...WATCH,...MINE].find(x=>x.id===S.arg);d=series(w).slice(-n-1);F=Math.min(6,n);fc=[...Array(F+1)].map((_,i)=>w.v*(1+w.g*i));lo=fc.map((v,i)=>v*(1-0.0085*i));hi=fc.map((v,i)=>v*(1+0.0085*i))}
+ else{const w=[...WATCH,...MINE,...MKT].find(x=>x.id===S.arg);d=series(w).slice(-n-1);F=Math.min(6,n);fc=[...Array(F+1)].map((_,i)=>w.v*(1+w.g*i));lo=fc.map((v,i)=>v*(1-0.0085*i));hi=fc.map((v,i)=>v*(1+0.0085*i))}
  const bs=benchSeries(d[0],d.length-1,S.bench);
  const carCh=(d[d.length-1]/d[0]-1)*100,bCh=(bs[bs.length-1]/bs[0]-1)*100,gap=carCh-bCh,bn=BENCH[S.bench].n;
  const pv=$('#pverdict');if(pv)pv.innerHTML=`Last ${S.range==='All'?'10 years':S.range}: ${port?'your cars':'this model'} ${pct(carCh)}, ${bn} ${pct(bCh)}. ${gap>=0?'<b>Beat</b>':'<b>Behind</b>'} ${bn} by ${Math.abs(gap).toFixed(1)} points.`;
