@@ -1615,12 +1615,13 @@ function lotHome(){
  const need=rows.filter(r=>r.tag==='above'||r.days>r.typ).length;
  return `<div class="wrap"><div class="srchead"><h1 class="pagetitle" style="margin:0">My lot</h1><button class="btn main" data-act="addcar">${ic('plus')}Add car</button></div>
  <p class="mut" style="margin:4px 0 14px">${LOT.length} cars · ${need} need attention · sorted by needs attention first</p>
- ${lotStats()}
+ ${lotStats().split('<div class="lotcharts">')[0]}
  <div class="lotgal">
  ${rows.map(c=>`<div class="lotcard click" data-lotcar="${c.id}">${photo(c,'100%')}<div class="lc-body"><div class="lc-top"><b>${c.y} ${c.mk} ${c.md}</b><span class="tag ${c.tag}">${{above:'Above market',fair:'Fair',below:'Below market'}[c.tag]}</span></div><div class="hint">${mi(c.mi)} · ${c.col}</div>
  <div class="lc-price"><b>${money(c.you)}</b><span class="hint">${pct(c.vs)} vs market ${money(c.mkt)}</span></div>
  <div class="lc-days ${c.days>c.typ?'slow':''}">${c.days} days on lot <span class="hint">· typical ${c.typ}</span></div><div class="lc-live">${liveCount(c.id)?`Live on ${liveCount(c.id)} site${liveCount(c.id)>1?'s':''}`:'<span class="hint">Not listed yet</span>'}</div></div></div>`).join('')}
  </div>
+ <div class="lotcharts" style="margin-top:21px">${lotStats().split('<div class="lotcharts">')[1]||''}
  <p class="hint" style="text-align:center"><a href="#" data-act="toggleempty">Sketch: show empty lot</a></p></div>`;
 }
 function lotCar(){
