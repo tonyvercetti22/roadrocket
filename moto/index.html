@@ -954,8 +954,11 @@ body:has(#ibxwrap) .msgfab{display:none}
   .top,.dock,.back,.srchead,.msgfab,.bottom,.side{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
   .top{background:var(--bg)!important}.dock{background:var(--bg)!important}
   .lotcard:hover .photo img,.ltile:hover .photo img{transform:none}
+  /* small links and switches get a bigger invisible tap area (44 px), layout unchanged */
+  .spec a,.num a,.source,.sw{position:relative}
+  .spec a::after,.num a::after,.source::after{content:"";position:absolute;inset:-13px -8px}
+  .sw::before{content:"";position:absolute;inset:-8px -5px}
 }
-img{content-visibility:auto}
 .photo img{background:var(--surf2)}
 </style>
 <style>:root{--z:1}@media (min-width:768px){:root{--z:.9}html{zoom:.9}}@media (min-width:1280px){:root{--z:.81}html{zoom:.81}}</style>
