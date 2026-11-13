@@ -960,6 +960,34 @@ body:has(#ibxwrap) .msgfab{display:none}
   .sw::before{content:"";position:absolute;inset:-8px -5px}
 }
 .photo img{background:var(--surf2)}
+
+/* Sort dropdown, same on every vehicle list (Thomas 13.11.2026) */
+.listbar{display:flex;align-items:center;justify-content:space-between;gap:13px;margin:0 0 13px;flex-wrap:wrap}
+.listbar.end{justify-content:flex-end}
+.sortdd{position:relative;display:inline-block}
+.sortbtn{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 13px;border-radius:999px;background:var(--surf);border:1px solid var(--hair,var(--line));color:var(--ink);font:inherit;font-size:14px;cursor:pointer;transition:border-color .21s var(--ease-out),box-shadow .21s var(--ease-out),background-color .21s var(--ease-out)}
+.sortbtn:hover{border-color:var(--hair2,var(--line));box-shadow:var(--e1)}
+.sortbtn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.sortbtn .sl{color:var(--hint)}
+.sortbtn .sv{font-weight:600}
+.sortbtn .chev{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;color:var(--muted);transition:transform .34s var(--ease-out)}
+.sortdd.open .chev{transform:rotate(180deg)}
+.sortdd.open .sortbtn{border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent)}
+.sortmenu{position:absolute;right:0;top:calc(100% + 8px);min-width:233px;z-index:40;padding:5px;border-radius:12px;background:var(--surf);border:1px solid var(--hair2,var(--line));box-shadow:var(--e2);opacity:0;visibility:hidden;transform:translateY(-5px) scale(.98);transform-origin:top right;transition:opacity .21s var(--ease-out),transform .34s var(--ease-out),visibility 0s .34s}
+.sortdd.open .sortmenu{opacity:1;visibility:visible;transform:none;transition:opacity .21s var(--ease-out),transform .34s var(--ease-out),visibility 0s}
+.sortmenu button{display:flex;align-items:center;justify-content:space-between;width:100%;gap:13px;padding:8px 10px;border:0;border-radius:8px;background:none;color:var(--muted);font:inherit;font-size:14px;text-align:left;cursor:pointer;transition:background-color .13s,color .13s}
+.sortmenu button:hover,.sortmenu button:focus-visible{background:var(--surf2);color:var(--ink);outline:none}
+.sortmenu button.on{color:var(--ink);font-weight:600}
+.sortmenu svg{width:12px;height:12px;flex-shrink:0;fill:none;stroke:var(--brand);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:0;transform:scale(.6);transition:opacity .21s,transform .34s var(--ease-out)}
+.sortmenu button.on svg{opacity:1;transform:none}
+.sortmenu hr{border:0;border-top:1px solid var(--hair,var(--line));margin:4px 6px}
+.sortdd.open .sortmenu button{animation:sortIn .34s var(--ease-out) both}
+.sortdd.open .sortmenu button:nth-of-type(2){animation-delay:.02s}.sortdd.open .sortmenu button:nth-of-type(3){animation-delay:.04s}.sortdd.open .sortmenu button:nth-of-type(4){animation-delay:.06s}.sortdd.open .sortmenu button:nth-of-type(5){animation-delay:.08s}.sortdd.open .sortmenu button:nth-of-type(6){animation-delay:.1s}.sortdd.open .sortmenu button:nth-of-type(7){animation-delay:.12s}.sortdd.open .sortmenu button:nth-of-type(8){animation-delay:.14s}.sortdd.open .sortmenu button:nth-of-type(9){animation-delay:.16s}
+@keyframes sortIn{from{opacity:0;transform:translateY(-3px)}}
+.sorted-in{animation:sortFade .34s var(--ease-out)}
+@keyframes sortFade{from{opacity:.35;transform:translateY(3px)}}
+@media (prefers-reduced-motion:reduce){.sortmenu,.sortbtn .chev,.sortmenu svg{transition:none}.sortdd.open .sortmenu button,.sorted-in{animation:none}}
+.lotcharts svg{max-height:120px}
 </style>
 <style>:root{--z:1}@media (min-width:768px){:root{--z:.9}html{zoom:.9}}@media (min-width:1280px){:root{--z:.81}html{zoom:.81}}</style>
 <meta name="description" content="Buy, sell and track motorcycles."><meta property="og:type" content="website"><meta property="og:site_name" content="RoadRocket"><meta property="og:title" content="RoadRocket Moto"><meta property="og:description" content="Buy, sell and track motorcycles."><meta property="og:url" content="https://tonyvercetti22.github.io/roadrocket/moto/"><meta property="og:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png">
@@ -1112,7 +1140,7 @@ const ALERTS=[
 ];
 
 /* ================= STATE ================= */
-const S={tab:'intel',scr:'home',arg:null,stack:[],chats:[],chatId:null,starred:new Set(['c8']),
+const S={sort:{},tab:'intel',scr:'home',arg:null,stack:[],chats:[],chatId:null,starred:new Set(['c8']),
  sideOpen:true,vehicle:'moto',flt:{maxPrice:60000,seller:{Dealer:true,Private:true},trans:{Manual:true,PDK:true,DCT:true},saved:false},
  invMode:'mine',invF:{cat:'Any',c:'Any',y:[1920,2026],b:[5000,1e9],hp:[40,1e9]},range:'1Y',bench:null,lotEmpty:false,user:'Thomas',signedUp:true,offline:false,
  prefs:{makes:['Ducati','Harley-Davidson'],region:'Florida + Southeast',band:'$20k to $50k'},
@@ -1554,13 +1582,13 @@ function searchForm(){
 }
 function results(){
  if(S.arg==='all'&&S._pending)return searchForm();
- const q=S.q||{};const s=SEARCHES.find(x=>x.id===S.arg)||{name:[q.make,q.model].filter(Boolean).join(' ')||'Your search',crit:[]};const cs=fltCars();const tags=activeTags();
+ const q=S.q||{};const s=SEARCHES.find(x=>x.id===S.arg)||{name:[q.make,q.model].filter(Boolean).join(' ')||'Your search',crit:[]};const cs=sorted('res',fltCars());const tags=activeTags();
  const list=S._loading?'<div class="skel"></div><div class="skel"></div><div class="skel"></div>':cs.length?cs.map(carRow).join('')+`<p class="hint" style="text-align:center;padding:18px">You are caught up. ${cs.length} cars match.</p>`:'<p class="mut" style="padding:20px 0">No cars match these filters.</p>';
  return `<div class="wrap">${backBtn()}<h1 class="pagetitle">${s.name}</h1>
- <p class="mut" style="margin:0 0 6px">${cs.length} cars, best price first, adjusted for miles and year.</p>
+ <p class="mut" style="margin:0 0 6px">${cs.length} cars match. Prices adjusted for miles and year.</p>
  <div class="p-only" style="display:flex;gap:8px;align-items:center;margin:8px 0"><button class="btn" data-act="filters">${ic('filter')}Filters${tags.length?' ('+tags.length+')':''}</button></div>
  ${tags.length?`<div class="ftags">${tags.map(t=>`<span class="chip">${t}</span>`).join('')}<button class="btn sm ghost" data-act="clearflt">Clear</button></div>`:''}
- <div class="layout2"><aside class="filters"><div class="card">${filterPanel()}</div></aside><div>${list}</div></div></div>`;
+ <div class="layout2"><aside class="filters"><div class="card">${filterPanel()}</div></aside><div><div class="listbar end">${sortDD('res')}</div><div>${list}</div></div></div></div>`;
 }
 function carPage(){
  const c=CARS.find(x=>x.id===S.arg);
@@ -1615,19 +1643,47 @@ function lotStats(){
  <div class="card"><h3>Days on lot</h3><span class="hint">Bar = days so far · black line = typical</span><div style="margin-top:10px">${days}</div></div></div>
  <p class="hint" style="margin:0 0 16px">Based on your ${LOT.length} cars on the lot and ${SOLD.length} sold in the last 90 days. Market from comparable listings, last 90 days.</p>`;
 }
+/* ---------- SORT (one dropdown for every vehicle list, Thomas 13.11.2026) ---------- */
+const gainOf=w=>(w.v-w.paid)/w.paid*100;
+const SORTS={
+ lot:[['need','Needs attention first',(a,b)=>b.score-a.score],['pd','Price: high to low',(a,b)=>b.you-a.you],['pa','Price: low to high',(a,b)=>a.you-b.you],['up','Appreciating most',(a,b)=>b.ch-a.ch],['dn','Depreciating most',(a,b)=>a.ch-b.ch],['lo','Longest on the lot',(a,b)=>b.days-a.days],['sh','Shortest on the lot',(a,b)=>a.days-b.days],['yn','Year: newest first',(a,b)=>b.y-a.y],['yo','Year: oldest first',(a,b)=>a.y-b.y]],
+ res:[['deal','Best deal first',(a,b)=>a.vs-b.vs],['pa','Price: low to high',(a,b)=>a.price-b.price],['pd','Price: high to low',(a,b)=>b.price-a.price],['yn','Year: newest first',(a,b)=>b.y-a.y],['yo','Year: oldest first',(a,b)=>a.y-b.y],['mi','Lowest mileage',(a,b)=>a.mi-b.mi],['fr','Newest listing',(a,b)=>a.days-b.days]],
+ watch:[['up','Appreciating most',(a,b)=>b.ch-a.ch],['dn','Depreciating most',(a,b)=>a.ch-b.ch],['pd','Price: high to low',(a,b)=>b.v-a.v],['pa','Price: low to high',(a,b)=>a.v-b.v]],
+ mine:[['up','Appreciating most',(a,b)=>gainOf(b)-gainOf(a)],['dn','Depreciating most',(a,b)=>gainOf(a)-gainOf(b)],['pd','Value: high to low',(a,b)=>b.v-a.v],['pa','Value: low to high',(a,b)=>a.v-b.v],['ol','Owned longest',(a,b)=>a.since-b.since]],
+ best:[['g','Best expected rise',(a,b)=>b.g-a.g],['pa','Price: low to high',(a,b)=>a.v-b.v],['pd','Price: high to low',(a,b)=>b.v-a.v],['yn','Year: newest first',(a,b)=>b.y-a.y],['yo','Year: oldest first',(a,b)=>a.y-b.y]]};
+function sortCur(k){const o=SORTS[k];return o.find(x=>x[0]===S.sort[k])||o[0]}
+function sorted(k,list){return [...list].sort(sortCur(k)[2])}
+function sortDD(k){const o=SORTS[k],cur=sortCur(k);
+ return `<div class="sortdd" data-sortk="${k}"><button type="button" class="sortbtn" aria-haspopup="listbox" aria-expanded="false"><span class="sl">Sort</span><span class="sv">${cur[1]}</span><svg class="chev" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="sortmenu" role="listbox">${o.map(x=>`<button type="button" role="option" aria-selected="${x===cur}" class="${x===cur?'on':''}" data-sortv="${x[0]}"><span>${x[1]}</span><svg viewBox="0 0 12 12"><path d="M2.5 6.5l2.3 2.3L9.5 3.8"/></svg></button>`).join('')}</div></div>`}
+document.addEventListener('click',e=>{
+ const v=e.target.closest('[data-sortv]');
+ if(v){e.stopImmediatePropagation();e.preventDefault();const dd=v.closest('.sortdd'),k=dd.dataset.sortk;S.sort[k]=v.dataset.sortv;
+  const open=[...document.querySelectorAll('details[open]')].map(d=>d.className);render($('#view').scrollTop);
+  open.forEach(c=>{const d=c&&document.querySelector('details.'+c.split(' ')[0]);if(d)d.open=true});
+  const n=document.querySelector(`.sortdd[data-sortk="${k}"]`);const tgt=n&&(n.closest('.listbar')||n).nextElementSibling;if(tgt){tgt.classList.add('sorted-in');setTimeout(()=>tgt.classList.remove('sorted-in'),400)}
+  return}
+ const b=e.target.closest('.sortbtn');
+ document.querySelectorAll('.sortdd.open').forEach(d=>{if(!b||d!==b.parentElement){d.classList.remove('open');d.querySelector('.sortbtn').setAttribute('aria-expanded','false')}});
+ if(b){e.stopImmediatePropagation();e.preventDefault();const d=b.parentElement,on=d.classList.toggle('open');b.setAttribute('aria-expanded',on);if(on)(d.querySelector('.sortmenu .on')||d.querySelector('.sortmenu button')).focus({preventScroll:true})}
+},true);
+document.addEventListener('keydown',e=>{const d=document.querySelector('.sortdd.open');if(!d)return;
+ const bs=[...d.querySelectorAll('.sortmenu button')],i=bs.indexOf(document.activeElement);
+ if(e.key==='Escape'){d.classList.remove('open');d.querySelector('.sortbtn').focus();e.preventDefault()}
+ else if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();bs[(i+(e.key==='ArrowDown'?1:-1)+bs.length)%bs.length].focus()}
+});
 function lotHome(){
  if(S.lotEmpty)return `<div class="wrap"><h1 class="pagetitle">My lot</h1><div class="card" style="padding:40px;text-align:center;margin-top:16px"><p style="margin-top:0">Add your cars to see how each one sits against the market.</p><button class="btn main" data-act="addcar">${ic('plus')}Add your cars</button></div><p class="hint" style="text-align:center"><a href="#" data-act="toggleempty">Sketch: show full lot</a></p></div>`;
- const rows=[...LOT].sort((a,b)=>b.score-a.score);
+ const rows=sorted('lot',LOT);
  const need=rows.filter(r=>r.tag==='above'||r.days>r.typ).length;
  return `<div class="wrap"><div class="srchead"><h1 class="pagetitle" style="margin:0">My lot</h1><button class="btn main" data-act="addcar">${ic('plus')}Add car</button></div>
- <p class="mut" style="margin:4px 0 14px">${LOT.length} cars · ${need} need attention · sorted by needs attention first</p>
- ${lotStats().split('<div class="lotcharts">')[0]}
+ <p class="mut" style="margin:4px 0 14px">${LOT.length} cars · ${need} need attention</p>
+ ${lotStats()}
+ <div class="listbar end">${sortDD('lot')}</div>
  <div class="lotgal">
  ${rows.map(c=>`<div class="lotcard click" data-lotcar="${c.id}">${photo(c,'100%')}<div class="lc-body"><div class="lc-top"><b>${c.y} ${c.mk} ${c.md}</b><span class="tag ${c.tag}">${{above:'Above market',fair:'Fair',below:'Below market'}[c.tag]}</span></div><div class="hint">${mi(c.mi)} · ${c.col}</div>
- <div class="lc-price"><b>${money(c.you)}</b><span class="hint">${pct(c.vs)} vs market ${money(c.mkt)}</span></div>
+ <div class="lc-price"><b>${money(c.you)}</b><span class="hint">${pct(c.vs)} vs market ${money(c.mkt)}</span><span class="hint" style="display:block">Model ${pct(c.ch)} in 6 mo</span></div>
  <div class="lc-days ${c.days>c.typ?'slow':''}">${c.days} days on lot <span class="hint">· typical ${c.typ}</span></div><div class="lc-live">${liveCount(c.id)?`Live on ${liveCount(c.id)} site${liveCount(c.id)>1?'s':''}`:'<span class="hint">Not listed yet</span>'}</div></div></div>`).join('')}
  </div>
- <div class="lotcharts" style="margin-top:21px">${lotStats().split('<div class="lotcharts">')[1]||''}
  <p class="hint" style="text-align:center"><a href="#" data-act="toggleempty">Sketch: show empty lot</a></p></div>`;
 }
 function lotCar(){
@@ -1664,8 +1720,8 @@ function sellSheet(id){const c=LOT.find(x=>x.id===id);const L=LIVE[id]||{};
 function investHome(){
  const m=S.invMode==='market';const list=m?WATCH:MINE;
  return `<div class="wrap"><div class="srchead"><h1 class="pagetitle" style="margin:0">Invest</h1><div class="switch" role="tablist" style="margin:0"><button class="${m?'':'on'}" data-inv="mine">My cars</button><button class="${m?'on':''}" data-inv="market">Market</button></div></div>
- ${m?bestBuy()+`<h2 style="margin:22px 0 4px">Your watchlist</h2><p class="mut" style="margin-top:0">From your preferences and every star. 6-month trend.</p>`:portfolioBlock()}
- ${m?`<div class="card">${list.map(w=>`<div class="saved" data-chart="${w.id}"><div><b>${w.name}</b>${w.paid?`<div class="hint">Bought ${w.since} for ${money(w.paid)}</div>`:''}</div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(w.ch)} <span class="hint">6 mo</span></div></span></div>`).join('')}</div>
+ ${m?bestBuy()+`<div class="listbar" style="margin:22px 0 4px"><h2 style="margin:0">Your watchlist</h2>${sortDD('watch')}</div><p class="mut" style="margin-top:0">From your preferences and every star. 6-month trend.</p>`:portfolioBlock()}
+ ${m?`<div class="card">${sorted('watch',list).map(w=>`<div class="saved" data-chart="${w.id}"><div><b>${w.name}</b>${w.paid?`<div class="hint">Bought ${w.since} for ${money(w.paid)}</div>`:''}</div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(w.ch)} <span class="hint">6 mo</span></div></span></div>`).join('')}</div>
  <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn" data-act="addwatch">${ic('plus')}Add model</button></div>`:''}</div>`;
 }
 function bestBuy(){
@@ -1691,7 +1747,7 @@ function bestList(){
  return `${near?`<div class="card" style="padding:18px;margin-top:14px"><b>Nothing fits every filter exactly.</b><p class="mut" style="margin:4px 0 0">Here are the ${hit.length} closest models. The grey note on each shows what is outside your filters.</p></div>`:''}<div class="card" style="padding:18px;margin-top:14px"><div class="lbl">${near?'Closest match':'Best investment for these filters'}</div>
  <div class="saved" data-chart="${top.id}" style="padding:8px 0 0;border:0"><div><b style="font-size:20px">${top.name}</b><div class="hint">${top.c} · ${top.cat} · ${top.y} · ${top.hp} hp</div></div>${spark(top)}<span style="margin-left:auto;text-align:right"><b>${money(top.v)}</b><div>${pct(top.g*1200)} <span class="hint">next 12 mo, estimate</span></div></span></div>
  ${near?`<div class="hint" style="margin-top:6px">Outside your filters: ${top._m.join(', ')}</div>`:''}<p class="verdict" style="margin:10px 0 0">${pct(y5(top),0)} over the last 5 years.${near?'':` Strongest expected rise of the ${hit.length} model${hit.length>1?'s':''} that match.`}</p></div>
- ${hit.length>1?`<h2 style="margin:18px 0 8px">${near?`${hit.length} closest models, nearest first`:`All ${hit.length} matches, best first`}</h2><div class="card">${hit.map((w,i)=>`<div class="saved" data-chart="${w.id}"><div><b>${i+1}. ${w.name}</b><div class="hint">${w.c} · ${w.cat} · ${w.y} · ${w.hp} hp</div>${near?`<div class="hint">Outside: ${w._m.join(', ')}</div>`:''}</div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(w.g*1200)} <span class="hint">12 mo est.</span></div><div class="hint">${(v=>(v>=0?'+':'−')+Math.abs(v).toFixed(0))(y5(w))}% last 5 yr</div></span></div>`).join('')}</div>`:''}
+ ${hit.length>1?`<div class="listbar" style="margin:18px 0 8px"><h2 style="margin:0">${near?`${hit.length} closest models, nearest first`:`All ${hit.length} matches`}</h2>${near?'':sortDD('best')}</div><div class="card">${(near?hit:sorted('best',hit)).map((w,i)=>`<div class="saved" data-chart="${w.id}"><div><b>${i+1}. ${w.name}</b><div class="hint">${w.c} · ${w.cat} · ${w.y} · ${w.hp} hp</div>${near?`<div class="hint">Outside: ${w._m.join(', ')}</div>`:''}</div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(w.g*1200)} <span class="hint">12 mo est.</span></div><div class="hint">${(v=>(v>=0?'+':'−')+Math.abs(v).toFixed(0))(y5(w))}% last 5 yr</div></span></div>`).join('')}</div>`:''}
  <div style="margin:10px 2px 0">${src('Sketch numbers. Live: sales and listings per model, 10 years. Estimates are not facts.')}</div>`;
 }
 function benchPicker(){return `<div class="benchrow"><span class="lbl">Compare to</span><div class="ranges" style="margin:0"><button class="${S.bench?'':'on'}" data-bench="none">Nothing</button>${Object.entries(BENCH).map(([k,b])=>`<button class="${S.bench===k?'on':''}" data-bench="${k}">${b.n}</button>`).join('')}</div></div>`}
@@ -1702,7 +1758,7 @@ function portfolioBlock(){
  const gn=w=>(w.v-w.paid)/w.paid*100,byG=[...MINE].sort((x,y)=>gn(y)-gn(x)),best=byG[0],worst=byG[byG.length-1];
  const row=(w,lbl)=>`<div class="saved" data-chart="${w.id}"><div>${lbl?`<div class="lbl">${lbl}</div>`:''}<b>${w.name}</b><div class="hint">Paid ${money(w.paid)} in ${w.since}</div></div>${spark(w)}<span style="margin-left:auto;text-align:right"><b>${money(w.v)}</b><div>${pct(gn(w))} <span class="hint">since ${w.since}</span></div></span></div>`;
  const bw=`<div class="card bwcard">${row(best,'Best appreciation in your lot')}${worst!==best?row(worst,'Worst depreciation in your lot'):''}</div>
- <details class="allcars"><summary>All ${MINE.length} cars</summary><div class="card">${byG.map(w=>row(w)).join('')}</div></details>
+ <details class="allcars"><summary>All ${MINE.length} cars</summary><div class="listbar end" style="margin-top:8px">${sortDD('mine')}</div><div class="card">${sorted('mine',MINE).map(w=>row(w)).join('')}</div></details>
  <button class="btn" data-act="addwatch" style="margin-top:12px">${ic('plus')}Add a car you own</button>`;
  return `<div class="pstrip" style="margin-top:6px">
   <div><span class="lbl">Worth today</span><b>${money(now)}</b><span>${pct((now-paid)/paid*100)} on ${money(paid)} paid</span></div>
