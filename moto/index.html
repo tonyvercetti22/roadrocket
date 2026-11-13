@@ -1006,6 +1006,28 @@ body:has(#ibxwrap) .msgfab{display:none}
 .fdd.multi .sortmenu .chip:first-child{border-bottom:1px solid var(--hair,var(--line))!important;border-radius:8px 8px 0 0!important;margin-bottom:4px}
 .sortdd.open .sortmenu .chip{animation:sortIn .34s var(--ease-out) both}
 @media (prefers-reduced-motion:reduce){.fdd .sortmenu .chip::after{transition:none}.sortdd.open .sortmenu .chip{animation:none}}
+
+/* ZIP + current location on top of every Vehicle location dropdown (Thomas 13.11.2026) */
+.locmenu{min-width:260px}
+.locbox{padding:3px 3px 0}
+.zip{display:flex;align-items:center;gap:8px;height:38px;padding:0 4px 0 10px;border-radius:8px;background:var(--surf2);border:1px solid transparent;cursor:text;transition:border-color .21s var(--ease-out),box-shadow .21s var(--ease-out)}
+.zip:focus-within{border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent)}
+.zip.bad{border-color:var(--down)}
+.zip>svg{width:14px;height:14px;flex-shrink:0;fill:none;stroke:var(--hint);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.zip input{flex:1;min-width:0;height:auto!important;padding:0!important;margin:0!important;border:0!important;background:none!important;box-shadow:none!important;outline:none;color:var(--ink);font:inherit;font-size:14px;font-variant-numeric:tabular-nums;letter-spacing:.06em}
+.zip input::placeholder{color:var(--hint);letter-spacing:0}
+.zipgo{width:30px;height:30px;flex-shrink:0;display:grid;place-items:center;border:0;border-radius:999px;background:var(--brand);cursor:pointer;opacity:.3;transform:scale(.9);transition:opacity .21s var(--ease-out),transform .34s var(--ease-out)}
+.zip.ready .zipgo{opacity:1;transform:none}
+.zipgo:active{transform:scale(.96)}
+.zipgo svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nearme{display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;margin:4px 0 0;border:0;border-radius:8px;background:none;color:var(--link,var(--brand));font:inherit;font-size:14px;font-weight:600;text-align:left;cursor:pointer;transition:background-color .13s}
+.nearme:hover,.nearme:focus-visible{background:var(--surf2);outline:none}
+.nearme svg{width:14px;height:14px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
+.nearme.busy{color:var(--muted);cursor:default}
+.nearme.busy svg{animation:locPulse .61s var(--ease-out) both}
+@keyframes locPulse{from{transform:scale(.6);opacity:.3}}
+.locmenu hr{border:0;border-top:1px solid var(--hair,var(--line));margin:5px 6px}
+@media (prefers-reduced-motion:reduce){.zipgo,.zip{transition:none}.nearme.busy svg{animation:none}}
 </style>
 <style>:root{--z:1}@media (min-width:768px){:root{--z:.9}html{zoom:.9}}@media (min-width:1280px){:root{--z:.81}html{zoom:.81}}</style>
 <meta name="description" content="Buy, sell and track motorcycles."><meta property="og:type" content="website"><meta property="og:site_name" content="RoadRocket"><meta property="og:title" content="RoadRocket Moto"><meta property="og:description" content="Buy, sell and track motorcycles."><meta property="og:url" content="https://tonyvercetti22.github.io/roadrocket/moto/"><meta property="og:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png">
@@ -1434,12 +1456,19 @@ const LOCS=['Global','US','UK','Germany','UAE','Japan'];
 function originOf(name){const k=Object.keys(MAKE_C).sort((a,b)=>b.length-a.length).find(m=>String(name).startsWith(m));return k?MAKE_C[k]:''}
 function madeOK(sel,name){return !sel||!sel.length||sel.includes(originOf(name))}
 function madeChips(name,sel){sel=sel||[];return `<div class="cmpchips" data-name="${name}" data-multi="1">${['Any',...ORIGINS].map(o=>`<span class="chip${(o==='Any'?!sel.length:sel.includes(o))?' on':''}" role="button" tabindex="0">${o}</span>`).join('')}</div>`}
-function fdd(name,label,opts,sel,multi){sel=sel||[];const any='Any',all=multi?[any,...opts]:opts,cur=sel[0]||opts[0];
+const LOCBOX=`<div class="locbox"><label class="zip"><svg viewBox="0 0 16 16"><path d="M8 14.5s4.5-4.2 4.5-7.7a4.5 4.5 0 0 0-9 0c0 3.5 4.5 7.7 4.5 7.7z"/><circle cx="8" cy="6.8" r="1.6"/></svg><input type="text" inputmode="numeric" maxlength="5" placeholder="ZIP code" aria-label="ZIP code" autocomplete="postal-code"><button type="button" class="zipgo" aria-label="Use this ZIP code"><svg viewBox="0 0 16 16"><path d="M3.5 8h9M8.5 4l4 4-4 4"/></svg></button></label><button type="button" class="nearme"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4.5"/><circle cx="8" cy="8" r="1.4"/><path d="M8 1v2.2M8 12.8V15M1 8h2.2M12.8 8H15"/></svg><span>Use current location</span></button></div><hr>`;
+function setLoc(dd,txt){const m=dd.querySelector('.sortmenu');let c=[...m.querySelectorAll('.chip')].find(x=>x.textContent===txt);if(!c){c=document.createElement('span');c.className='chip';c.setAttribute('role','option');c.tabIndex=0;c.textContent=txt;m.querySelector('hr').after(c)}c.click()}
+document.addEventListener('click',e=>{const z=e.target.closest('.zipgo'),n=e.target.closest('.nearme');if(!z&&!n)return;e.stopImmediatePropagation();e.preventDefault();const dd=e.target.closest('.fdd');
+ if(z){const box=z.closest('.zip'),v=box.querySelector('input').value.trim();if(!/^\d{5}$/.test(v)){box.classList.add('bad');box.querySelector('input').focus();return}setLoc(dd,'ZIP '+v);return}
+ if(n.classList.contains('busy'))return;n.classList.add('busy');n.querySelector('span').textContent='Finding you…';setTimeout(()=>setLoc(dd,'Current location'),610)},true);
+document.addEventListener('input',e=>{const box=e.target.closest('.zip');if(!box)return;e.target.value=e.target.value.replace(/\D/g,'').slice(0,5);box.classList.remove('bad');box.classList.toggle('ready',e.target.value.length===5)},true);
+document.addEventListener('keydown',e=>{const box=e.target.closest&&e.target.closest('.zip');if(box&&e.key==='Enter'){e.preventDefault();box.querySelector('.zipgo').click()}},true);
+function fdd(name,label,opts,sel,multi){sel=sel||[];const any='Any',cur=sel[0]||opts[0],all=multi?[any,...opts]:(opts.includes(cur)?opts:[cur,...opts]),isLoc=!multi&&/loc|cty/.test(name);
  const isOn=o=>multi?(o===any?!sel.length:sel.includes(o)):o===cur;const val=multi?(sel.length?sel.join(', '):any):cur;
- return `<div class="sortdd fdd${multi?' multi':''}" data-fdd="${name}"><button type="button" class="sortbtn" aria-haspopup="listbox" aria-expanded="false"><span class="sl">${label}</span><span class="sv">${val}</span><svg class="chev" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="sortmenu cmpchips" role="listbox" data-name="${name}"${multi?' aria-multiselectable="true" data-multi="1"':''}>${all.map(o=>`<span class="chip${isOn(o)?' on':''}" role="option" aria-selected="${isOn(o)}" tabindex="0">${o}</span>`).join('')}</div></div>`}
+ return `<div class="sortdd fdd${multi?' multi':''}" data-fdd="${name}"><button type="button" class="sortbtn" aria-haspopup="listbox" aria-expanded="false"><span class="sl">${label}</span><span class="sv">${val}</span><svg class="chev" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="sortmenu cmpchips${isLoc?' locmenu':''}" role="listbox" data-name="${name}"${multi?' aria-multiselectable="true" data-multi="1"':''}>${isLoc?LOCBOX:''}${all.map(o=>`<span class="chip${isOn(o)?' on':''}" role="option" aria-selected="${isOn(o)}" tabindex="0">${o}</span>`).join('')}</div></div>`}
 function chipVals(g){return [...g.querySelectorAll('.chip.on')].map(x=>x.textContent).filter(t=>!/^(Any|Anywhere|Global)$/.test(t))}
 function hotFor(c){const k=CTY[c]||CTY.US;if(c==='US'||!CTY[c])return HOT;return HOT.map((w,i)=>{const j=1+((i*37+c.length*13)%17-8)/100;return {...w,d:Math.max(4,Math.round(w.d*k.d*j)),u:Math.max(1,Math.round(w.u*k.u*j)),ch:Math.round(w.ch*j+((i+c.length)%5-2)),uc:+(w.uc*j).toFixed(1)}})}
-function hotRefresh(box){const f={};box.querySelectorAll('.rng[data-hot]').forEach(x=>{const lo=+x.querySelector('.lo').value,hi=+x.querySelector('.hi').value,mx=+x.dataset.max;f[x.dataset.hot]=[lo,hi>=mx&&x.dataset.hot!=='y'?1e9:hi]});const on=box.querySelector('.ctyrow[data-row=loc] .chip.on');f.c=on?on.textContent:'US';f.made=chipVals(box.querySelector('.ctyrow[data-row=made]'));f.sort=box.dataset.sort;const n=box.querySelector('.ctyname');if(n)n.textContent=f.c==='Global'?'worldwide':f.c;box.querySelector('.hotres').innerHTML=hotList(f,box.dataset.mode)}
+function hotRefresh(box){const f={};box.querySelectorAll('.rng[data-hot]').forEach(x=>{const lo=+x.querySelector('.lo').value,hi=+x.querySelector('.hi').value,mx=+x.dataset.max;f[x.dataset.hot]=[lo,hi>=mx&&x.dataset.hot!=='y'?1e9:hi]});const on=box.querySelector('.ctyrow[data-row=loc] .chip.on');f.c=on?on.textContent:'US';f.made=chipVals(box.querySelector('.ctyrow[data-row=made]'));f.sort=box.dataset.sort;const n=box.querySelector('.ctyname');if(n)n.textContent=f.c==='Global'?'worldwide':f.c==='Current location'?'near you':f.c;box.querySelector('.hotres').innerHTML=hotList(f,box.dataset.mode)}
 function dragBox(mode,lbl){lbl=lbl.replace(', US,',', <span class="ctyname">US</span>,');return `<div class="pcard hotbox" data-mode="${mode}"><div class="lbl">${lbl}</div><p class="mut" style="margin:4px 0 0">Drag the lines. The list updates as you go.</p>
  <div class="fddrow"><div class="ctyrow" data-row="loc">${fdd('cty','Vehicle location',LOCS,['US'])}</div><div class="ctyrow" data-row="made">${fdd('made','Made in',ORIGINS,[],1)}</div></div>
  ${rng('Year',1920,2026,1,1960,2026,'year').replace('class="rng"','class="rng" data-hot="y"')}
@@ -1577,7 +1606,7 @@ function sourcingHome(){
 function fltCars(){
  const f=S.flt,q=S.q||{},has=(a,b)=>!b||a.toLowerCase().includes(b.toLowerCase());return CARS.filter(c=>(S.arg==='all'||c.s===S.arg)&&(S.arg!=='all'||(has(c.mk,q.make)&&has(c.md,q.model)&&(!q.y0||c.y>=+q.y0)&&(!q.y1||c.y<=+q.y1)&&(!q.mi||c.mi<=+String(q.mi).replace(/\D/g,''))))&&c.price<=f.maxPrice*(S.arg==='s3'?10:1)&&f.seller[c.st]&&f.trans[c.trans]!==false&&madeOK(f.made,c.mk)&&locOK(f.loc,c.loc)&&(!f.saved||S.starred.has(c.id))).sort((a,b)=>a.vs-b.vs);
 }
-function locOK(l,loc){if(!l||l==='Anywhere'||l==='US')return true;if(['Florida','📍 Near me','Within 150 mi'].includes(l))return /, FL$/.test(loc);return false}
+function locOK(l,loc){if(!l||l==='Anywhere'||l==='US')return true;const z=/^ZIP (\d{5})$/.exec(l);if(z)return +z[1]>=32000&&+z[1]<35000?/, FL$/.test(loc):true;if(['Florida','Current location','Within 150 mi'].includes(l))return /, FL$/.test(loc);return false}
 function filterPanel(){
  const f=S.flt;
  const q=S.q||{};
@@ -1588,7 +1617,7 @@ function filterPanel(){
  <h4 style="margin-top:14px">Transmission</h4>${['Manual','PDK'].map(t=>`<label class="ck"><input type="checkbox" data-trans="${t}" ${f.trans[t]?'checked':''}>${t}</label>`).join('')}
  <h4 style="margin-top:14px">Seller</h4>${['Dealer','Private'].map(t=>`<label class="ck"><input type="checkbox" data-seller="${t}" ${f.seller[t]?'checked':''}>${t}</label>`).join('')}
  <h4 style="margin-top:14px">Colour</h4><select><option>Any colour</option><option>Special livery</option></select>
- <div class="fddrow col">${fdd('floc','Vehicle location',['Anywhere','📍 Near me','Within 150 mi','Florida','US','UK','Germany','UAE','Japan'],[f.loc||'Anywhere'])}${fdd('fmade','Made in',ORIGINS,f.made,1)}</div>
+ <div class="fddrow col">${fdd('floc','Vehicle location',['Anywhere','Within 150 mi','Florida','US','UK','Germany','UAE','Japan'],[f.loc||'Anywhere'])}${fdd('fmade','Made in',ORIGINS,f.made,1)}</div>
  <label class="ck" style="margin-top:14px"><input type="checkbox" data-saved ${f.saved?'checked':''}>Saved cars only ${ic('star')}</label>
  ${cmpMore('src')}`;
 }
@@ -1610,7 +1639,7 @@ function searchForm(){
   ${rng('Mileage',0,100000,1000,0,100000,'mi').replace('class="rng"','class="rng" data-q="mi"')}
   <label class="f">Transmission</label><div class="cmpchips" data-name="trans"><span class="chip on">Any</span><span class="chip">Manual</span><span class="chip">Auto / DCT</span></div>
   <label class="f">Seller</label><div class="cmpchips" data-name="seller"><span class="chip on">Any</span><span class="chip">Dealer</span><span class="chip">Private</span></div>
-  <div class="fddrow">${fdd('loc','Vehicle location',['Anywhere','📍 Near me','Within 150 mi','Florida','US','UK','Germany','UAE','Japan'],['Anywhere'])}${fdd('made','Made in',ORIGINS,[],1)}</div>
+  <div class="fddrow">${fdd('loc','Vehicle location',['Anywhere','Within 150 mi','Florida','US','UK','Germany','UAE','Japan'],['Anywhere'])}${fdd('made','Made in',ORIGINS,[],1)}</div>
   ${cmpMore('src')}
   <p class="hint" id="nshint" style="margin:12px 0 0;display:none">Tap a make or a Made in country first.</p>
   <button class="btn main" style="width:100%;margin-top:18px" data-act="runsearch">${ic('search')}Search</button>
@@ -1699,7 +1728,7 @@ document.addEventListener('click',e=>{
   const n=document.querySelector(`.sortdd[data-sortk="${k}"]`);const tgt=n&&(n.closest('.listbar')||n).nextElementSibling;if(tgt){tgt.classList.add('sorted-in');setTimeout(()=>tgt.classList.remove('sorted-in'),400)}
   return}
  const b=e.target.closest('.sortbtn');
- document.querySelectorAll('.sortdd.open').forEach(d=>{if((!b||d!==b.parentElement)&&!(d.classList.contains('multi')&&d.contains(e.target))){d.classList.remove('open');d.querySelector('.sortbtn').setAttribute('aria-expanded','false')}});
+ document.querySelectorAll('.sortdd.open').forEach(d=>{if((!b||d!==b.parentElement)&&!(d.contains(e.target)&&(d.classList.contains('multi')||e.target.closest('.locbox')))){d.classList.remove('open');d.querySelector('.sortbtn').setAttribute('aria-expanded','false')}});
  if(b){e.stopImmediatePropagation();e.preventDefault();const d=b.parentElement,on=d.classList.toggle('open');b.setAttribute('aria-expanded',on);if(on)(d.querySelector('.sortmenu .on')||d.querySelector('.sortmenu button')).focus({preventScroll:true})}
 },true);
 document.addEventListener('keydown',e=>{const d=document.querySelector('.sortdd.open');if(!d)return;
