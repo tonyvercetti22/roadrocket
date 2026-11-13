@@ -827,7 +827,7 @@ body:has(#ibxwrap) .msgfab{display:none}
 }
 /* subtle greeting 13.11 */
 .home .greet{font-weight:300;font-size:16px;letter-spacing:.01em;opacity:.7}
-.ctyrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0 4px}.ctyrow .ctylbl{color:var(--muted);font-size:15px;min-width:70px}.ctyrow .cmpchips .chip{min-height:32px;padding:0 12px;font-size:14px}
+.ctyrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0 4px}.ctyrow .ctylbl{color:var(--muted);font-size:15px;min-width:118px}.ctyrow+.ctyrow{margin-top:8px}.ctyrow .cmpchips .chip{min-height:32px;padding:0 12px;font-size:14px}
 
 /* ===== Rank by: every column sortable, rank number (13.11.2026) ===== */
 .rankby{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:21px}
@@ -1140,9 +1140,9 @@ const ALERTS=[
 ];
 
 /* ================= STATE ================= */
-const S={sort:{},tab:'intel',scr:'home',arg:null,stack:[],chats:[],chatId:null,starred:new Set(['c8']),
- sideOpen:true,vehicle:'car',flt:{maxPrice:250000,seller:{Dealer:true,Private:true},trans:{Manual:true,PDK:true,DCT:true},saved:false},
- invMode:'mine',invF:{cat:'Any',c:'Any',y:[1960,2026],b:[50000,1e9],hp:[150,1e9]},range:'1Y',bench:null,lotEmpty:false,user:'Thomas',signedUp:true,offline:false,
+const S={sort:{},lotMade:[],tab:'intel',scr:'home',arg:null,stack:[],chats:[],chatId:null,starred:new Set(['c8']),
+ sideOpen:true,vehicle:'car',flt:{loc:'Anywhere',made:[],maxPrice:250000,seller:{Dealer:true,Private:true},trans:{Manual:true,PDK:true,DCT:true},saved:false},
+ invMode:'mine',invF:{cat:'Any',loc:'US',made:[],y:[1960,2026],b:[50000,1e9],hp:[150,1e9]},range:'1Y',bench:null,lotEmpty:false,user:'Thomas',signedUp:true,offline:false,
  prefs:{makes:['Porsche','Ferrari'],region:'Florida + Southeast',band:'$150k to $500k'},
  alerts:{bell:true,sms:true,wa:true,email:true,digest:'7:00 am',max:5,quiet:'9pm to 7am',thr:10}};
 let uid=1;
@@ -1327,6 +1327,7 @@ function compareForm(){
   <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:10px"><div><label class="f">Make</label>${combo('make',f?'Ferrari':'','e.g. Porsche')}</div><div><label class="f">Model</label>${combo('model',f?'812 Competizione A':'','e.g. 911 GT3 Touring')}</div></div>
   ${rng1('Year',1960,2026,1,f?2022:2022,'year')}
   ${rng1('Mileage',0,100000,500,f?2500:5000,'mi')}
+  <label class="f">Vehicle location <span class="hint">(market to compare against, pick one)</span></label>${chips('cloc',LOCS,'US')}
   <label class="f">Options</label>${chips('opt',['None','Carbon wheels','Telemetry','Carbon seats','Front lift','Paint to Sample'],f?'Carbon wheels':'None',1)}
   ${cmpMore()}
   <button class="btn main" style="width:100%;margin-top:18px" data-act="runcompare">Compare to market</button>
@@ -1415,11 +1416,20 @@ const HOT=[
  {n:'Ferrari 308 GTB',y:1979,hp:240,v:95000,d:52,ch:4,u:11,uc:10,m:12.5,sc:72},
  {n:'Nissan GT-R',y:2017,hp:565,v:88000,d:58,ch:7,u:39,uc:-1.2,m:8.8,sc:69},
  {n:'Lamborghini Huracán',y:2019,hp:631,v:220000,d:83,ch:14,u:142,uc:4.4,m:6.6,sc:76}];
-const CTY={Global:{d:1.12,u:3.1},US:{d:1,u:1},UK:{d:1.18,u:.34},Germany:{d:1.09,u:.41},UAE:{d:.86,u:.22},Japan:{d:1.24,u:.27}};
+const CTY={Global:{d:1.12,u:3.1,p:1.02},US:{d:1,u:1,p:1},UK:{d:1.18,u:.34,p:1.07},Germany:{d:1.09,u:.41,p:1.04},UAE:{d:.86,u:.22,p:1.12},Japan:{d:1.24,u:.27,p:.96}};
+/* Vehicle location (pick one) vs Made in (pick several), same on every filter (Thomas 13.11.2026) */
+const ORIGINS=['Germany','Italy','UK','USA','Japan','France','Sweden'];
+const MAKE_C={'Porsche':'Germany','Ferrari':'Italy','Lamborghini':'Italy','McLaren':'UK','Mercedes-AMG':'Germany','Mercedes-Benz':'Germany','Aston Martin':'UK','Bentley':'UK','Rolls-Royce':'UK','BMW':'Germany','Audi':'Germany','Chevrolet':'USA','Ford':'USA','Dodge':'USA','Nissan':'Japan','Toyota':'Japan','Honda':'Japan','Lexus':'Japan','Lotus':'UK','Maserati':'Italy','Bugatti':'France','Pagani':'Italy','Koenigsegg':'Sweden','Jaguar':'UK','Land Rover':'UK'};
+const LOCS=['Global','US','UK','Germany','UAE','Japan'];
+function originOf(name){const k=Object.keys(MAKE_C).sort((a,b)=>b.length-a.length).find(m=>String(name).startsWith(m));return k?MAKE_C[k]:''}
+function madeOK(sel,name){return !sel||!sel.length||sel.includes(originOf(name))}
+function madeChips(name,sel){sel=sel||[];return `<div class="cmpchips" data-name="${name}" data-multi="1">${['Any',...ORIGINS].map(o=>`<span class="chip${(o==='Any'?!sel.length:sel.includes(o))?' on':''}" role="button" tabindex="0">${o}</span>`).join('')}</div>`}
+function chipVals(g){return [...g.querySelectorAll('.chip.on')].map(x=>x.textContent).filter(t=>!/^(Any|Anywhere|Global)$/.test(t))}
 function hotFor(c){const k=CTY[c]||CTY.US;if(c==='US'||!CTY[c])return HOT;return HOT.map((w,i)=>{const j=1+((i*37+c.length*13)%17-8)/100;return {...w,d:Math.max(4,Math.round(w.d*k.d*j)),u:Math.max(1,Math.round(w.u*k.u*j)),ch:Math.round(w.ch*j+((i+c.length)%5-2)),uc:+(w.uc*j).toFixed(1)}})}
-function hotRefresh(box){const f={};box.querySelectorAll('.rng[data-hot]').forEach(x=>{const lo=+x.querySelector('.lo').value,hi=+x.querySelector('.hi').value,mx=+x.dataset.max;f[x.dataset.hot]=[lo,hi>=mx&&x.dataset.hot!=='y'?1e9:hi]});const on=box.querySelector('.ctyrow .chip.on');f.c=on?on.textContent:'US';f.sort=box.dataset.sort;const n=box.querySelector('.ctyname');if(n)n.textContent=f.c==='Global'?'worldwide':f.c;box.querySelector('.hotres').innerHTML=hotList(f,box.dataset.mode)}
+function hotRefresh(box){const f={};box.querySelectorAll('.rng[data-hot]').forEach(x=>{const lo=+x.querySelector('.lo').value,hi=+x.querySelector('.hi').value,mx=+x.dataset.max;f[x.dataset.hot]=[lo,hi>=mx&&x.dataset.hot!=='y'?1e9:hi]});const on=box.querySelector('.ctyrow[data-row=loc] .chip.on');f.c=on?on.textContent:'US';f.made=chipVals(box.querySelector('.ctyrow[data-row=made]'));f.sort=box.dataset.sort;const n=box.querySelector('.ctyname');if(n)n.textContent=f.c==='Global'?'worldwide':f.c;box.querySelector('.hotres').innerHTML=hotList(f,box.dataset.mode)}
 function dragBox(mode,lbl){lbl=lbl.replace(', US,',', <span class="ctyname">US</span>,');return `<div class="pcard hotbox" data-mode="${mode}"><div class="lbl">${lbl}</div><p class="mut" style="margin:4px 0 0">Drag the lines. The list updates as you go.</p>
- <div class="ctyrow"><span class="ctylbl">Country</span>${chips('cty',['Global','US','UK','Germany','UAE','Japan'],'US')}</div>
+ <div class="ctyrow" data-row="loc"><span class="ctylbl">Vehicle location</span>${chips('cty',LOCS,'US')}</div>
+ <div class="ctyrow" data-row="made"><span class="ctylbl">Made in</span>${madeChips('made')}</div>
  ${rng('Year',1960,2026,1,1960,2026,'year').replace('class="rng"','class="rng" data-hot="y"')}
  ${rng('Budget',50000,3000000,10000,50000,3000000,'usd').replace('class="rng"','class="rng" data-hot="b"')}
  ${rng('Horsepower',150,900,10,150,900,'hp').replace('class="rng"','class="rng" data-hot="hp"')}
@@ -1434,7 +1444,7 @@ function rankTable(hit,k,nm){
 function hotList(f,mode='hot'){
  const sk=f.sort||(mode==='volume'?'u':'d');const srt=mode==='top'?(a,b)=>b.sc-a.sc:HSORT[sk][1];
  const inR=w=>w.y>=f.y[0]&&w.y<=f.y[1]&&w.v>=f.b[0]&&w.v<=f.b[1]&&w.hp>=f.hp[0]&&w.hp<=f.hp[1];
- const SRC=hotFor(f.c||'US');let hit=SRC.filter(inR).sort(srt),near=false;
+ const SRC=hotFor(f.c||'US').filter(w=>madeOK(f.made,w.n));if(!SRC.length)return `<p class="mut" style="margin:14px 0 0"><b>No models made in ${f.made.join(' or ')} in this data yet.</b> Pick another country.</p>`;let hit=SRC.filter(inR).sort(srt),near=false;
  if(!hit.length){near=true;const off=(v,lo,hi,sp)=>v<lo?(lo-v)/sp:v>hi?(v-hi)/sp:0;
   hit=SRC.map(w=>({...w,_d:off(w.y,f.y[0],f.y[1],66)+off(w.v,f.b[0],f.b[1],2950000)+off(w.hp,f.hp[0],f.hp[1],750)})).sort((a,b)=>a._d-b._d).slice(0,5).sort(srt)}
  const out=w=>{const m=[];if(w.y<f.y[0]||w.y>f.y[1])m.push(w.y);if(w.v<f.b[0]||w.v>f.b[1])m.push(money(w.v));if(w.hp<f.hp[0]||w.hp>f.hp[1])m.push(w.hp+' hp');return m.join(', ')};
@@ -1509,6 +1519,10 @@ document.addEventListener('click',e=>{
  const rs=e.target.closest('[data-cmpreset]');if(rs){e.stopPropagation();const b=rs.closest('.cmpmore');b.querySelectorAll('.cmpchips').forEach(c=>{c.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));const d=c.dataset.name==='win'?[...c.children].find(x=>x.textContent==='90 days'):c.firstElementChild;d.classList.add('on')});b.querySelectorAll('.rng').forEach(r=>{r.querySelector('.lo').value=r.dataset.lo0;const h=r.querySelector('.hi');if(h)h.value=r.dataset.hi0;rngPaint(r)});b.querySelectorAll('input[type=text]').forEach(x=>x.value='');cmpCount();return}
  const c=e.target.closest('.cmpchips .chip');if(c){e.stopPropagation();const g=c.parentElement,all=[...g.querySelectorAll('.chip')];if(g.dataset.multi){if(c===all[0]){all.forEach(x=>x.classList.toggle('on',x===c))}else{c.classList.toggle('on');all[0].classList.remove('on');if(!all.some(x=>x.classList.contains('on')))all[0].classList.add('on')}}else all.forEach(x=>x.classList.toggle('on',x===c));if(g.closest('.ctyrow')){hotRefresh(g.closest('.hotbox'));return}cmpCount()}
 },true);
+document.addEventListener('click',e=>{const c=e.target.closest('.cmpchips .chip');if(!c)return;const g=c.parentElement,n=g.dataset.name,v=chipVals(g),st=()=>$('#view').scrollTop;
+ if(n==='fmade'){S.flt.made=v;render(st())}else if(n==='floc'){S.flt.loc=v[0]||'Anywhere';render(st())}
+ else if(n==='lmade'){S.lotMade=v;render(st())}
+ else if(n==='imade'){S.invF.made=v;document.getElementById('ivres').innerHTML=bestList()}},true);
 document.addEventListener('input',e=>{const r=e.target.closest('.rng');if(r&&r.dataset.hot){rngPaint(r);hotRefresh(r.closest('.hotbox'));return}if(r&&r.dataset.iv){rngPaint(r);const lo=+r.querySelector('.lo').value,hi=+r.querySelector('.hi').value,mx=+r.dataset.max;S.invF[r.dataset.iv]=[lo,hi>=mx&&r.dataset.iv!=='y'?1e9:hi];document.getElementById('ivres').innerHTML=bestList();return}if(r){rngPaint(r);cmpCount()}else if(e.target.closest('.cmpmore'))cmpCount()});
 new MutationObserver(()=>{document.querySelectorAll('.rng:not([data-ok])').forEach(r=>{r.dataset.ok=1;rngPaint(r)})}).observe(document.documentElement,{childList:true,subtree:true});
 function compareResult(){
@@ -1547,8 +1561,9 @@ function sourcingHome(){
  <div class="card">${SEARCHES.map(s=>`<div class="saved" data-search="${s.id}">${ic('search')}<div><b>${s.name}</b><div class="hint">${s.crit.join(' · ')}</div></div><span class="new">${s.n} new</span></div>`).join('')}</div></div></div>`;
 }
 function fltCars(){
- const f=S.flt,q=S.q||{},has=(a,b)=>!b||a.toLowerCase().includes(b.toLowerCase());return CARS.filter(c=>(S.arg==='all'||c.s===S.arg)&&(S.arg!=='all'||(has(c.mk,q.make)&&has(c.md,q.model)&&(!q.y0||c.y>=+q.y0)&&(!q.y1||c.y<=+q.y1)&&(!q.mi||c.mi<=+String(q.mi).replace(/\D/g,''))))&&c.price<=f.maxPrice*(S.arg==='s3'?10:1)&&f.seller[c.st]&&f.trans[c.trans]!==false&&(!f.saved||S.starred.has(c.id))).sort((a,b)=>a.vs-b.vs);
+ const f=S.flt,q=S.q||{},has=(a,b)=>!b||a.toLowerCase().includes(b.toLowerCase());return CARS.filter(c=>(S.arg==='all'||c.s===S.arg)&&(S.arg!=='all'||(has(c.mk,q.make)&&has(c.md,q.model)&&(!q.y0||c.y>=+q.y0)&&(!q.y1||c.y<=+q.y1)&&(!q.mi||c.mi<=+String(q.mi).replace(/\D/g,''))))&&c.price<=f.maxPrice*(S.arg==='s3'?10:1)&&f.seller[c.st]&&f.trans[c.trans]!==false&&madeOK(f.made,c.mk)&&locOK(f.loc,c.loc)&&(!f.saved||S.starred.has(c.id))).sort((a,b)=>a.vs-b.vs);
 }
+function locOK(l,loc){if(!l||l==='Anywhere'||l==='US')return true;if(['Florida','📍 Near me','Within 150 mi'].includes(l))return /, FL$/.test(loc);return false}
 function filterPanel(){
  const f=S.flt;
  const q=S.q||{};
@@ -1559,12 +1574,12 @@ function filterPanel(){
  <h4 style="margin-top:14px">Transmission</h4>${['Manual','PDK'].map(t=>`<label class="ck"><input type="checkbox" data-trans="${t}" ${f.trans[t]?'checked':''}>${t}</label>`).join('')}
  <h4 style="margin-top:14px">Seller</h4>${['Dealer','Private'].map(t=>`<label class="ck"><input type="checkbox" data-seller="${t}" ${f.seller[t]?'checked':''}>${t}</label>`).join('')}
  <h4 style="margin-top:14px">Colour</h4><select><option>Any colour</option><option>Paint to Sample</option></select>
- <h4 style="margin-top:14px">Location</h4><select><option>📍 Use my current location</option><option>Florida</option><option>Within 150 mi of me</option><option>United States</option></select>
+ <h4 style="margin-top:14px">Vehicle location</h4>${chips('floc',['Anywhere','📍 Near me','Within 150 mi','Florida','US','UK','Germany','UAE','Japan'],f.loc||'Anywhere')}
+ <h4 style="margin-top:14px">Made in</h4>${madeChips('fmade',f.made)}
  <label class="ck" style="margin-top:14px"><input type="checkbox" data-saved ${f.saved?'checked':''}>Saved cars only ${ic('star')}</label>
- <h4 style="margin-top:14px">Sort</h4><select><option>Best price first (adjusted for miles, year)</option><option>Newest listing</option></select>
  ${cmpMore('src')}`;
 }
-function activeTags(){const f=S.flt,t=[];if(f.maxPrice<250000)t.push('Under '+money(f.maxPrice));Object.keys(f.seller).forEach(k=>{if(!f.seller[k])t.push('No '+k.toLowerCase())});Object.keys(f.trans).forEach(k=>{if(!f.trans[k]&&k!=='DCT')t.push('No '+k)});if(f.saved)t.push('Saved only');return t}
+function activeTags(){const f=S.flt,t=[];if(f.maxPrice<250000)t.push('Under '+money(f.maxPrice));Object.keys(f.seller).forEach(k=>{if(!f.seller[k])t.push('No '+k.toLowerCase())});Object.keys(f.trans).forEach(k=>{if(!f.trans[k]&&k!=='DCT')t.push('No '+k)});if(f.saved)t.push('Saved only');if(f.loc&&f.loc!=='Anywhere')t.push(f.loc);if(f.made&&f.made.length)t.push('Made in '+f.made.join(', '));return t}
 function carRow(c){
  return `<div class="carrow" data-car="${c.id}">${photo(c)}
  <div><h3>${c.y} ${c.mk} ${c.md}</h3><div class="spec">${c.tr} · ${mi(c.mi)} · ${c.col} · ${c.loc}</div>
@@ -1582,9 +1597,10 @@ function searchForm(){
   ${rng('Mileage',0,100000,1000,0,100000,'mi').replace('class="rng"','class="rng" data-q="mi"')}
   <label class="f">Transmission</label><div class="cmpchips" data-name="trans"><span class="chip on">Any</span><span class="chip">Manual</span><span class="chip">PDK / automatic</span></div>
   <label class="f">Seller</label><div class="cmpchips" data-name="seller"><span class="chip on">Any</span><span class="chip">Dealer</span><span class="chip">Private</span></div>
-  <label class="f">Location</label>${chips('loc',['Anywhere in the US','📍 Near me','Within 150 mi','Florida'],'Anywhere in the US')}
+  <label class="f">Vehicle location <span class="hint">(pick one)</span></label>${chips('loc',['Anywhere','📍 Near me','Within 150 mi','Florida','US','UK','Germany','UAE','Japan'],'Anywhere')}
+  <label class="f">Made in <span class="hint">(pick several)</span></label>${madeChips('made')}
   ${cmpMore('src')}
-  <p class="hint" id="nshint" style="margin:12px 0 0;display:none">Tap a make first.</p>
+  <p class="hint" id="nshint" style="margin:12px 0 0;display:none">Tap a make or a Made in country first.</p>
   <button class="btn main" style="width:100%;margin-top:18px" data-act="runsearch">${ic('search')}Search</button>
  </div></div>`;
 }
@@ -1681,14 +1697,14 @@ document.addEventListener('keydown',e=>{const d=document.querySelector('.sortdd.
 });
 function lotHome(){
  if(S.lotEmpty)return `<div class="wrap"><h1 class="pagetitle">My lot</h1><div class="card" style="padding:40px;text-align:center;margin-top:16px"><p style="margin-top:0">Add your cars to see how each one sits against the market.</p><button class="btn main" data-act="addcar">${ic('plus')}Add your cars</button></div><p class="hint" style="text-align:center"><a href="#" data-act="toggleempty">Sketch: show full lot</a></p></div>`;
- const rows=sorted('lot',LOT);
+ const rows=sorted('lot',LOT).filter(c=>madeOK(S.lotMade,c.mk));
  const need=rows.filter(r=>r.tag==='above'||r.days>r.typ).length;
  return `<div class="wrap"><div class="srchead"><h1 class="pagetitle" style="margin:0">My lot</h1><button class="btn main" data-act="addcar">${ic('plus')}Add car</button></div>
  <p class="mut" style="margin:4px 0 14px">${LOT.length} cars · ${need} need attention</p>
  ${lotStats()}
- <div class="listbar end">${sortDD('lot')}</div>
+ <div class="listbar"><div class="ctyrow" style="margin:0"><span class="ctylbl">Made in</span>${madeChips('lmade',S.lotMade)}</div>${sortDD('lot')}</div>
  <div class="lotgal">
- ${rows.map(c=>`<div class="lotcard click" data-lotcar="${c.id}">${photo(c,'100%')}<div class="lc-body"><div class="lc-top"><b>${c.y} ${c.mk} ${c.md}</b><span class="tag ${c.tag}">${{above:'Above market',fair:'Fair',below:'Below market'}[c.tag]}</span></div><div class="hint">${mi(c.mi)} · ${c.col}</div>
+ ${rows.length?'':`<p class="mut" style="grid-column:1/-1">No cars on your lot made in ${S.lotMade.join(' or ')}.</p>`}${rows.map(c=>`<div class="lotcard click" data-lotcar="${c.id}">${photo(c,'100%')}<div class="lc-body"><div class="lc-top"><b>${c.y} ${c.mk} ${c.md}</b><span class="tag ${c.tag}">${{above:'Above market',fair:'Fair',below:'Below market'}[c.tag]}</span></div><div class="hint">${mi(c.mi)} · ${c.col}</div>
  <div class="lc-price"><b>${money(c.you)}</b><span class="hint">${pct(c.vs)} vs market ${money(c.mkt)}</span><span class="hint" style="display:block">Model ${pct(c.ch)} in 6 mo</span></div>
  <div class="lc-days ${c.days>c.typ?'slow':''}">${c.days} days on lot <span class="hint">· typical ${c.typ}</span></div><div class="lc-live">${liveCount(c.id)?`Live on ${liveCount(c.id)} site${liveCount(c.id)>1?'s':''}`:'<span class="hint">Not listed yet</span>'}</div></div></div>`).join('')}
  </div>
@@ -1736,20 +1752,21 @@ function bestBuy(){
  const f=S.invF,cl=(a,mx)=>Math.min(a,mx),grp=(k,lbl,opts)=>`<div style="margin-top:14px"><div class="lbl" style="margin-bottom:8px">${lbl}</div><div style="display:flex;flex-wrap:wrap;gap:8px">${opts.map(o=>`<button class="chip ${f[k]===o?'on':''}" style="min-height:38px;cursor:pointer" data-ivf="${k}" data-val="${o}">${o}</button>`).join('')}</div></div>`;
  return `<div class="card ivfind" id="ivf" style="padding:18px"><h2 style="margin:0">Find the best investment</h2><p class="mut" style="margin:4px 0 0">Drag the lines. The list updates as you go.</p>
  ${grp('cat','Category',['Any','Supercar','Sports','GT','Classic','SUV'])}
- ${grp('c','Country',['Any','Germany','Italy','UK','USA','Japan'])}
+ ${grp('loc','Vehicle location',LOCS)}
+ <div style="margin-top:14px"><div class="lbl" style="margin-bottom:8px">Made in <span class="hint">(pick several)</span></div>${madeChips('imade',f.made)}</div>
  ${rng('Year',1960,2026,1,f.y[0],f.y[1],'year').replace('class="rng"','class="rng" data-iv="y"')}
  ${rng('Budget',50000,3000000,10000,f.b[0],cl(f.b[1],3000000),'usd').replace('class="rng"','class="rng" data-iv="b"')}
  ${rng('Horsepower',150,900,10,f.hp[0],cl(f.hp[1],900),'hp').replace('class="rng"','class="rng" data-iv="hp"')}
  </div><div id="ivres">${bestList()}</div>`;
 }
 function bestList(){
- const f=S.invF;let hit=MKT.filter(w=>(f.cat==='Any'||w.cat===f.cat)&&(f.c==='Any'||w.c===f.c)&&w.y>=f.y[0]&&w.y<=f.y[1]&&w.v>=f.b[0]&&w.v<=f.b[1]&&w.hp>=f.hp[0]&&w.hp<=f.hp[1]).sort((a,b)=>b.g-a.g);
+ const f=S.invF;const MK=MKT.map(w=>({...w,v:Math.round(w.v*(CTY[f.loc]||CTY.US).p)}));let hit=MK.filter(w=>(f.cat==='Any'||w.cat===f.cat)&&(!f.made.length||f.made.includes(w.c))&&w.y>=f.y[0]&&w.y<=f.y[1]&&w.v>=f.b[0]&&w.v<=f.b[1]&&w.hp>=f.hp[0]&&w.hp<=f.hp[1]).sort((a,b)=>b.g-a.g);
  let near=false;
  if(!hit.length){near=true;
   const off=(v,lo,hi,span)=>v<lo?(lo-v)/span:v>hi?(v-hi)/span:0;
-  const miss=w=>{const m=[];if(f.cat!=='Any'&&w.cat!==f.cat)m.push(w.cat);if(f.c!=='Any'&&w.c!==f.c)m.push(w.c);if(w.y<f.y[0]||w.y>f.y[1])m.push(String(w.y));if(w.v<f.b[0]||w.v>f.b[1])m.push(money(w.v));if(w.hp<f.hp[0]||w.hp>f.hp[1])m.push(w.hp+' hp');return m};
-  const d=w=>(f.cat!=='Any'&&w.cat!==f.cat?1:0)+(f.c!=='Any'&&w.c!==f.c?1:0)+off(w.y,f.y[0],f.y[1],66)+off(w.v,f.b[0],f.b[1],2950000)+off(w.hp,f.hp[0],f.hp[1],750);
-  hit=MKT.map(w=>({...w,_d:d(w),_m:miss(w)})).sort((a,b)=>a._d-b._d||b.g-a.g).slice(0,5);
+  const miss=w=>{const m=[];if(f.cat!=='Any'&&w.cat!==f.cat)m.push(w.cat);if(f.made.length&&!f.made.includes(w.c))m.push('made in '+w.c);if(w.y<f.y[0]||w.y>f.y[1])m.push(String(w.y));if(w.v<f.b[0]||w.v>f.b[1])m.push(money(w.v));if(w.hp<f.hp[0]||w.hp>f.hp[1])m.push(w.hp+' hp');return m};
+  const d=w=>(f.cat!=='Any'&&w.cat!==f.cat?1:0)+(f.made.length&&!f.made.includes(w.c)?1:0)+off(w.y,f.y[0],f.y[1],66)+off(w.v,f.b[0],f.b[1],2950000)+off(w.hp,f.hp[0],f.hp[1],750);
+  hit=MK.map(w=>({...w,_d:d(w),_m:miss(w)})).sort((a,b)=>a._d-b._d||b.g-a.g).slice(0,5);
  }
  const top=hit[0],y5=w=>(a=>(a[a.length-1]/a[a.length-61]-1)*100)(series(w));
  return `${near?`<div class="card" style="padding:18px;margin-top:14px"><b>Nothing fits every filter exactly.</b><p class="mut" style="margin:4px 0 0">Here are the ${hit.length} closest models. The grey note on each shows what is outside your filters.</p></div>`:''}<div class="card" style="padding:18px;margin-top:14px"><div class="lbl">${near?'Closest match':'Best investment for these filters'}</div>
@@ -1967,7 +1984,8 @@ document.addEventListener('click',e=>{
   case 'runsearch':{const fm=document.getElementById('nsform'),v=k=>(fm.querySelector('[data-q="'+k+'"]')||{}).value||'',cb=k=>fm.querySelector('.combo[data-kind="'+k+'"] input').value.trim(),chip=n=>fm.querySelector('.cmpchips[data-name="'+n+'"] .chip.on').textContent;
    const ch=n=>{const o=fm.querySelector('.cmpchips[data-name="'+n+'"] .chip.on');return o&&!/^(Any|Anywhere)/.test(o.textContent)?o.textContent:''},yr=fm.querySelector('.rng[data-q="year"]'),y0=+yr.querySelector('.lo').value,y1=+yr.querySelector('.hi').value;
    const q={make:ch('make'),model:ch('model'),y0:y0>1960?y0:'',y1:y1<2026?y1:'',mi:(()=>{const r=fm.querySelector('.rng[data-q="mi"]'),h=+r.querySelector('.hi').value;return h<100000?h:''})(),loc:ch('loc')};
-   if(!q.make&&!q.model){fm.querySelector('#nshint').style.display='block';break}
+   const made=chipVals(fm.querySelector('.cmpchips[data-name="made"]'));S.flt.made=made;S.flt.loc=q.loc||'Anywhere';
+   if(!q.make&&!q.model&&!made.length){fm.querySelector('#nshint').style.display='block';break}
    S.q=q;const pr=(()=>{const r=fm.querySelector('.rng[data-q="price"]'),h=+r.querySelector('.hi').value;return h<PSTEPS.length-1?PSTEPS[h]:0})();if(pr)S.flt.maxPrice=Math.min(250000,Math.max(150000,pr));
    const t=chip('trans'),se=chip('seller');S.flt.trans={Manual:t!=='PDK / automatic',PDK:t!=='Manual',DCT:t!=='Manual'};S.flt.seller={Dealer:se!=='Private',Private:se!=='Dealer'};
    S._pending=false;S._loading=true;render(0);break}
