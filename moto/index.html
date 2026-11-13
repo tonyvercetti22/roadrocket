@@ -988,6 +988,7 @@ body:has(#ibxwrap) .msgfab{display:none}
 @keyframes sortFade{from{opacity:.35;transform:translateY(3px)}}
 @media (prefers-reduced-motion:reduce){.sortmenu,.sortbtn .chev,.sortmenu svg{transition:none}.sortdd.open .sortmenu button,.sorted-in{animation:none}}
 .lotcharts svg{max-height:120px}
+.filtrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.filtrow .ctylbl{color:var(--muted);font-size:15px}.filtrow .cmpchips .chip{min-height:32px;padding:0 12px;font-size:14px}
 </style>
 <style>:root{--z:1}@media (min-width:768px){:root{--z:.9}html{zoom:.9}}@media (min-width:1280px){:root{--z:.81}html{zoom:.81}}</style>
 <meta name="description" content="Buy, sell and track motorcycles."><meta property="og:type" content="website"><meta property="og:site_name" content="RoadRocket"><meta property="og:title" content="RoadRocket Moto"><meta property="og:description" content="Buy, sell and track motorcycles."><meta property="og:url" content="https://tonyvercetti22.github.io/roadrocket/moto/"><meta property="og:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png">
@@ -1410,8 +1411,8 @@ const HOT=[
  {n:'Triumph Speed Triple 1200 RR',y:2022,hp:178,v:16500,d:83,ch:14,u:142,uc:4.4,m:6.6,sc:76}];
 const CTY={Global:{d:1.12,u:3.1,p:1.02},US:{d:1,u:1,p:1},UK:{d:1.18,u:.34,p:1.07},Germany:{d:1.09,u:.41,p:1.04},UAE:{d:.86,u:.22,p:1.12},Japan:{d:1.24,u:.27,p:.96}};
 /* Vehicle location (pick one) vs Made in (pick several), same on every filter (Thomas 13.11.2026) */
-const ORIGINS=['Germany','Italy','UK','USA','Japan','France','Sweden'];
-const MAKE_C={'Porsche':'Germany','Ferrari':'Italy','Lamborghini':'Italy','McLaren':'UK','Mercedes-AMG':'Germany','Mercedes-Benz':'Germany','Aston Martin':'UK','Bentley':'UK','Rolls-Royce':'UK','BMW':'Germany','Audi':'Germany','Chevrolet':'USA','Ford':'USA','Dodge':'USA','Nissan':'Japan','Toyota':'Japan','Honda':'Japan','Lexus':'Japan','Lotus':'UK','Maserati':'Italy','Bugatti':'France','Pagani':'Italy','Koenigsegg':'Sweden','Jaguar':'UK','Land Rover':'UK'};
+const ORIGINS=['Italy','Japan','Germany','USA','UK','Austria'];
+const MAKE_C={'Ducati':'Italy','Harley-Davidson':'USA','BMW':'Germany','Kawasaki':'Japan','Honda':'Japan','Yamaha':'Japan','Suzuki':'Japan','MV Agusta':'Italy','Triumph':'UK','Aprilia':'Italy','KTM':'Austria','Indian':'USA','Norton':'UK','Vincent':'UK','Brough Superior':'UK','Moto Guzzi':'Italy'};
 const LOCS=['Global','US','UK','Germany','UAE','Japan'];
 function originOf(name){const k=Object.keys(MAKE_C).sort((a,b)=>b.length-a.length).find(m=>String(name).startsWith(m));return k?MAKE_C[k]:''}
 function madeOK(sel,name){return !sel||!sel.length||sel.includes(originOf(name))}
@@ -1694,7 +1695,7 @@ function lotHome(){
  return `<div class="wrap"><div class="srchead"><h1 class="pagetitle" style="margin:0">My lot</h1><button class="btn main" data-act="addcar">${ic('plus')}Add car</button></div>
  <p class="mut" style="margin:4px 0 14px">${LOT.length} cars · ${need} need attention</p>
  ${lotStats()}
- <div class="listbar"><div class="ctyrow" style="margin:0"><span class="ctylbl">Made in</span>${madeChips('lmade',S.lotMade)}</div>${sortDD('lot')}</div>
+ <div class="listbar"><div class="filtrow"><span class="ctylbl">Made in</span>${madeChips('lmade',S.lotMade)}</div>${sortDD('lot')}</div>
  <div class="lotgal">
  ${rows.length?'':`<p class="mut" style="grid-column:1/-1">No cars on your lot made in ${S.lotMade.join(' or ')}.</p>`}${rows.map(c=>`<div class="lotcard click" data-lotcar="${c.id}">${photo(c,'100%')}<div class="lc-body"><div class="lc-top"><b>${c.y} ${c.mk} ${c.md}</b><span class="tag ${c.tag}">${{above:'Above market',fair:'Fair',below:'Below market'}[c.tag]}</span></div><div class="hint">${mi(c.mi)} · ${c.col}</div>
  <div class="lc-price"><b>${money(c.you)}</b><span class="hint">${pct(c.vs)} vs market ${money(c.mkt)}</span><span class="hint" style="display:block">Model ${pct(c.ch)} in 6 mo</span></div>
