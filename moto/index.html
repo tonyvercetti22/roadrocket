@@ -973,20 +973,19 @@ body:has(#ibxwrap) .msgfab{display:none}
 .sortbtn .chev{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;color:var(--muted);transition:transform .34s var(--ease-out)}
 .sortdd.open .chev{transform:rotate(180deg)}
 .sortdd.open .sortbtn{border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent)}
-.sortmenu{position:absolute;right:0;top:calc(100% + 8px);min-width:233px;z-index:40;padding:5px;border-radius:12px;background:var(--surf);border:1px solid var(--hair2,var(--line));box-shadow:var(--e2);opacity:0;visibility:hidden;transform:translateY(-5px) scale(.98);transform-origin:top right;transition:opacity .21s var(--ease-out),transform .34s var(--ease-out),visibility 0s .34s}
+.sortmenu{position:absolute;right:0;top:calc(100% + 8px);min-width:233px;z-index:40;padding:5px;border-radius:12px;background:var(--surf);border:1px solid var(--hair2,var(--line));box-shadow:var(--e2);opacity:0;visibility:hidden;transform:translateY(-5px);transform-origin:top right;transition:opacity .21s var(--ease-out),transform .34s var(--ease-out),visibility 0s .34s}
 .sortdd.open .sortmenu{opacity:1;visibility:visible;transform:none;transition:opacity .21s var(--ease-out),transform .34s var(--ease-out),visibility 0s}
-.sortmenu button{display:flex;align-items:center;justify-content:space-between;width:100%;gap:13px;padding:8px 10px;border:0;border-radius:8px;background:none;color:var(--muted);font:inherit;font-size:14px;text-align:left;cursor:pointer;transition:background-color .13s,color .13s}
-.sortmenu button:hover,.sortmenu button:focus-visible{background:var(--surf2);color:var(--ink);outline:none}
-.sortmenu button.on{color:var(--ink);font-weight:600}
-.sortmenu svg{width:12px;height:12px;flex-shrink:0;fill:none;stroke:var(--brand);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:0;transform:scale(.6);transition:opacity .21s,transform .34s var(--ease-out)}
-.sortmenu button.on svg{opacity:1;transform:none}
+.sortmenu>button{display:flex;align-items:center;justify-content:space-between;width:100%;gap:13px;padding:8px 10px;border:0;border-radius:8px;background:none;color:var(--muted);font:inherit;font-size:14px;text-align:left;cursor:pointer;transition:background-color .13s,color .13s}
+.sortmenu>button:hover,.sortmenu>button:focus-visible{background:var(--surf2);color:var(--ink);outline:none}
+.sortmenu>button.on{color:var(--ink);font-weight:600}
+.sortmenu [data-sortv] svg{width:12px;height:12px;flex-shrink:0;fill:none;stroke:var(--brand);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:0;transform:scale(.6);transition:opacity .21s,transform .34s var(--ease-out)}
+.sortmenu [data-sortv].on svg{opacity:1;transform:none}
 .sortmenu hr{border:0;border-top:1px solid var(--hair,var(--line));margin:4px 6px}
-.sortdd.open .sortmenu button{animation:sortIn .34s var(--ease-out) both}
-.sortdd.open .sortmenu button:nth-of-type(2){animation-delay:.02s}.sortdd.open .sortmenu button:nth-of-type(3){animation-delay:.04s}.sortdd.open .sortmenu button:nth-of-type(4){animation-delay:.06s}.sortdd.open .sortmenu button:nth-of-type(5){animation-delay:.08s}.sortdd.open .sortmenu button:nth-of-type(6){animation-delay:.1s}.sortdd.open .sortmenu button:nth-of-type(7){animation-delay:.12s}.sortdd.open .sortmenu button:nth-of-type(8){animation-delay:.14s}.sortdd.open .sortmenu button:nth-of-type(9){animation-delay:.16s}
-@keyframes sortIn{from{opacity:0;transform:translateY(-3px)}}
+.sortdd.open .sortmenu>button{animation:sortIn .34s var(--ease-out) both}
+@keyframes sortIn{from{opacity:0}}
 .sorted-in{animation:sortFade .34s var(--ease-out)}
 @keyframes sortFade{from{opacity:.35;transform:translateY(3px)}}
-@media (prefers-reduced-motion:reduce){.sortmenu,.sortbtn .chev,.sortmenu svg{transition:none}.sortdd.open .sortmenu button,.sorted-in{animation:none}}
+@media (prefers-reduced-motion:reduce){.sortmenu,.sortbtn .chev,.sortmenu [data-sortv] svg{transition:none}.sortdd.open .sortmenu>button,.sorted-in{animation:none}}
 .lotcharts svg{max-height:120px}
 .filtrow{display:flex;align-items:center;gap:13px;flex-wrap:wrap}.filtrow .ctylbl{color:var(--muted);font-size:15px}.filtrow .cmpchips .chip{min-height:32px;padding:0 12px;font-size:14px}
 
@@ -1003,7 +1002,6 @@ body:has(#ibxwrap) .msgfab{display:none}
 .fdd .sortmenu .chip.on{color:var(--ink)!important;font-weight:600}
 .fdd .sortmenu .chip::after{content:"";width:12px;height:12px;flex-shrink:0;background:var(--brand);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.5l2.3 2.3L9.5 3.8' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.5l2.3 2.3L9.5 3.8' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;opacity:0;transform:scale(.6);transition:opacity .21s,transform .34s var(--ease-out)}
 .fdd .sortmenu .chip.on::after{opacity:1;transform:none}
-.fdd.multi .sortmenu .chip:first-child{border-bottom:1px solid var(--hair,var(--line))!important;border-radius:8px 8px 0 0!important;margin-bottom:4px}
 .sortdd.open .sortmenu .chip{animation:sortIn .34s var(--ease-out) both}
 @media (prefers-reduced-motion:reduce){.fdd .sortmenu .chip::after{transition:none}.sortdd.open .sortmenu .chip{animation:none}}
 
@@ -1018,8 +1016,8 @@ body:has(#ibxwrap) .msgfab{display:none}
 .zip input::placeholder{color:var(--hint);letter-spacing:0}
 .zipgo{width:30px;height:30px;flex-shrink:0;display:grid;place-items:center;border:0;border-radius:999px;background:var(--brand);cursor:pointer;opacity:.3;transform:scale(.9);transition:opacity .21s var(--ease-out),transform .34s var(--ease-out)}
 .zip.ready .zipgo{opacity:1;transform:none}
-.zipgo:active{transform:scale(.96)}
-.zipgo svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.zip.ready .zipgo:active{transform:scale(.96)}
+.zipgo svg{width:14px;height:14px;fill:none;stroke:var(--brand-ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nearme{display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;margin:4px 0 0;border:0;border-radius:8px;background:none;color:var(--link,var(--brand));font:inherit;font-size:14px;font-weight:600;text-align:left;cursor:pointer;transition:background-color .13s}
 .nearme:hover,.nearme:focus-visible{background:var(--surf2);outline:none}
 .nearme svg{width:14px;height:14px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
@@ -1039,6 +1037,26 @@ body:has(#ibxwrap) .msgfab{display:none}
 .fddrow,.listbar{position:relative;z-index:6}
 .fddrow:has(.sortdd.open),.listbar:has(.sortdd.open){z-index:30}
 .sortdd.open{z-index:31}
+
+/* Review fixes 13.11.2026: clipping, phones, focus, touch, motion */
+.card:has(.sortdd){overflow:visible!important}
+.sortdd.open .sortmenu>[role=option]{animation:sortIn .21s var(--ease-out) both;animation-delay:calc(var(--i,0)*13ms)}
+.sortmenu>button,.fdd .sortmenu .chip{padding:8px 13px!important}
+.sortmenu hr,.locmenu hr{border:0;border-top:1px solid var(--hair,var(--line));margin:5px 8px}
+.locbox{padding:5px 5px 0}
+.zip{height:34px;padding:0 3px 0 13px}
+.zip input{height:32px!important}
+.sortmenu .zipgo{width:28px;height:28px}
+.locmenu{min-width:255px}
+.fddrow.col .sortmenu{left:0;right:0;min-width:0}
+.sortbtn:focus-visible{outline:none}
+.sortdd.open .sortbtn,.zip:focus-within{box-shadow:var(--ring)}
+.sortmenu>button:focus-visible,.fdd .sortmenu .chip:focus-visible,.nearme:focus-visible{box-shadow:none!important;background:var(--surf2)!important}
+.zip.bad,.zip.bad:focus-within{border-color:var(--down);box-shadow:none}
+@media (max-width:760px){.fddrow .sortdd,.listbar .sortdd{position:static}.fddrow .sortmenu,.listbar .sortmenu{left:0;right:0;min-width:0;max-height:min(377px,calc(60vh / var(--z,1)));overflow:auto}}
+@media (pointer:coarse){.sortbtn{height:44px}.zip{height:44px}.zip input{height:42px!important}.sortmenu>button,.fdd .sortmenu .chip,.sortmenu .nearme{min-height:44px!important}.sortmenu .zipgo{position:relative;width:34px;height:34px}.sortmenu .zipgo::after{content:"";position:absolute;inset:-5px}}
+@media (hover:none){.sortbtn:hover{border-color:var(--hair,var(--line));box-shadow:none}.sortmenu>button:hover,.fdd .sortmenu .chip:hover,.sortmenu .nearme:hover{background:none!important}.sortmenu .zipgo:hover{filter:none}}
+@media (prefers-reduced-motion:reduce){.sortdd.open .sortmenu>[role=option]{animation:none}}
 </style>
 <style>:root{--z:1}@media (min-width:768px){:root{--z:.9}html{zoom:.9}}@media (min-width:1280px){:root{--z:.81}html{zoom:.81}}</style>
 <meta name="description" content="Buy, sell and track motorcycles."><meta property="og:type" content="website"><meta property="og:site_name" content="RoadRocket"><meta property="og:title" content="RoadRocket Moto"><meta property="og:description" content="Buy, sell and track motorcycles."><meta property="og:url" content="https://tonyvercetti22.github.io/roadrocket/moto/"><meta property="og:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png">
@@ -1467,16 +1485,16 @@ const LOCS=['Global','US','UK','Germany','UAE','Japan'];
 function originOf(name){const k=Object.keys(MAKE_C).sort((a,b)=>b.length-a.length).find(m=>String(name).startsWith(m));return k?MAKE_C[k]:''}
 function madeOK(sel,name){return !sel||!sel.length||sel.includes(originOf(name))}
 function madeChips(name,sel){sel=sel||[];return `<div class="cmpchips" data-name="${name}" data-multi="1">${['Any',...ORIGINS].map(o=>`<span class="chip${(o==='Any'?!sel.length:sel.includes(o))?' on':''}" role="button" tabindex="0">${o}</span>`).join('')}</div>`}
-const LOCBOX=`<div class="locbox"><label class="zip"><svg viewBox="0 0 16 16"><path d="M8 14.5s4.5-4.2 4.5-7.7a4.5 4.5 0 0 0-9 0c0 3.5 4.5 7.7 4.5 7.7z"/><circle cx="8" cy="6.8" r="1.6"/></svg><input type="text" inputmode="numeric" maxlength="5" placeholder="ZIP code" aria-label="ZIP code" autocomplete="postal-code"><button type="button" class="zipgo" aria-label="Use this ZIP code"><svg viewBox="0 0 16 16"><path d="M3.5 8h9M8.5 4l4 4-4 4"/></svg></button></label><button type="button" class="nearme"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4.5"/><circle cx="8" cy="8" r="1.4"/><path d="M8 1v2.2M8 12.8V15M1 8h2.2M12.8 8H15"/></svg><span>Use current location</span></button></div><hr>`;
-function setLoc(dd,txt){const m=dd.querySelector('.sortmenu');let c=[...m.querySelectorAll('.chip')].find(x=>x.textContent===txt);if(!c){c=document.createElement('span');c.className='chip';c.setAttribute('role','option');c.tabIndex=0;c.textContent=txt;m.querySelector('hr').after(c)}c.click()}
+const LOCBOX=`<div class="locbox"><label class="zip"><svg viewBox="0 0 16 16"><path d="M8 14.5s4.5-4.2 4.5-7.7a4.5 4.5 0 0 0-9 0c0 3.5 4.5 7.7 4.5 7.7z"/><circle cx="8" cy="6.8" r="1.6"/></svg><input type="text" inputmode="numeric" maxlength="5" placeholder="5-digit ZIP code" aria-label="ZIP code" autocomplete="postal-code"><button type="button" class="zipgo" aria-label="Use this ZIP code"><svg viewBox="0 0 16 16"><path d="M3.5 8h9M8.5 4l4 4-4 4"/></svg></button></label><button type="button" class="nearme"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4.5"/><circle cx="8" cy="8" r="1.4"/><path d="M8 1v2.2M8 12.8V15M1 8h2.2M12.8 8H15"/></svg><span>Use current location</span></button></div><hr>`;
+function setLoc(dd,txt){const m=dd.querySelector('.sortmenu');let c=[...m.querySelectorAll('.chip')].find(x=>x.textContent===txt)||m.querySelector('.chip[data-custom]');if(!c){c=document.createElement('span');c.className='chip';c.dataset.custom=1;c.setAttribute('role','option');c.tabIndex=0;m.querySelector('hr').after(c)}c.textContent=txt;c.click()}
 document.addEventListener('click',e=>{const z=e.target.closest('.zipgo'),n=e.target.closest('.nearme');if(!z&&!n)return;e.stopImmediatePropagation();e.preventDefault();const dd=e.target.closest('.fdd');
- if(z){const box=z.closest('.zip'),v=box.querySelector('input').value.trim();if(!/^\d{5}$/.test(v)){box.classList.add('bad');box.querySelector('input').focus();return}setLoc(dd,'ZIP '+v);return}
- if(n.classList.contains('busy'))return;n.classList.add('busy');n.querySelector('span').textContent='Finding you…';setTimeout(()=>setLoc(dd,'Current location'),610)},true);
-document.addEventListener('input',e=>{const box=e.target.closest('.zip');if(!box)return;e.target.value=e.target.value.replace(/\D/g,'').slice(0,5);box.classList.remove('bad');box.classList.toggle('ready',e.target.value.length===5)},true);
+ if(z){const box=z.closest('.zip'),v=box.querySelector('input').value.trim();if(!/^\d{5}$/.test(v)){box.classList.add('bad');box.querySelector('input').setAttribute('aria-invalid','true');box.querySelector('input').focus();return}setLoc(dd,'ZIP '+v);return}
+ if(n.classList.contains('busy'))return;n.classList.add('busy');n.querySelector('span').textContent='Finding you…';setTimeout(()=>{n.classList.remove('busy');n.querySelector('span').textContent='Use current location';if(dd.isConnected)setLoc(dd,'Current location')},610)},true);
+document.addEventListener('input',e=>{const box=e.target.closest('.zip');if(!box)return;e.target.value=e.target.value.replace(/\D/g,'').slice(0,5);box.classList.remove('bad');e.target.removeAttribute('aria-invalid');box.classList.toggle('ready',e.target.value.length===5)},true);
 document.addEventListener('keydown',e=>{const box=e.target.closest&&e.target.closest('.zip');if(box&&e.key==='Enter'){e.preventDefault();box.querySelector('.zipgo').click()}},true);
-function fdd(name,label,opts,sel,multi){sel=sel||[];const any='Any',cur=sel[0]||opts[0],all=multi?[any,...opts]:(opts.includes(cur)?opts:[cur,...opts]),isLoc=!multi&&/loc|cty/.test(name);
+function fdd(name,label,opts,sel,multi){sel=sel||[];const any='Any',cur=sel[0]||opts[0],all=multi?[any,...opts]:(opts.includes(cur)?opts:['\u0000'+cur,...opts]),isLoc=!multi&&/loc|cty/.test(name);
  const isOn=o=>multi?(o===any?!sel.length:sel.includes(o)):o===cur;const val=multi?(sel.length?sel.join(', '):any):cur;
- return `<div class="sortdd fdd${multi?' multi':''}" data-fdd="${name}"><button type="button" class="sortbtn" aria-haspopup="listbox" aria-expanded="false"><span class="sl">${label}</span><span class="sv">${val}</span><svg class="chev" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="sortmenu cmpchips${isLoc?' locmenu':''}" role="listbox" data-name="${name}"${multi?' aria-multiselectable="true" data-multi="1"':''}>${isLoc?LOCBOX:''}${all.map(o=>`<span class="chip${isOn(o)?' on':''}" role="option" aria-selected="${isOn(o)}" tabindex="0">${o}</span>`).join('')}</div></div>`}
+ return `<div class="sortdd fdd${multi?' multi':''}" data-fdd="${name}"><button type="button" class="sortbtn" aria-haspopup="listbox" aria-expanded="false"><span class="sl">${label}</span><span class="sv">${val}</span><svg class="chev" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="sortmenu cmpchips${isLoc?' locmenu':''}" role="listbox" data-name="${name}"${multi?' aria-multiselectable="true" data-multi="1"':''}>${isLoc?LOCBOX:''}${all.map((o0,i)=>{const cu=o0[0]==='\u0000',o=cu?o0.slice(1):o0;return `<span class="chip${isOn(o)?' on':''}"${cu?' data-custom="1"':''} role="option" aria-selected="${isOn(o)}" tabindex="0" style="--i:${i}">${o}</span>${multi&&i===0?'<hr>':''}`}).join('')}</div></div>`}
 function chipVals(g){return [...g.querySelectorAll('.chip.on')].map(x=>x.textContent).filter(t=>!/^(Any|Anywhere|Global)$/.test(t))}
 function hotFor(c){const k=CTY[c]||CTY.US;if(c==='US'||!CTY[c])return HOT;return HOT.map((w,i)=>{const j=1+((i*37+c.length*13)%17-8)/100;return {...w,d:Math.max(4,Math.round(w.d*k.d*j)),u:Math.max(1,Math.round(w.u*k.u*j)),ch:Math.round(w.ch*j+((i+c.length)%5-2)),uc:+(w.uc*j).toFixed(1)}})}
 function hotRefresh(box){const f={};box.querySelectorAll('.rng[data-hot]').forEach(x=>{const lo=+x.querySelector('.lo').value,hi=+x.querySelector('.hi').value,mx=+x.dataset.max;f[x.dataset.hot]=[lo,hi>=mx&&x.dataset.hot!=='y'?1e9:hi]});const on=box.querySelector('.ctyrow[data-row=loc] .chip.on');f.c=on?on.textContent:'US';f.made=chipVals(box.querySelector('.ctyrow[data-row=made]'));f.sort=box.dataset.sort;const n=box.querySelector('.ctyname');if(n)n.textContent=f.c==='Global'?'worldwide':f.c==='Current location'?'near you':f.c;box.querySelector('.hotres').innerHTML=hotList(f,box.dataset.mode)}
@@ -1574,8 +1592,8 @@ document.addEventListener('click',e=>{
 document.addEventListener('click',e=>{const c=e.target.closest('.cmpchips .chip');if(!c)return;const g=c.parentElement,n=g.dataset.name,v=chipVals(g),st=()=>$('#view').scrollTop;
  const dd=c.closest('.fdd');if(dd){const on=[...g.querySelectorAll('.chip')].map(x=>{const y=x.classList.contains('on');x.setAttribute('aria-selected',y);return y?x.textContent:null}).filter(Boolean);dd.querySelector('.sv').textContent=on.join(', ')}
  if(n==='iloc'){S.invF.loc=c.textContent;document.getElementById('ivres').innerHTML=bestList();return}
- if(n==='fmade'){S.flt.made=v;render(st())}else if(n==='floc'){S.flt.loc=v[0]||'Anywhere';render(st())}
- else if(n==='lmade'){S.lotMade=v;render(st())}
+ if(n==='fmade'){S.flt.made=v;if(dd)dd.dataset.dirty=1;else render(st())}else if(n==='floc'){S.flt.loc=v[0]||'Anywhere';render(st())}
+ else if(n==='lmade'){S.lotMade=v;if(dd)dd.dataset.dirty=1;else render(st())}
  else if(n==='imade'){S.invF.made=v;document.getElementById('ivres').innerHTML=bestList()}},true);
 document.addEventListener('input',e=>{const r=e.target.closest('.rng');if(r&&r.dataset.hot){rngPaint(r);hotRefresh(r.closest('.hotbox'));return}if(r&&r.dataset.iv){rngPaint(r);const lo=+r.querySelector('.lo').value,hi=+r.querySelector('.hi').value,mx=+r.dataset.max;S.invF[r.dataset.iv]=[lo,hi>=mx&&r.dataset.iv!=='y'?1e9:hi];document.getElementById('ivres').innerHTML=bestList();return}if(r){rngPaint(r);cmpCount()}else if(e.target.closest('.cmpmore'))cmpCount()});
 new MutationObserver(()=>{document.querySelectorAll('.rng:not([data-ok])').forEach(r=>{r.dataset.ok=1;rngPaint(r)})}).observe(document.documentElement,{childList:true,subtree:true});
@@ -1727,24 +1745,30 @@ const SORTS={
  watch:[['up','Appreciating most',(a,b)=>b.ch-a.ch],['dn','Depreciating most',(a,b)=>a.ch-b.ch],['pd','Price: high to low',(a,b)=>b.v-a.v],['pa','Price: low to high',(a,b)=>a.v-b.v]],
  mine:[['up','Appreciating most',(a,b)=>gainOf(b)-gainOf(a)],['dn','Depreciating most',(a,b)=>gainOf(a)-gainOf(b)],['pd','Value: high to low',(a,b)=>b.v-a.v],['pa','Value: low to high',(a,b)=>a.v-b.v],['ol','Owned longest',(a,b)=>a.since-b.since]],
  best:[['g','Best expected rise',(a,b)=>b.g-a.g],['pa','Price: low to high',(a,b)=>a.v-b.v],['pd','Price: high to low',(a,b)=>b.v-a.v],['yn','Year: newest first',(a,b)=>b.y-a.y],['yo','Year: oldest first',(a,b)=>a.y-b.y]]};
+function closeDD(d,refocus){d.classList.remove('open');const b=d.querySelector('.sortbtn');b.setAttribute('aria-expanded','false');
+ if(d.dataset.dirty){delete d.dataset.dirty;const k=d.dataset.fdd;setTimeout(()=>{render($('#view').scrollTop);const nb=document.querySelector(`.fdd[data-fdd="${k}"] .sortbtn`);if(nb&&refocus)nb.focus({preventScroll:true})},210)}
+ else if(refocus)b.focus({preventScroll:true})}
 function sortCur(k){const o=SORTS[k];return o.find(x=>x[0]===S.sort[k])||o[0]}
 function sorted(k,list){return [...list].sort(sortCur(k)[2])}
 function sortDD(k){const o=SORTS[k],cur=sortCur(k);
- return `<div class="sortdd" data-sortk="${k}"><button type="button" class="sortbtn" aria-haspopup="listbox" aria-expanded="false"><span class="sl">Sort</span><span class="sv">${cur[1]}</span><svg class="chev" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="sortmenu" role="listbox">${o.map(x=>`<button type="button" role="option" aria-selected="${x===cur}" class="${x===cur?'on':''}" data-sortv="${x[0]}"><span>${x[1]}</span><svg viewBox="0 0 12 12"><path d="M2.5 6.5l2.3 2.3L9.5 3.8"/></svg></button>`).join('')}</div></div>`}
+ return `<div class="sortdd" data-sortk="${k}"><button type="button" class="sortbtn" aria-haspopup="listbox" aria-expanded="false"><span class="sl">Sort</span><span class="sv">${cur[1]}</span><svg class="chev" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="sortmenu" role="listbox">${o.map((x,i)=>`<button type="button" role="option" aria-selected="${x===cur}" class="${x===cur?'on':''}" data-sortv="${x[0]}" style="--i:${i}"><span>${x[1]}</span><svg viewBox="0 0 12 12"><path d="M2.5 6.5l2.3 2.3L9.5 3.8"/></svg></button>`).join('')}</div></div>`}
 document.addEventListener('click',e=>{
  const v=e.target.closest('[data-sortv]');
  if(v){e.stopImmediatePropagation();e.preventDefault();const dd=v.closest('.sortdd'),k=dd.dataset.sortk;S.sort[k]=v.dataset.sortv;
   const open=[...document.querySelectorAll('details[open]')].map(d=>d.className);render($('#view').scrollTop);
   open.forEach(c=>{const d=c&&document.querySelector('details.'+c.split(' ')[0]);if(d)d.open=true});
-  const n=document.querySelector(`.sortdd[data-sortk="${k}"]`);const tgt=n&&(n.closest('.listbar')||n).nextElementSibling;if(tgt){tgt.classList.add('sorted-in');setTimeout(()=>tgt.classList.remove('sorted-in'),400)}
+  const n=document.querySelector(`.sortdd[data-sortk="${k}"]`);if(n)n.querySelector('.sortbtn').focus({preventScroll:true});let tgt=n&&(n.closest('.listbar')||n).nextElementSibling;while(tgt&&tgt.matches('p'))tgt=tgt.nextElementSibling;if(tgt){tgt.classList.add('sorted-in');setTimeout(()=>tgt.classList.remove('sorted-in'),400)}
   return}
  const b=e.target.closest('.sortbtn');
- document.querySelectorAll('.sortdd.open').forEach(d=>{if((!b||d!==b.parentElement)&&!(d.contains(e.target)&&(d.classList.contains('multi')||e.target.closest('.locbox')))){d.classList.remove('open');d.querySelector('.sortbtn').setAttribute('aria-expanded','false')}});
- if(b){e.stopImmediatePropagation();e.preventDefault();const d=b.parentElement,on=d.classList.toggle('open');b.setAttribute('aria-expanded',on);if(on)(d.querySelector('.sortmenu .on')||d.querySelector('.sortmenu button')).focus({preventScroll:true})}
+ document.querySelectorAll('.sortdd.open').forEach(d=>{if((!b||d!==b.parentElement)&&!(d.contains(e.target)&&(d.classList.contains('multi')||e.target.closest('.locbox')))){closeDD(d)}});
+ if(b){e.stopImmediatePropagation();e.preventDefault();const d=b.parentElement;if(d.classList.contains('open')){closeDD(d,1);return}d.classList.add('open');const on=true;b.setAttribute('aria-expanded',on);if(on)(d.querySelector('.sortmenu .on')||d.querySelector('.sortmenu>button')).focus({preventScroll:true})}
 },true);
 document.addEventListener('keydown',e=>{const d=document.querySelector('.sortdd.open');if(!d)return;
- const bs=[...d.querySelectorAll('.sortmenu button,.sortmenu .chip')],i=bs.indexOf(document.activeElement);
- if(e.key==='Escape'){d.classList.remove('open');d.querySelector('.sortbtn').focus();e.preventDefault()}
+ const bs=[...d.querySelectorAll('.sortmenu>button,.sortmenu .chip')],i=bs.indexOf(document.activeElement);
+ if(e.key==='Escape'){closeDD(d,1);e.preventDefault()}
+ else if((e.key==='Enter'||e.key===' ')&&document.activeElement.matches('.sortmenu .chip')){e.preventDefault();document.activeElement.click()}
+ else if(e.key==='Tab'){closeDD(d)}
+ else if(e.key==='Home'||e.key==='End'){e.preventDefault();bs[e.key==='Home'?0:bs.length-1].focus()}
  else if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();bs[(i+(e.key==='ArrowDown'?1:-1)+bs.length)%bs.length].focus()}
 });
 function lotHome(){
