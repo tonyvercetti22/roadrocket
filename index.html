@@ -997,6 +997,7 @@ body:has(#ibxwrap) .msgfab{display:none}
 .fdd .sortmenu{left:0;right:auto;transform-origin:top left}
 .fdd .sortbtn .sv{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fdd .sortmenu.cmpchips{display:block}
+.mkdd .sortmenu{max-height:340px;overflow:auto}
 .fdd .sortmenu .chip{display:flex;align-items:center;justify-content:space-between;gap:13px;width:100%;min-height:0!important;height:auto!important;padding:8px 10px!important;margin:0;border:0!important;border-radius:8px!important;background:none!important;color:var(--muted)!important;font-size:14px!important;font-weight:400;box-shadow:none!important;cursor:pointer;transition:background-color .13s,color .13s}
 .fdd .sortmenu .chip:hover,.fdd .sortmenu .chip:focus-visible{background:var(--surf2)!important;color:var(--ink)!important;outline:none}
 .fdd .sortmenu .chip.on{color:var(--ink)!important;font-weight:600}
@@ -1461,11 +1462,11 @@ document.addEventListener('keydown',e=>{
 /* Tap-only pickers (13.11.2026): no typing needed on search forms */
 const PSTEPS=[0,25e3,50e3,75e3,100e3,150e3,200e3,250e3,300e3,400e3,500e3,750e3,1e6,1.5e6,2e6,3e6,5e6];
 const TOPMAKES=['Porsche','Ferrari','Lamborghini','McLaren','Mercedes-AMG','Aston Martin','Bentley','BMW'];
-function makeChips(){const rest=Object.keys(MAKES).filter(m=>!TOPMAKES.includes(m));return `<div class="cmpchips" data-name="make">${['Any',...TOPMAKES].map((o,i)=>`<span class="chip${i?'':' on'}" role="button" tabindex="0">${o}</span>`).join('')}<span class="chip more" role="button" tabindex="0" data-allmakes>+ ${rest.length} more</span>${rest.map(o=>`<span class="chip xtra" role="button" tabindex="0" hidden>${o}</span>`).join('')}</div>`}
-function modelChips(mk){const box=document.getElementById('modelpick');if(!box)return;const l=MAKES[mk];box.innerHTML=`<label class="f">Model</label>`+(l?chips('model',['Any',...l],'Any'):`<p class="hint" style="margin:0">Pick a make first.</p>`)}
+function makeChips(){const rest=Object.keys(MAKES).filter(m=>!TOPMAKES.includes(m)).sort();return `<div class="fddrow col mkdd">${fdd('make','Make',[...TOPMAKES,...rest],[],1)}</div>`}
+function modelChips(mk){const box=document.getElementById('modelpick');if(!box)return;const ms=(Array.isArray(mk)?mk:[mk]).filter(m=>MAKES[m]);const l=ms.length===1?MAKES[ms[0]]:ms.flatMap(m=>MAKES[m].map(x=>m+' '+x));box.innerHTML=`<label class="f">Model</label>`+(ms.length?chips('model',['Any',...l],'Any'):`<p class="hint" style="margin:0">Pick a make first.</p>`)}
 function amt(t){const m=String(t).replace(/[,$\s]/g,'').match(/([\d.]+)([kKmM]?)/);if(!m)return 0;return +m[1]*(m[2].toLowerCase()==='k'?1e3:m[2].toLowerCase()==='m'?1e6:1)}
 document.addEventListener('click',e=>{const a=e.target.closest('[data-allmakes]');if(a){e.stopImmediatePropagation();a.parentElement.querySelectorAll('.xtra').forEach(x=>x.hidden=false);a.remove();return}
- const c=e.target.closest('.cmpchips[data-name="make"] .chip');if(c&&document.getElementById('modelpick'))setTimeout(()=>modelChips(c.textContent),0)},true);
+ const c=e.target.closest('.cmpchips[data-name="make"] .chip');if(c&&document.getElementById('modelpick'))setTimeout(()=>modelChips(chipVals(c.parentElement)),0)},true);
 /* More criteria (12.11.2026): hidden until opened, chips for choices, drag ranges for numbers */
 function chips(name,opts,on,multi){return `<div class="cmpchips" data-name="${name}"${multi?' data-multi="1"':''}>${opts.map(o=>`<span class="chip${o===on?' on':''}" role="button" tabindex="0">${o}</span>`).join('')}</div>`}
 const HOT=[
@@ -1641,7 +1642,7 @@ function sourcingHome(){
  <div class="card">${SEARCHES.map(s=>`<div class="saved" data-search="${s.id}">${ic('search')}<div><b>${s.name}</b><div class="hint">${s.crit.join(' · ')}</div></div><span class="new">${s.n} new</span></div>`).join('')}</div></div></div>`;
 }
 function fltCars(){
- const f=S.flt,q=S.q||{},has=(a,b)=>!b||a.toLowerCase().includes(b.toLowerCase());return CARS.filter(c=>(S.arg==='all'||c.s===S.arg)&&(S.arg!=='all'||(has(c.mk,q.make)&&has(c.md,q.model)&&(!q.y0||c.y>=+q.y0)&&(!q.y1||c.y<=+q.y1)&&(!q.mi||c.mi<=+String(q.mi).replace(/\D/g,''))))&&c.price<=f.maxPrice*(S.arg==='s3'?10:1)&&f.seller[c.st]&&f.trans[c.trans]!==false&&madeOK(f.made,c.mk)&&locOK(f.loc,c.loc)&&(!f.saved||S.starred.has(c.id))).sort((a,b)=>a.vs-b.vs);
+ const f=S.flt,q=S.q||{},has=(a,b)=>!b||a.toLowerCase().includes(b.toLowerCase());return CARS.filter(c=>(S.arg==='all'||c.s===S.arg)&&(S.arg!=='all'||((q.makes&&q.makes.length?q.makes.includes(c.mk):has(c.mk,q.make))&&has(c.mk+' '+c.md,q.model)&&(!q.y0||c.y>=+q.y0)&&(!q.y1||c.y<=+q.y1)&&(!q.mi||c.mi<=+String(q.mi).replace(/\D/g,''))))&&c.price<=f.maxPrice*(S.arg==='s3'?10:1)&&f.seller[c.st]&&f.trans[c.trans]!==false&&madeOK(f.made,c.mk)&&locOK(f.loc,c.loc)&&(!f.saved||S.starred.has(c.id))).sort((a,b)=>a.vs-b.vs);
 }
 function locOK(l,loc){if(!l||l==='Anywhere'||l==='US')return true;const z=/^ZIP (\d{5})$/.exec(l);if(z)return +z[1]>=32000&&+z[1]<35000?/, FL$/.test(loc):true;if(['Florida','Current location','Within 150 mi'].includes(l))return /, FL$/.test(loc);return false}
 function filterPanel(){
@@ -2066,7 +2067,7 @@ document.addEventListener('click',e=>{
   case 'newsearch':S._pending=true;S.q={};S.flt={maxPrice:250000,seller:{Dealer:true,Private:true},trans:{Manual:true,PDK:true,DCT:true},saved:false};go('results','all');break;
   case 'runsearch':{const fm=document.getElementById('nsform'),v=k=>(fm.querySelector('[data-q="'+k+'"]')||{}).value||'',cb=k=>fm.querySelector('.combo[data-kind="'+k+'"] input').value.trim(),chip=n=>fm.querySelector('.cmpchips[data-name="'+n+'"] .chip.on').textContent;
    const ch=n=>{const o=fm.querySelector('.cmpchips[data-name="'+n+'"] .chip.on');return o&&!/^(Any|Anywhere)/.test(o.textContent)?o.textContent:''},yr=fm.querySelector('.rng[data-q="year"]'),y0=+yr.querySelector('.lo').value,y1=+yr.querySelector('.hi').value;
-   const q={make:ch('make'),model:ch('model'),y0:y0>1960?y0:'',y1:y1<2026?y1:'',mi:(()=>{const r=fm.querySelector('.rng[data-q="mi"]'),h=+r.querySelector('.hi').value;return h<100000?h:''})(),loc:ch('loc')};
+   const mks=chipVals(fm.querySelector('.cmpchips[data-name="make"]'));const q={makes:mks,make:mks.join(', '),model:ch('model'),y0:y0>1960?y0:'',y1:y1<2026?y1:'',mi:(()=>{const r=fm.querySelector('.rng[data-q="mi"]'),h=+r.querySelector('.hi').value;return h<100000?h:''})(),loc:ch('loc')};
    const made=chipVals(fm.querySelector('.cmpchips[data-name="made"]'));S.flt.made=made;S.flt.loc=q.loc||'Anywhere';
    if(!q.make&&!q.model&&!made.length){fm.querySelector('#nshint').style.display='block';break}
    S.q=q;const pr=(()=>{const r=fm.querySelector('.rng[data-q="price"]'),h=+r.querySelector('.hi').value;return h<PSTEPS.length-1?PSTEPS[h]:0})();if(pr)S.flt.maxPrice=Math.min(250000,Math.max(150000,pr));
