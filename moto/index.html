@@ -930,6 +930,22 @@ body:has(#ibxwrap) .msgfab{display:none}
 .tabbtn::after{transition:transform .34s var(--ease-out)}
 @media (prefers-reduced-motion:reduce){.lotcard:hover .photo img,.ltile:hover .photo img{transform:none}.saved:hover,.carrow:hover{transform:none}}
 @media (hover:none){.saved:hover,.carrow:hover,.lotcard:hover,.ltile:hover,.msgfab:hover{transform:none}}
+
+/* My lot: two rows of cars on one desktop screen (Thomas 13.11.2026) */
+@media (min-width:1100px){
+.lotstats{margin:0 0 13px!important}
+.lotstats>div{padding:13px 16px!important}
+.lotstats b{font-size:22px!important}
+.lotcharts{margin-bottom:5px}
+.lotcharts .card{padding:13px 16px!important}
+.lotcharts svg{max-height:130px;margin-top:5px}
+.lotgal{grid-template-columns:repeat(4,1fr)!important;gap:13px!important}
+.lotcard .photo{aspect-ratio:2/1!important}
+.lc-body{padding:8px 13px 10px!important}
+.lc-price{margin-top:5px!important}
+.lc-price b{font-size:19px!important}
+.lc-days{margin-top:5px!important}
+}
 </style>
 <style>:root{--z:1}@media (min-width:768px){:root{--z:.9}html{zoom:.9}}@media (min-width:1280px){:root{--z:.81}html{zoom:.81}}</style>
 <meta name="description" content="Buy, sell and track motorcycles."><meta property="og:type" content="website"><meta property="og:site_name" content="RoadRocket"><meta property="og:title" content="RoadRocket Moto"><meta property="og:description" content="Buy, sell and track motorcycles."><meta property="og:url" content="https://tonyvercetti22.github.io/roadrocket/moto/"><meta property="og:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png">
