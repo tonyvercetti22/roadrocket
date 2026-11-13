@@ -886,6 +886,50 @@ body:has(#ibxwrap) .msgfab{display:none}
   .msgfab{height:47px;bottom:21px;padding:0 21px 0 16px;font-size:16px}
 }
 @media (min-width:761px) and (max-width:1180px){.dock{padding-left:21px!important}}
+
+/* ===== Refined touch (Thomas 13.11.2026): a bit more depth, hover and press feel. Subtle, short, never in the way ===== */
+:root{--e1:inset 0 1px 0 rgba(255,255,255,.04),0 1px 2px rgba(0,0,0,.32),0 4px 13px -8px rgba(0,0,0,.45);
+ --e2:inset 0 1px 0 rgba(255,255,255,.06),0 2px 5px rgba(0,0,0,.28),0 21px 34px -21px rgba(0,0,0,.75);
+ --spring:cubic-bezier(.34,1.3,.64,1)}
+:root[data-theme="light"]{--e1:0 1px 2px rgba(16,24,40,.06),0 4px 13px -8px rgba(16,24,40,.12);--e2:0 2px 5px rgba(16,24,40,.06),0 21px 34px -21px rgba(16,24,40,.28)}
+/* cards: lift a touch on hover, settle on press */
+.card,.lotstats>div,.pstrip>div,.chartbox,.lotcard,.ltile,.box,.opt{transition:box-shadow .26s var(--ease-out),transform .26s var(--ease-out),border-color .26s var(--ease-out),background-color .26s var(--ease-out)}
+.lotstats>div:hover,.pstrip>div:hover,.chartbox:hover{box-shadow:var(--e2);border-color:var(--hair2)!important}
+.lotcard:hover,.ltile:hover,.box:hover{box-shadow:var(--e2);border-color:var(--hair2)}
+.lotcard:active,.ltile:active,.box:active,.opt:active{transform:translateY(0) scale(.99);transition-duration:.08s}
+.lotcard .photo img,.ltile .photo img{transition:transform .89s var(--ease-out)}
+.lotcard:hover .photo img,.ltile:hover .photo img{transform:scale(1.034)}
+/* list rows: soft tint slides in, tiny nudge */
+.saved,.carrow,.thr{transition:background-color .2s var(--ease-out),box-shadow .2s var(--ease-out),transform .2s var(--ease-out)}
+.saved:hover,.carrow:hover{transform:translateX(2px)}
+.saved:active,.carrow:active{transform:translateX(2px) scale(.995);transition-duration:.08s}
+/* buttons: crisp press */
+.btn,.send,.iconbtn,.tabbtn,.switch button,.ranges button,.chip,.msgfab,.back{transition:background-color .16s var(--ease),border-color .16s var(--ease),color .16s var(--ease),box-shadow .2s var(--ease-out),transform .16s var(--ease-out),filter .16s var(--ease)}
+.btn:active,.send:active,.iconbtn:active,.switch button:active,.ranges button:active,.chip:active,.msgfab:active,.back:active{transform:scale(.96);transition-duration:.06s}
+.btn.main,.ask .send{background-image:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,0) 55%)}
+.btn.main:hover,.ask .send:hover{box-shadow:0 10px 24px -10px var(--brand),inset 0 1px 0 rgba(255,255,255,.22);filter:brightness(1.06)}
+.msgfab{box-shadow:var(--e1)}.msgfab:hover{box-shadow:var(--e2);transform:translateY(-1px)}
+.star.on svg{animation:rr-pop .34s var(--spring)}
+@keyframes rr-pop{0%{transform:scale(.7)}100%{transform:scale(1)}}
+/* ask bar: gentle glow when typing */
+.ask{transition:border-color .2s var(--ease),box-shadow .26s var(--ease-out)}
+.ask:focus-within{border-color:color-mix(in srgb,var(--brand) 55%,#3a4252);box-shadow:0 0 0 4px color-mix(in srgb,var(--brand) 14%,transparent),var(--e2)}
+/* header + sticky title get a soft shadow once you scroll */
+.top{transition:box-shadow .3s var(--ease-out)}
+.app.scrolled .top{box-shadow:0 8px 21px -13px rgba(0,0,0,.6)}
+.srchead{transition:box-shadow .3s var(--ease-out),background-color .3s var(--ease)}
+/* popups, sheets, toasts arrive instead of popping */
+@keyframes rr-pop-in{from{opacity:0;transform:translateY(-5px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes rr-sheet-in{from{opacity:0;transform:translateY(13px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes rr-fade{from{opacity:0}to{opacity:1}}
+@keyframes rr-toast{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+.pop,.combo.open .combo-list{animation:rr-pop-in .2s var(--ease-out);transform-origin:top}
+.scrim{animation:rr-fade .2s var(--ease)}
+.scrim .sheet{animation:rr-sheet-in .26s var(--ease-out)}
+.toast{animation:rr-toast .26s var(--ease-out)}
+.tabbtn::after{transition:transform .34s var(--ease-out)}
+@media (prefers-reduced-motion:reduce){.lotcard:hover .photo img,.ltile:hover .photo img{transform:none}.saved:hover,.carrow:hover{transform:none}}
+@media (hover:none){.saved:hover,.carrow:hover,.lotcard:hover,.ltile:hover,.msgfab:hover{transform:none}}
 </style>
 <style>:root{--z:1}@media (min-width:768px){:root{--z:.9}html{zoom:.9}}@media (min-width:1280px){:root{--z:.81}html{zoom:.81}}</style>
 <meta name="description" content="Buy, sell and track cars."><meta property="og:type" content="website"><meta property="og:site_name" content="RoadRocket"><meta property="og:title" content="RoadRocket"><meta property="og:description" content="Buy, sell and track cars."><meta property="og:url" content="https://tonyvercetti22.github.io/roadrocket/"><meta property="og:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png">
@@ -1967,7 +2011,7 @@ if(h&&h!=='signup'){const m={sourcing:'sourcing',mylot:'mylot',invest:'invest'};
   const changed=k!==lastKey;lastKey=k;
   _render(sc);
   const v=document.getElementById('view');if(!v)return;
-  v.classList.toggle('scrolled',v.scrollTop>8);
+  v.classList.toggle('scrolled',v.scrollTop>8);const ap=document.getElementById('app');ap&&ap.classList.toggle('scrolled',v.scrollTop>8);
   if(!changed||RM.matches)return;
   v.classList.remove('enter');void v.offsetWidth;v.classList.add('enter');
   clearTimeout(v._et);v._et=setTimeout(()=>v.classList.remove('enter'),420);
@@ -2005,7 +2049,7 @@ if(h&&h!=='signup'){const m={sourcing:'sourcing',mylot:'mylot',invest:'invest'};
    p.style.setProperty('--len',Math.ceil(L));p.classList.remove('draw');void p.getBBox();p.classList.add('draw');
   });
  }
- document.addEventListener('scroll',e=>{const v=e.target;if(!v||v.id!=='view')return;v.classList.toggle('scrolled',v.scrollTop>8);
+ document.addEventListener('scroll',e=>{const v=e.target;if(!v||v.id!=='view')return;v.classList.toggle('scrolled',v.scrollTop>8);const ap=document.getElementById('app');ap&&ap.classList.toggle('scrolled',v.scrollTop>8);
   const b=v.getBoundingClientRect().bottom;v.querySelectorAll('.rv:not(.in)').forEach(el=>{if(el.getBoundingClientRect().top<b){io&&io.unobserve(el);el.classList.add('in');setTimeout(()=>el.classList.remove('rv','in'),800)}})},true);
  document.addEventListener('keydown',e=>{
   if(e.key!=='Escape'||e.defaultPrevented)return;
