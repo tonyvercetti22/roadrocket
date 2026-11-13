@@ -989,6 +989,23 @@ body:has(#ibxwrap) .msgfab{display:none}
 @media (prefers-reduced-motion:reduce){.sortmenu,.sortbtn .chev,.sortmenu svg{transition:none}.sortdd.open .sortmenu button,.sorted-in{animation:none}}
 .lotcharts svg{max-height:120px}
 .filtrow{display:flex;align-items:center;gap:13px;flex-wrap:wrap}.filtrow .ctylbl{color:var(--muted);font-size:15px}.filtrow .cmpchips .chip{min-height:32px;padding:0 12px;font-size:14px}
+
+/* Filter dropdowns (Vehicle location / Made in), same look as Sort (Thomas 13.11.2026) */
+.fddrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:13px 0 5px}
+.fddrow .ctyrow{margin:0!important;display:block}
+.fddrow.col{flex-direction:column;align-items:stretch;margin-top:13px}
+.fddrow.col .sortbtn{width:100%;justify-content:flex-start}.fddrow.col .sortbtn .chev{margin-left:auto}
+.fdd .sortmenu{left:0;right:auto;transform-origin:top left}
+.fdd .sortbtn .sv{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fdd .sortmenu.cmpchips{display:block}
+.fdd .sortmenu .chip{display:flex;align-items:center;justify-content:space-between;gap:13px;width:100%;min-height:0!important;height:auto!important;padding:8px 10px!important;margin:0;border:0!important;border-radius:8px!important;background:none!important;color:var(--muted)!important;font-size:14px!important;font-weight:400;box-shadow:none!important;cursor:pointer;transition:background-color .13s,color .13s}
+.fdd .sortmenu .chip:hover,.fdd .sortmenu .chip:focus-visible{background:var(--surf2)!important;color:var(--ink)!important;outline:none}
+.fdd .sortmenu .chip.on{color:var(--ink)!important;font-weight:600}
+.fdd .sortmenu .chip::after{content:"";width:12px;height:12px;flex-shrink:0;background:var(--brand);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.5l2.3 2.3L9.5 3.8' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.5l2.3 2.3L9.5 3.8' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;opacity:0;transform:scale(.6);transition:opacity .21s,transform .34s var(--ease-out)}
+.fdd .sortmenu .chip.on::after{opacity:1;transform:none}
+.fdd.multi .sortmenu .chip:first-child{border-bottom:1px solid var(--hair,var(--line))!important;border-radius:8px 8px 0 0!important;margin-bottom:4px}
+.sortdd.open .sortmenu .chip{animation:sortIn .34s var(--ease-out) both}
+@media (prefers-reduced-motion:reduce){.fdd .sortmenu .chip::after{transition:none}.sortdd.open .sortmenu .chip{animation:none}}
 </style>
 <style>:root{--z:1}@media (min-width:768px){:root{--z:.9}html{zoom:.9}}@media (min-width:1280px){:root{--z:.81}html{zoom:.81}}</style>
 <meta name="description" content="Buy, sell and track cars."><meta property="og:type" content="website"><meta property="og:site_name" content="RoadRocket"><meta property="og:title" content="RoadRocket"><meta property="og:description" content="Buy, sell and track cars."><meta property="og:url" content="https://tonyvercetti22.github.io/roadrocket/"><meta property="og:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png">
@@ -1328,7 +1345,7 @@ function compareForm(){
   <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:10px"><div><label class="f">Make</label>${combo('make',f?'Ferrari':'','e.g. Porsche')}</div><div><label class="f">Model</label>${combo('model',f?'812 Competizione A':'','e.g. 911 GT3 Touring')}</div></div>
   ${rng1('Year',1960,2026,1,f?2022:2022,'year')}
   ${rng1('Mileage',0,100000,500,f?2500:5000,'mi')}
-  <label class="f">Vehicle location <span class="hint">(market to compare against, pick one)</span></label>${chips('cloc',LOCS,'US')}
+  <div class="fddrow">${fdd('cloc','Vs market in',LOCS,['US'])}</div>
   <label class="f">Options</label>${chips('opt',['None','Carbon wheels','Telemetry','Carbon seats','Front lift','Paint to Sample'],f?'Carbon wheels':'None',1)}
   ${cmpMore()}
   <button class="btn main" style="width:100%;margin-top:18px" data-act="runcompare">Compare to market</button>
@@ -1425,12 +1442,14 @@ const LOCS=['Global','US','UK','Germany','UAE','Japan'];
 function originOf(name){const k=Object.keys(MAKE_C).sort((a,b)=>b.length-a.length).find(m=>String(name).startsWith(m));return k?MAKE_C[k]:''}
 function madeOK(sel,name){return !sel||!sel.length||sel.includes(originOf(name))}
 function madeChips(name,sel){sel=sel||[];return `<div class="cmpchips" data-name="${name}" data-multi="1">${['Any',...ORIGINS].map(o=>`<span class="chip${(o==='Any'?!sel.length:sel.includes(o))?' on':''}" role="button" tabindex="0">${o}</span>`).join('')}</div>`}
+function fdd(name,label,opts,sel,multi){sel=sel||[];const any='Any',all=multi?[any,...opts]:opts,cur=sel[0]||opts[0];
+ const isOn=o=>multi?(o===any?!sel.length:sel.includes(o)):o===cur;const val=multi?(sel.length?sel.join(', '):any):cur;
+ return `<div class="sortdd fdd${multi?' multi':''}" data-fdd="${name}"><button type="button" class="sortbtn" aria-haspopup="listbox" aria-expanded="false"><span class="sl">${label}</span><span class="sv">${val}</span><svg class="chev" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="sortmenu cmpchips" role="listbox" data-name="${name}"${multi?' aria-multiselectable="true" data-multi="1"':''}>${all.map(o=>`<span class="chip${isOn(o)?' on':''}" role="option" aria-selected="${isOn(o)}" tabindex="0">${o}</span>`).join('')}</div></div>`}
 function chipVals(g){return [...g.querySelectorAll('.chip.on')].map(x=>x.textContent).filter(t=>!/^(Any|Anywhere|Global)$/.test(t))}
 function hotFor(c){const k=CTY[c]||CTY.US;if(c==='US'||!CTY[c])return HOT;return HOT.map((w,i)=>{const j=1+((i*37+c.length*13)%17-8)/100;return {...w,d:Math.max(4,Math.round(w.d*k.d*j)),u:Math.max(1,Math.round(w.u*k.u*j)),ch:Math.round(w.ch*j+((i+c.length)%5-2)),uc:+(w.uc*j).toFixed(1)}})}
 function hotRefresh(box){const f={};box.querySelectorAll('.rng[data-hot]').forEach(x=>{const lo=+x.querySelector('.lo').value,hi=+x.querySelector('.hi').value,mx=+x.dataset.max;f[x.dataset.hot]=[lo,hi>=mx&&x.dataset.hot!=='y'?1e9:hi]});const on=box.querySelector('.ctyrow[data-row=loc] .chip.on');f.c=on?on.textContent:'US';f.made=chipVals(box.querySelector('.ctyrow[data-row=made]'));f.sort=box.dataset.sort;const n=box.querySelector('.ctyname');if(n)n.textContent=f.c==='Global'?'worldwide':f.c;box.querySelector('.hotres').innerHTML=hotList(f,box.dataset.mode)}
 function dragBox(mode,lbl){lbl=lbl.replace(', US,',', <span class="ctyname">US</span>,');return `<div class="pcard hotbox" data-mode="${mode}"><div class="lbl">${lbl}</div><p class="mut" style="margin:4px 0 0">Drag the lines. The list updates as you go.</p>
- <div class="ctyrow" data-row="loc"><span class="ctylbl">Vehicle location</span>${chips('cty',LOCS,'US')}</div>
- <div class="ctyrow" data-row="made"><span class="ctylbl">Made in</span>${madeChips('made')}</div>
+ <div class="fddrow"><div class="ctyrow" data-row="loc">${fdd('cty','Vehicle location',LOCS,['US'])}</div><div class="ctyrow" data-row="made">${fdd('made','Made in',ORIGINS,[],1)}</div></div>
  ${rng('Year',1960,2026,1,1960,2026,'year').replace('class="rng"','class="rng" data-hot="y"')}
  ${rng('Budget',50000,3000000,10000,50000,3000000,'usd').replace('class="rng"','class="rng" data-hot="b"')}
  ${rng('Horsepower',150,900,10,150,900,'hp').replace('class="rng"','class="rng" data-hot="hp"')}
@@ -1521,6 +1540,8 @@ document.addEventListener('click',e=>{
  const c=e.target.closest('.cmpchips .chip');if(c){e.stopPropagation();const g=c.parentElement,all=[...g.querySelectorAll('.chip')];if(g.dataset.multi){if(c===all[0]){all.forEach(x=>x.classList.toggle('on',x===c))}else{c.classList.toggle('on');all[0].classList.remove('on');if(!all.some(x=>x.classList.contains('on')))all[0].classList.add('on')}}else all.forEach(x=>x.classList.toggle('on',x===c));if(g.closest('.ctyrow')){hotRefresh(g.closest('.hotbox'));return}cmpCount()}
 },true);
 document.addEventListener('click',e=>{const c=e.target.closest('.cmpchips .chip');if(!c)return;const g=c.parentElement,n=g.dataset.name,v=chipVals(g),st=()=>$('#view').scrollTop;
+ const dd=c.closest('.fdd');if(dd){const on=[...g.querySelectorAll('.chip')].map(x=>{const y=x.classList.contains('on');x.setAttribute('aria-selected',y);return y?x.textContent:null}).filter(Boolean);dd.querySelector('.sv').textContent=on.join(', ')}
+ if(n==='iloc'){S.invF.loc=c.textContent;document.getElementById('ivres').innerHTML=bestList();return}
  if(n==='fmade'){S.flt.made=v;render(st())}else if(n==='floc'){S.flt.loc=v[0]||'Anywhere';render(st())}
  else if(n==='lmade'){S.lotMade=v;render(st())}
  else if(n==='imade'){S.invF.made=v;document.getElementById('ivres').innerHTML=bestList()}},true);
@@ -1575,8 +1596,7 @@ function filterPanel(){
  <h4 style="margin-top:14px">Transmission</h4>${['Manual','PDK'].map(t=>`<label class="ck"><input type="checkbox" data-trans="${t}" ${f.trans[t]?'checked':''}>${t}</label>`).join('')}
  <h4 style="margin-top:14px">Seller</h4>${['Dealer','Private'].map(t=>`<label class="ck"><input type="checkbox" data-seller="${t}" ${f.seller[t]?'checked':''}>${t}</label>`).join('')}
  <h4 style="margin-top:14px">Colour</h4><select><option>Any colour</option><option>Paint to Sample</option></select>
- <h4 style="margin-top:14px">Vehicle location</h4>${chips('floc',['Anywhere','📍 Near me','Within 150 mi','Florida','US','UK','Germany','UAE','Japan'],f.loc||'Anywhere')}
- <h4 style="margin-top:14px">Made in</h4>${madeChips('fmade',f.made)}
+ <div class="fddrow col">${fdd('floc','Vehicle location',['Anywhere','📍 Near me','Within 150 mi','Florida','US','UK','Germany','UAE','Japan'],[f.loc||'Anywhere'])}${fdd('fmade','Made in',ORIGINS,f.made,1)}</div>
  <label class="ck" style="margin-top:14px"><input type="checkbox" data-saved ${f.saved?'checked':''}>Saved cars only ${ic('star')}</label>
  ${cmpMore('src')}`;
 }
@@ -1598,8 +1618,7 @@ function searchForm(){
   ${rng('Mileage',0,100000,1000,0,100000,'mi').replace('class="rng"','class="rng" data-q="mi"')}
   <label class="f">Transmission</label><div class="cmpchips" data-name="trans"><span class="chip on">Any</span><span class="chip">Manual</span><span class="chip">PDK / automatic</span></div>
   <label class="f">Seller</label><div class="cmpchips" data-name="seller"><span class="chip on">Any</span><span class="chip">Dealer</span><span class="chip">Private</span></div>
-  <label class="f">Vehicle location <span class="hint">(pick one)</span></label>${chips('loc',['Anywhere','📍 Near me','Within 150 mi','Florida','US','UK','Germany','UAE','Japan'],'Anywhere')}
-  <label class="f">Made in <span class="hint">(pick several)</span></label>${madeChips('made')}
+  <div class="fddrow">${fdd('loc','Vehicle location',['Anywhere','📍 Near me','Within 150 mi','Florida','US','UK','Germany','UAE','Japan'],['Anywhere'])}${fdd('made','Made in',ORIGINS,[],1)}</div>
   ${cmpMore('src')}
   <p class="hint" id="nshint" style="margin:12px 0 0;display:none">Tap a make or a Made in country first.</p>
   <button class="btn main" style="width:100%;margin-top:18px" data-act="runsearch">${ic('search')}Search</button>
@@ -1688,11 +1707,11 @@ document.addEventListener('click',e=>{
   const n=document.querySelector(`.sortdd[data-sortk="${k}"]`);const tgt=n&&(n.closest('.listbar')||n).nextElementSibling;if(tgt){tgt.classList.add('sorted-in');setTimeout(()=>tgt.classList.remove('sorted-in'),400)}
   return}
  const b=e.target.closest('.sortbtn');
- document.querySelectorAll('.sortdd.open').forEach(d=>{if(!b||d!==b.parentElement){d.classList.remove('open');d.querySelector('.sortbtn').setAttribute('aria-expanded','false')}});
+ document.querySelectorAll('.sortdd.open').forEach(d=>{if((!b||d!==b.parentElement)&&!(d.classList.contains('multi')&&d.contains(e.target))){d.classList.remove('open');d.querySelector('.sortbtn').setAttribute('aria-expanded','false')}});
  if(b){e.stopImmediatePropagation();e.preventDefault();const d=b.parentElement,on=d.classList.toggle('open');b.setAttribute('aria-expanded',on);if(on)(d.querySelector('.sortmenu .on')||d.querySelector('.sortmenu button')).focus({preventScroll:true})}
 },true);
 document.addEventListener('keydown',e=>{const d=document.querySelector('.sortdd.open');if(!d)return;
- const bs=[...d.querySelectorAll('.sortmenu button')],i=bs.indexOf(document.activeElement);
+ const bs=[...d.querySelectorAll('.sortmenu button,.sortmenu .chip')],i=bs.indexOf(document.activeElement);
  if(e.key==='Escape'){d.classList.remove('open');d.querySelector('.sortbtn').focus();e.preventDefault()}
  else if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();bs[(i+(e.key==='ArrowDown'?1:-1)+bs.length)%bs.length].focus()}
 });
@@ -1703,7 +1722,7 @@ function lotHome(){
  return `<div class="wrap"><div class="srchead"><h1 class="pagetitle" style="margin:0">My lot</h1><button class="btn main" data-act="addcar">${ic('plus')}Add car</button></div>
  <p class="mut" style="margin:4px 0 14px">${LOT.length} cars · ${need} need attention</p>
  ${lotStats()}
- <div class="listbar"><div class="filtrow"><span class="ctylbl">Made in</span>${madeChips('lmade',S.lotMade)}</div>${sortDD('lot')}</div>
+ <div class="listbar">${fdd('lmade','Made in',ORIGINS,S.lotMade,1)}${sortDD('lot')}</div>
  <div class="lotgal">
  ${rows.length?'':`<p class="mut" style="grid-column:1/-1">No cars on your lot made in ${S.lotMade.join(' or ')}.</p>`}${rows.map(c=>`<div class="lotcard click" data-lotcar="${c.id}">${photo(c,'100%')}<div class="lc-body"><div class="lc-top"><b>${c.y} ${c.mk} ${c.md}</b><span class="tag ${c.tag}">${{above:'Above market',fair:'Fair',below:'Below market'}[c.tag]}</span></div><div class="hint">${mi(c.mi)} · ${c.col}</div>
  <div class="lc-price"><b>${money(c.you)}</b><span class="hint">${pct(c.vs)} vs market ${money(c.mkt)}</span><span class="hint" style="display:block">Model ${pct(c.ch)} in 6 mo</span></div>
@@ -1753,8 +1772,7 @@ function bestBuy(){
  const f=S.invF,cl=(a,mx)=>Math.min(a,mx),grp=(k,lbl,opts)=>`<div style="margin-top:14px"><div class="lbl" style="margin-bottom:8px">${lbl}</div><div style="display:flex;flex-wrap:wrap;gap:8px">${opts.map(o=>`<button class="chip ${f[k]===o?'on':''}" style="min-height:38px;cursor:pointer" data-ivf="${k}" data-val="${o}">${o}</button>`).join('')}</div></div>`;
  return `<div class="card ivfind" id="ivf" style="padding:18px"><h2 style="margin:0">Find the best investment</h2><p class="mut" style="margin:4px 0 0">Drag the lines. The list updates as you go.</p>
  ${grp('cat','Category',['Any','Supercar','Sports','GT','Classic','SUV'])}
- ${grp('loc','Vehicle location',LOCS)}
- <div style="margin-top:14px"><div class="lbl" style="margin-bottom:8px">Made in <span class="hint">(pick several)</span></div>${madeChips('imade',f.made)}</div>
+ <div class="fddrow">${fdd('iloc','Vehicle location',LOCS,[f.loc])}${fdd('imade','Made in',ORIGINS,f.made,1)}</div>
  ${rng('Year',1960,2026,1,f.y[0],f.y[1],'year').replace('class="rng"','class="rng" data-iv="y"')}
  ${rng('Budget',50000,3000000,10000,f.b[0],cl(f.b[1],3000000),'usd').replace('class="rng"','class="rng" data-iv="b"')}
  ${rng('Horsepower',150,900,10,f.hp[0],cl(f.hp[1],900),'hp').replace('class="rng"','class="rng" data-iv="hp"')}
