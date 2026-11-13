@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2"><link rel="shortcut icon" href="favicon.ico?v=2"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>RoadRocket Moto</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap"></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,900&text=RoadRocket&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,900&text=RoadRocket&display=swap"></noscript>
 <style>
 :root{
   --bg:#121417;--surf:#1b1e23;--surf2:#262a31;--line:#2e333a;--ink:#f2f4f7;--muted:#b4bac3;--hint:#8b929c;
@@ -948,6 +948,15 @@ body:has(#ibxwrap) .msgfab{display:none}
 .lc-price b{font-size:19px!important}
 .lc-days{margin-top:5px!important}
 }
+
+/* ===== Speed pass (Thomas 13.11.2026): phones skip the costly glass blur, scrolling stays smooth ===== */
+@media (max-width:760px){
+  .top,.dock,.back,.srchead,.msgfab,.bottom,.side{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  .top{background:var(--bg)!important}.dock{background:var(--bg)!important}
+  .lotcard:hover .photo img,.ltile:hover .photo img{transform:none}
+}
+img{content-visibility:auto}
+.photo img{background:var(--surf2)}
 </style>
 <style>:root{--z:1}@media (min-width:768px){:root{--z:.9}html{zoom:.9}}@media (min-width:1280px){:root{--z:.81}html{zoom:.81}}</style>
 <meta name="description" content="Buy, sell and track motorcycles."><meta property="og:type" content="website"><meta property="og:site_name" content="RoadRocket"><meta property="og:title" content="RoadRocket Moto"><meta property="og:description" content="Buy, sell and track motorcycles."><meta property="og:url" content="https://tonyvercetti22.github.io/roadrocket/moto/"><meta property="og:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tonyvercetti22.github.io/roadrocket/og-image.png">
@@ -1003,7 +1012,7 @@ function val(p,dec=1){const a=Math.abs(p).toFixed(dec);if(Math.abs(p)<0.05)retur
 function pct(p,dec=1){const s=p>0?'+':p<0?'−':'';const a=p>0?'↑':p<0?'↓':'';return `<span class="${p>0?'up':p<0?'down':'mut'}">${a} ${s}${Math.abs(p).toFixed(dec)}%</span>`}
 function mi(n){return n.toLocaleString('en-US')+' mi'}
 
-const IMG={c1:'c1.jpg',c2:'c2.jpg',c3:'c3.jpg',c4:'c4.jpg',c5:'c5.jpg',c6:'c6.jpg',c7:'c7.jpg',c8:'c8.jpg',c9:'c9.jpg',l1:'l1.jpg',l2:'l2.jpg',l3:'l3.jpg',l4:'l4.jpg',l5:'l5.jpg',l6:'l6.jpg'};
+const IMG={c1:'c1.webp',c2:'c2.webp',c3:'c3.webp',c4:'c4.webp',c5:'c5.webp',c6:'c6.webp',c7:'c7.webp',c8:'c8.webp',c9:'c9.webp',l1:'l1.webp',l2:'l2.webp',l3:'l3.webp',l4:'l4.webp',l5:'l5.webp',l6:'l6.webp'};
 const CARS=[
  {id:'c1',s:'s1',y:2021,mk:'Ducati',md:'Panigale V4 S',tr:'Öhlins, Akrapovič exhaust',mi:3200,col:'Ducati Red',loc:'Naples, FL',price:23900,mkt:26900,seller:'Gulf Coast Moto',st:'Dealer',phone:'(239) 555-0141',email:'sales@gulfcoastmoto.example',days:2,src:'Dealer website',vin:'ZDMBB1BV7MB00xxxx',trans:'Manual',hist:[['Listed',24900,'9 days ago'],['Dropped',23900,'2 days ago']]},
  {id:'c2',s:'s1',y:2020,mk:'Ducati',md:'Panigale V4 S',tr:'Winter Test livery',mi:6100,col:'Matte Black',loc:'Miami, FL',price:21500,mkt:22600,seller:'Private seller',st:'Private',phone:'(305) 555-0187',email:'owner.v4s@example.com',days:6,src:'Classified listing',vin:'ZDMBB1BV2LB00xxxx',trans:'Manual',hist:[['Listed',21500,'6 days ago']]},
@@ -1222,7 +1231,7 @@ function askBar(id,ph){
   <button type="button" class="iconbtn mic" data-act="mic" aria-label="Speak">${ic('mic')}</button>
   <button type="submit" class="send" data-act="ask">Ask</button></form>`;
 }
-function photo(c,w){const im=IMG[c.id];return `<div class="photo" style="background:linear-gradient(135deg,${c.color},#0b0d12);${w?'width:'+w:''}">${im?`<img src="img/t_${im}" srcset="img/t_${im} 360w, img/${im} 720w" sizes="${w==='100%'?'(max-width:760px) 92vw, 560px':'170px'}" alt="${c.y} ${c.mk} ${c.md}" loading="lazy" onerror="this.remove()">`:CARSVG}</div>`}
+function photo(c,w){const im=IMG[c.id];return `<div class="photo" style="background:linear-gradient(135deg,${c.color},#0b0d12);${w?'width:'+w:''}">${im?`<img src="img/t_${im}" srcset="img/t_${im} 360w, img/${im} 720w" sizes="${w==='100%'?'(max-width:760px) 92vw, 560px':'170px'}" decoding="async" alt="${c.y} ${c.mk} ${c.md}" loading="lazy" onerror="this.remove()">`:CARSVG}</div>`}
 function starBtn(id){return `<button class="star ${S.starred.has(id)?'on':''}" data-star="${id}" aria-label="Save">${ic('star')}</button>`}
 function contacts(c){return `<div class="contacts">
  <button class="btn" data-contact="call" data-id="${c.id}">${ic('phone')}Call</button>
@@ -2068,6 +2077,15 @@ if(h&&h!=='signup'){const m={sourcing:'sourcing',mylot:'mylot',invest:'invest'};
   const a=document.activeElement;if(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))return;
   if(S.stack&&S.stack.length)back();
  });
+})();
+
+/* Speed pass (Thomas 13.11.2026): once the page is idle, quietly fetch the small photos for My lot and saved searches so those pages open with pictures already there. Skipped on data saver or slow mobile data. */
+(function(){
+ const c=navigator.connection||{};if(c.saveData||/2g/.test(c.effectiveType||''))return;
+ const go=()=>{const seen=new Set();[...(typeof LOT!=='undefined'?LOT:[]),...(typeof CARS!=='undefined'?CARS:[])].slice(0,24).forEach(x=>{
+  const m=photo(x,'100%').match(/src="([^"]+)"/);if(!m||seen.has(m[1]))return;seen.add(m[1]);const im=new Image();im.decoding='async';im.src=m[1]})};
+ const idle=window.requestIdleCallback||(f=>setTimeout(f,1200));
+ window.addEventListener('load',()=>idle(go,{timeout:3000}));
 })();
 </script>
 <script>/* moto twin word swap: screen text only, built by moto_twin.py */
